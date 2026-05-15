@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" role="img" aria-label="VOX mark">
+  <rect width="80" height="80" rx="16" fill="#F9F7F4"></rect>
+  <text x="40" y="56" font-family="Fraunces, Cormorant Garamond, Georgia, serif" font-weight="700" font-size="34" font-feature-settings="ss01" letter-spacing="0.02em" text-anchor="middle" fill="#166534">V</text>
+  <circle cx="58" cy="24" r="3.5" fill="#B45309"></circle>
+</svg>

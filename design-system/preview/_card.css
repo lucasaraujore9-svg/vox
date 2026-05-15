@@ -1,0 +1,86 @@
+/* Shared preview-card chrome. Loaded by every card in preview/. */
+@import url("../colors_and_type.css");
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--vox-bg);
+  color: var(--vox-ink);
+  font-family: var(--vox-font-ui);
+  font-size: 13px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+.card {
+  padding: 22px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 110px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.eyebrow {
+  font-size: 10.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--vox-muted);
+}
+
+.note {
+  color: var(--vox-prose);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.mono {
+  font-family: var(--vox-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* swatch grid for color cards */
+.swatch-row {
+  display: grid;
+  gap: 10px;
+}
+
+.swatch {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.swatch-chip {
+  height: 56px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.swatch-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--vox-ink);
+}
+
+.swatch-token {
+  font-family: var(--vox-font-mono);
+  font-size: 10.5px;
+  color: var(--vox-muted);
+  letter-spacing: 0.2px;
+}

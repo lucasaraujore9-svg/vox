@@ -1,0 +1,246 @@
+/* =========================================================================
+   VOX — design tokens
+   This stylesheet defines every color, type and surface token used by VOX.
+   Import this file as the FIRST stylesheet in any new artifact.
+   ========================================================================= */
+
+/* --- Fonts (Google Fonts) ---
+   For self-hosted builds, replace this @import with a local @font-face block.
+*/
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap");
+
+:root {
+
+  /* ─────────────────────────────────────────────────────────────────────
+     COLORS — Surfaces
+     ───────────────────────────────────────────────────────────────────── */
+  --vox-bg:               #F9F7F4;   /* Parchment Canvas — page background */
+  --vox-surface:          #FFFFFF;   /* Pure white — cards */
+  --vox-surface-elev:     #FEFCF9;   /* Linen — sidebars, rails */
+  --vox-surface-deep:     #F4F1EC;   /* One step deeper than parchment */
+  --vox-stage-bg:         #0B0F0D;   /* Presentation Mode dark canvas */
+
+  /* COLORS — Ink */
+  --vox-ink:              #18181B;   /* Charcoal — primary text. NEVER pure black. */
+  --vox-prose:            #4B5563;   /* Slate Prose — body text, descriptions */
+  --vox-muted:            #9CA3AF;   /* Muted Sage — captions, metadata */
+  --vox-whisper:          rgba(226, 232, 240, 0.7);  /* Hairline borders */
+  --vox-whisper-strong:   rgba(180, 188, 200, 0.65); /* Stronger borders, dividers */
+
+  /* COLORS — Primary accents */
+  --vox-forest:           #166534;   /* Primary accent. Buttons, active state. */
+  --vox-forest-mid:       #15803D;   /* Hover state */
+  --vox-forest-soft:      rgba(22, 101, 52, 0.08);
+  --vox-forest-tint:      rgba(22, 101, 52, 0.14);
+
+  /* COLORS — Secondary accent */
+  --vox-gold:             #B45309;   /* Scripture Gold — bible refs, authority */
+  --vox-gold-soft:        rgba(180, 83, 9, 0.10);
+
+  /* COLORS — Framework accents
+     Closed set: do not introduce new framework hues without product approval.
+  */
+  --vox-fw-expositivo:    #166534;
+  --vox-fw-textual:       #0D7C7C;
+  --vox-fw-narrativo:     #6D28D9;
+  --vox-fw-tematico:      #B45309;
+  --vox-fw-topico:        #BE123C;
+  --vox-fw-livre:         #475569;
+
+  /* COLORS — State */
+  --vox-destructive:      #E11D48;   /* Deep Rose */
+  --vox-success:          #10B981;   /* Emerald */
+  --vox-info:             #0D7C7C;   /* Reuses Teal Sage */
+
+  /* ─────────────────────────────────────────────────────────────────────
+     TYPOGRAPHY — Families
+     ───────────────────────────────────────────────────────────────────── */
+  --vox-font-display:     "Fraunces", "Cormorant Garamond", "Source Serif Pro", Georgia, serif;
+  --vox-font-ui:          "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --vox-font-mono:        "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* TYPOGRAPHY — Type scale */
+  --vox-text-xs:          11px;     /* meta, mono timestamps */
+  --vox-text-sm:          12.5px;   /* secondary body, chips */
+  --vox-text-base:        14px;     /* default UI body */
+  --vox-text-md:          15px;     /* prominent body, intro paragraph */
+  --vox-text-lg:          17px;     /* large title input, scripture body */
+  --vox-text-xl:          19px;     /* card title, editor body in Fraunces */
+  --vox-text-2xl:         22px;     /* up-next title */
+  --vox-text-3xl:         26px;     /* step title */
+  --vox-text-4xl:         32px;     /* dashboard hero */
+  --vox-text-5xl:         36px;     /* stat numbers, stage block */
+
+  /* TYPOGRAPHY — Eyebrow */
+  --vox-eyebrow-size:     11px;
+  --vox-eyebrow-tracking: 0.12em;
+
+  /* ─────────────────────────────────────────────────────────────────────
+     SPACING — 4px base grid
+     ───────────────────────────────────────────────────────────────────── */
+  --vox-space-1:          4px;
+  --vox-space-2:          8px;
+  --vox-space-3:          12px;
+  --vox-space-4:          16px;
+  --vox-space-5:          20px;
+  --vox-space-6:          24px;
+  --vox-space-7:          28px;
+  --vox-space-8:          32px;
+  --vox-space-10:         40px;
+  --vox-space-12:         48px;
+  --vox-space-16:         64px;
+
+  /* RADII */
+  --vox-r-badge:          4px;
+  --vox-r-input:          8px;
+  --vox-r-card:           12px;
+  --vox-r-pill:           999px;
+
+  /* SHADOWS — All carry a green undertone (paper on wood, not glass). */
+  --vox-shadow-card:        0 1px 0 rgba(22,101,52,0.04), 0 4px 24px rgba(22,101,52,0.06);
+  --vox-shadow-card-hover:  0 2px 0 rgba(22,101,52,0.05), 0 12px 32px rgba(22,101,52,0.10);
+  --vox-shadow-overlay:     0 24px 64px rgba(22,40,30,0.16), 0 2px 8px rgba(22,40,30,0.08);
+
+  /* BORDERS — Note the 1.5px weight on prominent fields/buttons */
+  --vox-border-hairline:  1px solid var(--vox-whisper);
+  --vox-border-medium:    1.5px solid var(--vox-whisper-strong);
+  --vox-border-accent:    1.5px solid var(--vox-forest);
+
+  /* MOTION */
+  --vox-ease:             cubic-bezier(.2, .7, .2, 1);
+  --vox-dur-fast:         120ms;
+  --vox-dur:              200ms;
+  --vox-dur-slow:         320ms;
+}
+
+/* =========================================================================
+   SEMANTIC ALIASES — drop-in CSS variables matching the source product.
+   The product uses unprefixed names internally; we mirror them here so this
+   file is enough to style new artifacts without touching the source.
+   ========================================================================= */
+:root {
+  --bg:               var(--vox-bg);
+  --surface:          var(--vox-surface);
+  --surface-elev:     var(--vox-surface-elev);
+  --surface-deep:     var(--vox-surface-deep);
+
+  --ink:              var(--vox-ink);
+  --prose:            var(--vox-prose);
+  --muted:            var(--vox-muted);
+  --whisper:          var(--vox-whisper);
+  --whisper-strong:   var(--vox-whisper-strong);
+
+  --forest:           var(--vox-forest);
+  --forest-mid:       var(--vox-forest-mid);
+  --forest-soft:      var(--vox-forest-soft);
+  --forest-tint:      var(--vox-forest-tint);
+  --gold:             var(--vox-gold);
+  --gold-soft:        var(--vox-gold-soft);
+
+  --fw-expositivo:    var(--vox-fw-expositivo);
+  --fw-textual:       var(--vox-fw-textual);
+  --fw-narrativo:     var(--vox-fw-narrativo);
+  --fw-tematico:      var(--vox-fw-tematico);
+  --fw-topico:        var(--vox-fw-topico);
+  --fw-livre:         var(--vox-fw-livre);
+
+  --destructive:      var(--vox-destructive);
+  --success:          var(--vox-success);
+
+  --font-display:     var(--vox-font-display);
+  --font-ui:          var(--vox-font-ui);
+  --font-mono:        var(--vox-font-mono);
+
+  --r-badge:          var(--vox-r-badge);
+  --r-input:          var(--vox-r-input);
+  --r-card:           var(--vox-r-card);
+}
+
+/* =========================================================================
+   BASE — set on body when this file is the root stylesheet.
+   ========================================================================= */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--vox-bg);
+  color: var(--vox-ink);
+  font-family: var(--vox-font-ui);
+  font-size: var(--vox-text-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: var(--vox-forest-tint); color: var(--vox-ink); }
+
+/* =========================================================================
+   SEMANTIC TYPE — drop-in classes
+   ========================================================================= */
+.vox-h1 {
+  font-family: var(--vox-font-display);
+  font-weight: 600;
+  font-size: var(--vox-text-4xl);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: var(--vox-ink);
+  text-wrap: balance;
+  margin: 0;
+}
+
+.vox-h2 {
+  font-family: var(--vox-font-display);
+  font-weight: 600;
+  font-size: var(--vox-text-3xl);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--vox-ink);
+  text-wrap: balance;
+  margin: 0;
+}
+
+.vox-h3 {
+  font-family: var(--vox-font-display);
+  font-weight: 600;
+  font-size: var(--vox-text-xl);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--vox-ink);
+  margin: 0;
+}
+
+.vox-body {
+  font-family: var(--vox-font-ui);
+  font-size: var(--vox-text-md);
+  line-height: 1.55;
+  color: var(--vox-prose);
+  text-wrap: pretty;
+}
+
+.vox-eyebrow {
+  font-family: var(--vox-font-ui);
+  font-weight: 500;
+  font-size: var(--vox-eyebrow-size);
+  letter-spacing: var(--vox-eyebrow-tracking);
+  text-transform: uppercase;
+  color: var(--vox-prose);
+}
+
+.vox-mono {
+  font-family: var(--vox-font-mono);
+  font-feature-settings: "tnum";
+}
+
+.vox-scripture {
+  font-family: var(--vox-font-display);
+  font-style: italic;
+  font-size: var(--vox-text-lg);
+  line-height: 1.7;
+  color: var(--vox-ink);
+}
+
+.vox-ref {
+  font-family: var(--vox-font-mono);
+  color: var(--vox-gold);
+  font-size: var(--vox-text-sm);
+  letter-spacing: 0.02em;
+}

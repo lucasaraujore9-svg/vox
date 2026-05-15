@@ -1,0 +1,45 @@
+{
+  "name": "VOX — Palestras e Sermões",
+  "short_name": "VOX",
+  "description": "Companheiro silencioso do púlpito. Prepare, pregue e arquive sermões, palestras e aulas.",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F9F7F4",
+  "theme_color": "#166534",
+  "lang": "pt-BR",
+  "categories": ["productivity", "education", "lifestyle"],
+  "icons": [
+    {
+      "src": "/logo/png/vox-app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo/png/vox-app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo/png/vox-app-icon-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Novo sermão",
+      "url": "/sermons/new",
+      "description": "Começar um novo manuscrito"
+    },
+    {
+      "name": "Banco de conteúdo",
+      "url": "/sermons",
+      "description": "Buscar sermões arquivados"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" width="240" height="80" role="img" aria-label="VOX">
+  <defs>
+    
+  </defs>
+  <text x="0" y="58" class="vox-mark-letter" fill="#18181B">VOX</text>
+  <circle cx="174" cy="22" r="5" fill="#166534"></circle>
+</svg>

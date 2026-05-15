@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"/><link rel="stylesheet" href="_card.css"/>
+<style>
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 18px; border-radius: 8px; font: 500 14px/1 var(--vox-font-ui); letter-spacing: -0.005em; border: 1.5px solid transparent; cursor: default; }
+.btn-primary { background: var(--vox-forest); color: #fff; }
+.btn-secondary { background: #fff; color: var(--vox-forest); border-color: var(--vox-forest); }
+.btn-ghost { background: transparent; color: var(--vox-prose); }
+.icon { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="eyebrow">Buttons</div>
+  <div class="row" style="gap: 14px; align-items: center;">
+    <button class="btn btn-primary">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Novo sermão
+    </button>
+    <button class="btn btn-secondary">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M4 20h4l10-10-4-4L4 16v4Z"/><path d="m13 7 4 4"/></svg>
+      Editar
+    </button>
+    <button class="btn btn-ghost">
+      Cancelar
+    </button>
+  </div>
+  <div class="row" style="gap: 18px; padding-top: 6px;">
+    <span class="mono" style="font-size: 11px; color: var(--vox-muted);">Primary · forest fill</span>
+    <span class="mono" style="font-size: 11px; color: var(--vox-muted);">Secondary · forest border 1.5px</span>
+    <span class="mono" style="font-size: 11px; color: var(--vox-muted);">Ghost · forest on hover</span>
+  </div>
+  <div class="note" style="padding-top: 4px;">Min height 40 (44 for touch targets). Geist 500 / 14px. Active press is scale(0.98).</div>
+</div>
+</body></html>

@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VOX — livro da marca</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #F9F7F4;
+    --surface: #FFFFFF;
+    --surface-elev: #FEFCF9;
+    --ink: #18181B;
+    --prose: #4B5563;
+    --muted: #9CA3AF;
+    --whisper: rgba(226, 232, 240, 0.7);
+    --whisper-strong: rgba(180, 188, 200, 0.65);
+    --forest: #166534;
+    --forest-mid: #15803D;
+    --forest-soft: rgba(22, 101, 52, 0.08);
+    --gold: #B45309;
+    --stage: #0B0F0D;
+    --font-display: "Fraunces", "Cormorant Garamond", "Source Serif Pro", Georgia, serif;
+    --font-ui: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-ui);
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: rgba(22, 101, 52, 0.18); }
+  .page {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 72px 64px 120px;
+  }
+  /* --- Wordmark / pluga (used live throughout book) --- */
+  .vox-wordmark {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-feature-settings: "ss01";
+    font-variation-settings: "opsz" 144;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    line-height: 1;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+  }
+  .vox-dot {
+    display: inline-block;
+    border-radius: 50%;
+    background: var(--forest);
+    transform: translateY(-0.72em);
+  }
+  .wm-260 { font-size: 260px; }
+  .wm-260 .vox-dot { width: 19px; height: 19px; }
+  .wm-160 { font-size: 160px; }
+  .wm-160 .vox-dot { width: 12px; height: 12px; }
+  .wm-80 { font-size: 80px; }
+  .wm-80 .vox-dot { width: 6px; height: 6px; }
+  .wm-48 { font-size: 48px; }
+  .wm-48 .vox-dot { width: 4px; height: 4px; }
+  .wm-32 { font-size: 32px; }
+  .wm-32 .vox-dot { width: 3px; height: 3px; }
+  .wm-22 { font-size: 22px; }
+  .wm-22 .vox-dot { width: 2px; height: 2px; }
+  .wm-16 { font-size: 16px; }
+  .wm-16 .vox-dot { width: 1.5px; height: 1.5px; }
+
+  /* Monogram V */
+  .vox-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18%;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-feature-settings: "ss01";
+    font-variation-settings: "opsz" 144;
+    line-height: 1;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .vox-mark::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+  }
+
+  /* Headers */
+  .eyebrow {
+    font-family: var(--font-ui);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  h1.cover {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 64px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 0;
+    text-wrap: balance;
+    max-width: 760px;
+  }
+  h2.section {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 38px;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  h3.sub {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  p.lede {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.5;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+    max-width: 640px;
+    margin: 0;
+    text-wrap: pretty;
+  }
+  p.body {
+    color: var(--prose);
+    margin: 0;
+    line-height: 1.6;
+    max-width: 580px;
+    text-wrap: pretty;
+  }
+  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .pageno {
+    font-family: var(--font-mono);
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+
+  /* --- Page section layouts --- */
+  section { padding: 88px 0; border-top: 1px solid var(--whisper); }
+  section:first-of-type { border-top: none; padding-top: 0; }
+  .section-head {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 32px;
+    margin-bottom: 56px;
+    align-items: baseline;
+  }
+  .section-head .eyebrow { padding-top: 12px; }
+
+  /* --- Specific blocks --- */
+  .cover-block {
+    min-height: 720px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 24px;
+  }
+  .cover-mark-wrap {
+    display: flex;
+    align-items: flex-start;
+    gap: 64px;
+  }
+  .cover-mark {
+    width: 200px; height: 200px;
+    background: var(--forest);
+    color: #F9F7F4;
+    border-radius: 36px;
+    font-size: 160px;
+    box-shadow: 0 1px 0 rgba(22,101,52,0.04), 0 4px 24px rgba(22,101,52,0.06);
+  }
+  .cover-mark::after {
+    background: #FBBF24;
+    width: 18px; height: 18px;
+    top: 22%; right: 22%;
+  }
+  .cover-info {
+    flex: 1;
+    padding-top: 24px;
+  }
+
+  /* presentation tile */
+  .hero-wordmark {
+    padding: 96px 0 64px;
+    border-bottom: 1px dashed var(--whisper-strong);
+    margin-bottom: 24px;
+  }
+
+  .specs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px 32px;
+    margin-top: 32px;
+    max-width: 560px;
+  }
+  .specs > dt {
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    padding-top: 6px;
+  }
+  .specs > dd {
+    margin: 0;
+    color: var(--ink);
+    font-size: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--whisper);
+  }
+
+  /* mark grid */
+  .mark-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .mark-tile {
+    background: var(--surface);
+    border: 1px solid var(--whisper);
+    border-radius: 12px;
+    padding: 32px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    box-shadow: 0 1px 0 rgba(22,101,52,0.04), 0 4px 24px rgba(22,101,52,0.06);
+  }
+  .mark-tile.dark {
+    background: var(--stage);
+    border-color: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.7);
+  }
+  .mark-tile.parchment-bg { background: var(--bg); }
+  .mark-tile.gold-tint { background: #FEF6E7; }
+
+  .mark-label {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .mark-label .name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .mark-tile.dark .mark-label .name { color: #F9F7F4; }
+  .mark-label .file {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--muted);
+  }
+  .mark-tile.dark .mark-label .file { color: rgba(255,255,255,0.4); }
+
+  /* mark presets */
+  .mk-80 { width: 80px; height: 80px; font-size: 64px; }
+  .mk-80::after { width: 9px; height: 9px; top: 17%; right: 20%; }
+  .mk-120 { width: 120px; height: 120px; font-size: 96px; }
+  .mk-120::after { width: 13px; height: 13px; top: 17%; right: 20%; }
+
+  .mk-parchment      { background: var(--bg);     color: var(--ink); }
+  .mk-parchment::after { background: var(--forest); }
+  .mk-white          { background: #fff;          color: var(--ink); border: 1px solid var(--whisper); }
+  .mk-white::after { background: var(--forest); }
+  .mk-forest         { background: var(--forest); color: #F9F7F4; }
+  .mk-forest::after { background: #FBBF24; }
+  .mk-stage          { background: var(--stage);  color: #F9F7F4; }
+  .mk-stage::after { background: #86EFAC; }
+  .mk-gold           { background: var(--gold);   color: #F9F7F4; }
+  .mk-gold::after { background: #FEF3C7; }
+  .mk-mono-ink       { background: transparent;   color: var(--ink); border: 1px dashed var(--whisper-strong); }
+  .mk-mono-ink::after { background: var(--ink); }
+  .mk-mono-paper     { background: var(--ink);    color: #F9F7F4; }
+  .mk-mono-paper::after { background: #F9F7F4; }
+
+  /* clear-space diagram */
+  .clear-space {
+    display: flex;
+    gap: 48px;
+    align-items: center;
+    padding: 64px 48px;
+    background: var(--surface);
+    border: 1px solid var(--whisper);
+    border-radius: 16px;
+    box-shadow: 0 1px 0 rgba(22,101,52,0.04), 0 4px 24px rgba(22,101,52,0.06);
+  }
+  .clear-frame {
+    position: relative;
+    padding: 36px;
+  }
+  .clear-frame::before, .clear-frame::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+  }
+  .clear-frame::before {
+    inset: 0;
+    border: 1px dashed var(--forest);
+    opacity: 0.45;
+  }
+  .clear-frame .corner {
+    position: absolute;
+    width: 12px; height: 12px;
+    border: 1.5px solid var(--forest);
+  }
+  .clear-frame .corner.tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+  .clear-frame .corner.tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+  .clear-frame .corner.bl { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+  .clear-frame .corner.br { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+  .x-height-label {
+    color: var(--forest);
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+
+  /* misuse panels */
+  .misuse {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .misuse-tile {
+    background: var(--surface);
+    border: 1px solid var(--whisper);
+    border-radius: 12px;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .misuse-tile.stretched .vox-wordmark { transform: scaleX(1.6); }
+  .misuse-tile.condensed .vox-wordmark { transform: scaleX(0.6); }
+  .misuse-tile.rotated   .vox-wordmark { transform: rotate(-8deg); }
+  .misuse-tile.colorshift .vox-wordmark { color: #6D28D9; }
+  .misuse-tile.colorshift .vox-dot { background: #6D28D9; }
+  .misuse-tile.outline { background: #fff; }
+  .misuse-tile.outline .vox-wordmark { -webkit-text-stroke: 1px var(--ink); color: transparent; }
+  .misuse-tile.outline .vox-dot { background: transparent; border: 1px solid var(--ink); }
+  .misuse-tile.shadow .vox-wordmark { text-shadow: 4px 4px 0 rgba(190,18,60,0.4); }
+  .misuse-x {
+    position: absolute;
+    top: 12px; right: 12px;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(225,29,72,0.10);
+    color: #E11D48;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .misuse-x svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+  .misuse-tile .label {
+    font-size: 12px;
+    color: var(--prose);
+    line-height: 1.45;
+  }
+
+  /* lockups */
+  .lockup-pane {
+    background: var(--surface);
+    border: 1px solid var(--whisper);
+    border-radius: 12px;
+    padding: 56px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 1px 0 rgba(22,101,52,0.04), 0 4px 24px rgba(22,101,52,0.06);
+  }
+  .lockup-horiz {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+  .lockup-horiz .divider {
+    width: 1px;
+    align-self: stretch;
+    background: var(--whisper-strong);
+  }
+  .lockup-horiz .text-side {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .tagline {
+    font-family: var(--font-ui);
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--prose);
+  }
+  .lockup-stacked {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+  }
+
+  /* size-step ruler */
+  .ruler {
+    display: flex;
+    align-items: flex-end;
+    gap: 36px;
+    flex-wrap: wrap;
+    padding: 48px;
+    background: var(--surface);
+    border: 1px solid var(--whisper);
+    border-radius: 12px;
+  }
+  .ruler .stop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .ruler .stop .mono { font-size: 10.5px; color: var(--muted); }
+
+  /* color usage */
+  .palette-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+  }
+  .palette {
+    background: var(--surface);
+    border: 1px solid var(--whisper);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .palette .swatch {
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.92);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+  .palette .meta {
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .palette .name { font-weight: 500; font-size: 13px; color: var(--ink); }
+  .palette .role { color: var(--muted); font-size: 11.5px; }
+
+  /* punctum applications */
+  .punctum-uses {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .punctum-use {
+    background: var(--surface);
+    border: 1px solid var(--whisper);
+    border-radius: 12px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .pu-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; font-weight: 500; }
+
+  /* misc */
+  .small { font-size: 13px; }
+  .row { display: flex; align-items: center; gap: 12px; }
+  hr.rule { border: none; height: 1px; background: var(--whisper); margin: 24px 0; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<!-- =========================================================== -->
+<!-- COVER -->
+<!-- =========================================================== -->
+<section class="cover-block" style="border-top: none; padding-top: 0;">
+  <div>
+    <div class="eyebrow">VOX · livro da marca</div>
+    <h1 class="cover" style="margin-top: 16px;">
+      A voz silenciosa sobre o&nbsp;papel.
+    </h1>
+    <p class="lede" style="margin-top: 28px;">
+      Sistema de identidade visual do <em>VOX</em> — um instrumento editorial
+      para a preparação de sermões. Logo, monograma, marca solta e
+      todas as suas aplicações.
+    </p>
+  </div>
+
+  <div class="cover-mark-wrap">
+    <div class="vox-mark cover-mark">V</div>
+    <div class="cover-info">
+      <div class="eyebrow">Edição</div>
+      <p class="body" style="margin-top: 8px;">v1 · maio de 2026 · Pr. Edmundo Marques</p>
+      <hr class="rule" />
+      <div class="eyebrow">Conteúdo</div>
+      <p class="body" style="margin-top: 8px;">
+        Conceito · Wordmark · Monograma · Punctum · Lockups · Cores · Espaço de proteção · Tamanhos mínimos · Aplicações · Mau uso · Arquivos
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================== -->
+<!-- CONCEPT -->
+<!-- =========================================================== -->
+<section>
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">01 · O conceito</span>
+      <div class="pageno" style="margin-top: 8px;">página 01</div>
+    </div>
+    <div>
+      <h2 class="section">O Punctum.</h2>
+      <p class="lede" style="margin-top: 18px;">
+        Antes da imprensa, o&nbsp;copista marcava no manuscrito um <em>punctum</em> —
+        um pequeno ponto&nbsp;— para chamar atenção a um trecho importante.
+        É essa a marca silenciosa que o VOX adota.
+      </p>
+      <p class="body" style="margin-top: 16px;">
+        O ponto é discreto e específico. Não anuncia, não decora. Aponta. Por isso o VOX o usa em três escalas:
+        como acento sobre o wordmark, como sinal sobre o monograma, e como glifo independente para listas, separadores e selos editoriais.
+      </p>
+    </div>
+  </div>
+
+  <div class="hero-wordmark" style="display: flex; justify-content: center;">
+    <span class="vox-wordmark wm-260">VOX<span class="vox-dot"></span></span>
+  </div>
+  <dl class="specs" style="margin-left: auto; margin-right: auto;">
+    <dt>Família</dt><dd>Fraunces 600, ss01 alternates</dd>
+    <dt>Tracking</dt><dd>+0.02em</dd>
+    <dt>Punctum</dt><dd>7% da altura do caixa-alta · Forest Deep #166534</dd>
+    <dt>Posição do ponto</dt><dd>Tittle sobre o X, deslocado ao alto-direito</dd>
+  </dl>
+</section>
+
+<!-- =========================================================== -->
+<!-- WORDMARK VARIANTS -->
+<!-- =========================================================== -->
+<section>
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">02 · Wordmark</span>
+      <div class="pageno" style="margin-top: 8px;">página 02</div>
+    </div>
+    <div>
+      <h2 class="section">Variantes do wordmark</h2>
+      <p class="body" style="margin-top: 18px;">
+        Cinco variantes oficiais. Sempre use o arquivo do contexto certo;
+        nunca recolora manualmente sobre o ativo principal.
+      </p>
+    </div>
+  </div>
+
+  <div class="mark-grid" style="grid-template-columns: repeat(2, 1fr); gap: 18px;">
+    <div class="mark-tile" style="padding: 56px 32px;">
+      <span class="vox-wordmark wm-160">VOX<span class="vox-dot"></span></span>
+      <div class="mark-label">
+        <span class="name">Primary · sobre Parchment</span>
+        <span class="file">vox-wordmark.svg</span>
+      </div>
+    </div>
+    <div class="mark-tile dark" style="padding: 56px 32px;">
+      <span class="vox-wordmark wm-160" style="color: #F9F7F4;">VOX<span class="vox-dot" style="background: #86EFAC;"></span></span>
+      <div class="mark-label">
+        <span class="name">Dark · sobre Stage</span>
+        <span class="file">vox-wordmark-dark.svg</span>
+      </div>
+    </div>
+    <div class="mark-tile" style="padding: 56px 32px;">
+      <span class="vox-wordmark wm-160">VOX<span class="vox-dot" style="background: #18181B;"></span></span>
+      <div class="mark-label">
+        <span class="name">Mono-ink · impressão preto-e-branco</span>
+        <span class="file">vox-wordmark-mono-ink.svg</span>
+      </div>
+    </div>
+    <div class="mark-tile" style="padding: 56px 32px; background: #2D7A3F; color: #F9F7F4; border-color: transparent;">
+      <span class="vox-wordmark wm-160" style="color: #F9F7F4;">VOX<span class="vox-dot" style="background: #F9F7F4;"></span></span>
+      <div class="mark-label">
+        <span class="name" style="color: #F9F7F4;">Mono-paper · reverso sobre cor sólida</span>
+        <span class="file" style="color: rgba(255,255,255,0.5);">vox-wordmark-mono-paper.svg</span>
+      </div>
+    </div>
+    <div class="mark-tile" style="padding: 56px 32px; grid-column: 1 / -1; background: #FEF6E7; border-color: rgba(180,83,9,0.18);">
+      <span class="vox-wordmark wm-160">VOX<span class="vox-dot" style="background: #B45309;"></span></span>
+      <div class="mark-label">
+        <span class="name">Gold · cerimonial</span>
+        <span class="file">vox-wordmark-gold.svg <span style="color: var(--gold); margin-left: 8px;">— uso restrito: capas, dedicatórias, certificados.</span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================== -->
+<!-- MONOGRAM -->
+<!-- =========================================================== -->
+<section>
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">03 · Monograma</span>
+      <div class="pageno" style="margin-top: 8px;">página 03</div>
+    </div>
+    <div>
+      <h2 class="section">O V solitário</h2>
+      <p class="body" style="margin-top: 18px;">
+        Para favicons, app icons, avatars, capas de séries homiléticas, papelaria. O V
+        é Fraunces 700 com ss01; o punctum se posiciona no canto superior direito,
+        a 10% da altura.
+      </p>
+    </div>
+  </div>
+
+  <div class="mark-grid">
+    <div class="mark-tile">
+      <div class="vox-mark mk-120 mk-parchment">V</div>
+      <div class="mark-label">
+        <span class="name">Parchment</span>
+        <span class="file">vox-mark-parchment.svg</span>
+      </div>
+    </div>
+    <div class="mark-tile">
+      <div class="vox-mark mk-120 mk-forest">V</div>
+      <div class="mark-label">
+        <span class="name">Forest · padrão</span>
+        <span class="file">vox-mark-forest.svg</span>
+      </div>
+    </div>
+    <div class="mark-tile dark">
+      <div class="vox-mark mk-120 mk-stage">V</div>
+      <div class="mark-label">
+        <span class="name">Stage</span>
+        <span class="file">vox-mark-stage.svg</span>
+      </div>
+    </div>
+    <div class="mark-tile gold-tint">
+      <div class="vox-mark mk-120 mk-gold">V</div>
+      <div class="mark-label">
+        <span class="name">Gold · cerimonial</span>
+        <span class="file">— uso restrito</span>
+      </div>
+    </div>
+    <div class="mark-tile">
+      <div class="vox-mark mk-120 mk-white">V</div>
+      <div class="mark-label">
+        <span class="name">White surface</span>
+        <span class="file">vox-mark.svg</span>
+      </div>
+    </div>
+    <div class="mark-tile">
+      <div class="vox-mark mk-120 mk-mono-ink">V</div>
+      <div class="mark-label">
+        <span class="name">Mono-ink · 1 cor</span>
+        <span class="file">vox-mark-mono-ink.svg</span>
+      </div>
+    </div>
+    <div class="mark-tile" style="background: #18181B; color: #F9F7F4; border-color: transparent;">
+      <div class="vox-mark mk-120 mk-mono-paper">V</div>
+      <div class="mark-label">
+        <span class="name" style="color: #F9F7F4;">Mono-paper · reverso</span>
+        <span class="file" style="color: rgba(255,255,255,0.5);">vox-mark-mono-paper</span>
+      </div>
+    </div>
+    <div class="mark-tile" style="background: linear-gradient(135deg, #166534 0%, #1F8B4A 100%); color: #F9F7F4; border-color: transparent;">
+      <div class="vox-mark mk-120" style="background: transparent; color: #F9F7F4; font-size: 96px;">V<span style="position: absolute; width: 13px; height: 13px; border-radius: 50%; background: #FBBF24; top: 17%; right: 20%;"></span></div>
+      <div class="mark-label">
+        <span class="name" style="color: #F9F7F4;">App icon · radial gradient</span>
+        <span class="file" style="color: rgba(255,255,255,0.5);">vox-app-icon-512.svg</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================== -->
+<!-- PUNCTUM -->
+<!-- =========================================================== -->
+<section>
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">04 · Punctum solto</span>
+      <div class="pageno" style="margin-top: 8px;">página 04</div>
+    </div>
+    <div>
+      <h2 class="section">O ponto como glifo</h2>
+      <p class="body" style="margin-top: 18px;">
+        Quando o sistema precisa de um sinal sutil que diga <em>VOX</em> sem o nome inteiro —
+        no rodapé de uma página, ao final de uma seção, como bullet em listas editoriais —
+        o punctum sozinho cumpre o papel.
+      </p>
+    </div>
+  </div>
+
+  <div class="punctum-uses">
+    <div class="punctum-use">
+      <div class="pu-label">Final de seção</div>
+      <p style="font-family: var(--font-display); font-size: 17px; line-height: 1.7; color: var(--ink); margin: 0; font-style: italic;">
+        “Sede cumpridores da palavra e não somente ouvintes,
+        enganando-vos a vós mesmos.”
+      </p>
+      <div style="display: flex; align-items: center; gap: 12px; justify-content: center; padding-top: 8px;">
+        <span style="height: 1px; flex: 1; max-width: 60px; background: var(--whisper-strong);"></span>
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--forest);"></span>
+        <span style="height: 1px; flex: 1; max-width: 60px; background: var(--whisper-strong);"></span>
+      </div>
+    </div>
+    <div class="punctum-use">
+      <div class="pu-label">Separador inline</div>
+      <div class="mono" style="display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--prose);">
+        <span style="color: var(--gold);">Romanos 5:1—11</span>
+        <span style="width: 5px; height: 5px; border-radius: 50%; background: var(--prose);"></span>
+        <span>2.840 palavras</span>
+        <span style="width: 5px; height: 5px; border-radius: 50%; background: var(--prose);"></span>
+        <span>~38 min</span>
+      </div>
+      <div class="small" style="color: var(--muted);">O punctum reduzido a 5px substitui o caractere · interpunct em metadata e legendas.</div>
+    </div>
+    <div class="punctum-use">
+      <div class="pu-label">Bullet em listas editoriais</div>
+      <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; font-family: var(--font-display); font-size: 16px; color: var(--ink);">
+        <li style="display: flex; align-items: baseline; gap: 14px;">
+          <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--forest); flex-shrink: 0; transform: translateY(-2px);"></span>
+          Texto Bíblico
+        </li>
+        <li style="display: flex; align-items: baseline; gap: 14px;">
+          <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--forest); flex-shrink: 0; transform: translateY(-2px);"></span>
+          Contexto
+        </li>
+        <li style="display: flex; align-items: baseline; gap: 14px;">
+          <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--forest); flex-shrink: 0; transform: translateY(-2px);"></span>
+          Aplicação
+        </li>
+      </ul>
+    </div>
+    <div class="punctum-use">
+      <div class="pu-label">Selo editorial</div>
+      <div style="display: flex; align-items: center; gap: 16px; padding: 14px 0;">
+        <span style="width: 40px; height: 40px; border-radius: 50%; background: var(--gold); flex-shrink: 0;"></span>
+        <div>
+          <div style="font-family: var(--font-display); font-size: 17px; color: var(--ink); font-style: italic;">Selo de revisão pastoral</div>
+          <div class="mono" style="font-size: 11px; color: var(--muted); margin-top: 4px;">— sermão revisado em 12 de maio de 2026</div>
+        </div>
+      </div>
+      <div class="small" style="color: var(--muted);">Em scriptural gold, o punctum cresce e vira selo. Reservado para certificações, dedicatórias.</div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================== -->
+<!-- LOCKUPS -->
+<!-- =========================================================== -->
+<section>
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">05 · Lockups</span>
+      <div class="pageno" style="margin-top: 8px;">página 05</div>
+    </div>
+    <div>
+      <h2 class="section">Composições com tagline</h2>
+      <p class="body" style="margin-top: 18px;">
+        Para contextos onde o nome precisa de descrição — apresentações, papelaria,
+        material institucional. Duas variantes oficiais; não crie outras.
+      </p>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px;">
+    <div class="lockup-pane">
+      <h3 class="sub">Lockup horizontal</h3>
+      <p class="small" style="color: var(--prose);">Mark + wordmark + tagline. Padrão para topo de papel timbrado, e-mails, slides.</p>
+      <div class="lockup-horiz" style="padding: 32px 0 16px;">
+        <div class="vox-mark mk-80 mk-forest">V</div>
+        <div class="divider"></div>
+        <div class="text-side">
+          <span class="vox-wordmark wm-48">VOX<span class="vox-dot"></span></span>
+          <span class="tagline">preparação de sermões</span>
+        </div>
+      </div>
+      <div class="mono" style="font-size: 11px; color: var(--muted); margin-top: 8px;">vox-lockup-horizontal.svg</div>
+    </div>
+    <div class="lockup-pane">
+      <h3 class="sub">Lockup empilhado</h3>
+      <p class="small" style="color: var(--prose);">Para selos, capas, contextos verticais ou quadrados.</p>
+      <div class="lockup-stacked" style="padding: 32px 0 16px;">
+        <div class="vox-mark mk-80 mk-forest">V</div>
+        <span class="vox-wordmark wm-48">VOX<span class="vox-dot"></span></span>
+        <span class="tagline" style="font-size: 11.5px;">preparação de sermões</span>
+      </div>
+      <div class="mono" style="font-size: 11px; color: var(--muted); margin-top: 8px;">vox-lockup-stacked.svg</div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================== -->
+<!-- CLEAR SPACE -->
+<!-- =========================================================== -->
+<section>
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">06 · Espaço de proteção</span>
+      <div class="pageno" style="margin-top: 8px;">página 06</div>
+    </div>
+    <div>
+      <h2 class="section">Respiração</h2>
+      <p class="body" style="margin-top: 18px;">
+        A regra é simples: a altura do <em>O</em> em torno do wordmark, em cada um dos quatro lados.
+        Nada — nem texto, nem elemento gráfico — pode invadir essa zona.
+      </p>
+    </div>
+  </div>
+
+  <div class="clear-space">
+    <div class="clear-frame" style="padding: 88px;">
+      <span class="corner tl"></span>
+      <span class="corner tr"></span>
+      <span class="corner bl"></span>
+      <span class="corner br"></span>
+      <span class="vox-wordmark wm-160">VOX<span class="vox-dot"></span></span>
+      <span class="x-height-label" style="position: absolute; top: 32px; left: 32px;">x</span>
+      <span class="x-height-label" style="position: absolute; top: 32px; right: 32px;">x</span>
+      <span class="x-height-label" style="position: absolute; bottom: 32px; left: 32px;">x</span>
+      <span class="x-height-label" style="position: absolute; bottom: 32px; right: 32px;">x</span>
+    </div>
+    <div>
+      <h3 class="sub">x = altura do "O"</h3>
+      <p class="body" style="margin-top: 8px;">
+        Para um wordmark a 96 px de cap-height, a zona de proteção mínima
+        é 72 px em cada lado (altura aproximada do O minúsculo na Fraunces).
+      </p>
+      <hr class="rule"/>
+      <div class="eyebrow">Regra rápida</div>
+      <p class="body" style="margin-top: 8px;">
+        Pegue qualquer wordmark do VOX e meça a altura da letra O. Esse valor é
+        seu espaço de proteção mínimo. Sem exceções.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================== -->
+<!-- SIZES -->
+<!-- =========================================================== -->
+<section>
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">07 · Tamanhos mínimos</span>
+      <div class="pageno" style="margin-top: 8px;">página 07</div>
+    </div>
+    <div>
+      <h2 class="section">A escala de uso</h2>
+      <p class="body" style="margin-top: 18px;">
+        Abaixo dos valores indicados, o punctum não registra mais e a tipografia
+        perde definição. Use o monograma ou favicon, não force o wordmark a sobreviver.
+      </p>
+    </div>
+  </div>
+
+  <div class="ruler">
+    <div class="stop"><span class="vox-wordmark wm-160">VOX<span class="vox-dot"></span></span><span class="mono">160 px · capa</span></div>
+    <div class="stop"><span class="vox-wordmark wm-80">VOX<span class="vox-dot"></span></span><span class="mono">80 px · header</span></div>
+    <div class="stop"><span class="vox-wordmark wm-48">VOX<span class="vox-dot"></span></span><span class="mono">48 px · interface</span></div>
+    <div class="stop"><span class="vox-wordmark wm-32">VOX<span class="vox-dot"></span></span><span class="mono">32 px · rodapé</span></div>
+    <div class="stop"><span class="vox-wordmark wm-22">VOX<span class="vox-dot"></span></span><span class="mono">22 px · sidebar</span></div>
+    <div class="stop"><span class="vox-wordmark wm-16">VOX<span class="vox-dot"></span></span><span class="mono">16 px · mínimo</span></div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 24px;">
+    <div class="lockup-pane" style="padding: 28px;">
+      <h3 class="sub" style="font-size: 17px;">Web</h3>
+      <p class="small" style="color: var(--prose);">Wordmark mínimo: 16 px de altura.<br/>Monograma mínimo: 16 px.<br/>Favicon dedicado a partir de 32 px.</p>
+    </div>
+    <div class="lockup-pane" style="padding: 28px;">
+      <h3 class="sub" style="font-size: 17px;">Impresso</h3>
+      <p class="small" style="color: var(--prose);">Wordmark mínimo: 24 mm de largura.<br/>Monograma mínimo: 6 mm.<br/>Em offset, use Pantone 357 C (forest) e 1395 C (gold).</p>
+    </div>
+    <div class="lockup-pane" style="padding: 28px;">
+      <h3 class="sub" style="font-size: 17px;">Touch</h3>
+      <p class="small" style="color: var(--prose);">App icon: 1024 × 1024 master, exporta para 16, 32, 64, 128, 192, 512.<br/>Bordas arredondadas em 22% do lado.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================== -->
+<!-- COLOR USAGE -->
+<!-- =========================================================== -->
+<section>
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">08 · Cor</span>
+      <div class="pageno" style="margin-top: 8px;">página 08</div>
+    </div>
+    <div>
+      <h2 class="section">A paleta da marca</h2>
+      <p class="body" style="margin-top: 18px;">
+        Forest Deep é a cor primária. Scripture Gold tem uso restrito —
+        cerimônia, dedicatória, selo. Punctum nunca usa uma terceira cor.
+      </p>
+    </div>
+  </div>
+
+  <div class="palette-row">
+    <div class="palette">
+      <div class="swatch" style="background: #166534;">#166534</div>
+      <div class="meta"><span class="name">Forest Deep</span><span class="role">Punctum padrão · monograma</span></div>
+    </div>
+    <div class="palette">
+      <div class="swatch" style="background: #18181B;">#18181B</div>
+      <div class="meta"><span class="name">Charcoal Ink</span><span class="role">Wordmark · letterforms</span></div>
+    </div>
+    <div class="palette">
+      <div class="swatch" style="background: #B45309;">#B45309</div>
+      <div class="meta"><span class="name">Scripture Gold</span><span class="role">Punctum cerimonial · uso restrito</span></div>
+    </div>
+    <div class="palette">
+      <div class="swatch" style="background: #F9F7F4; color: #18181B; border: 1px solid var(--whisper);">#F9F7F4</div>
+      <div class="meta"><span class="name">Parchment Canvas</span><span class="role">Fundo padrão · letterforms reversos</span></div>
+    </div>
+    <div class="palette">
+      <div class="swatch" style="background: #86EFAC; color: #166534;">#86EFAC</div>
+      <div class="meta"><span class="name">Sage Glow</span><span class="role">Punctum no Stage</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================== -->
+<!-- MISUSE -->
+<!-- =========================================================== -->
+<section>
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">09 · Mau uso</span>
+      <div class="pageno" style="margin-top: 8px;">página 09</div>
+    </div>
+    <div>
+      <h2 class="section">O que nunca fazer</h2>
+      <p class="body" style="margin-top: 18px;">
+        A marca tem uma postura específica. Distorcer, decorar ou recolorir
+        compromete não só o ativo — compromete o tom do produto.
+      </p>
+    </div>
+  </div>
+
+  <div class="misuse">
+    <div class="misuse-tile stretched">
+      <div class="misuse-x"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></div>
+      <span class="vox-wordmark wm-48">VOX<span class="vox-dot"></span></span>
+      <div class="label">Não esticar nem condensar a tipografia.</div>
+    </div>
+    <div class="misuse-tile condensed">
+      <div class="misuse-x"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></div>
+      <span class="vox-wordmark wm-48">VOX<span class="vox-dot"></span></span>
+      <div class="label">Não comprimir o wordmark.</div>
+    </div>
+    <div class="misuse-tile rotated">
+      <div class="misuse-x"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></div>
+      <span class="vox-wordmark wm-48">VOX<span class="vox-dot"></span></span>
+      <div class="label">Não rotacionar nem inclinar.</div>
+    </div>
+    <div class="misuse-tile colorshift">
+      <div class="misuse-x"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></div>
+      <span class="vox-wordmark wm-48">VOX<span class="vox-dot"></span></span>
+      <div class="label">Não recolorir com cores fora da paleta. Sem roxo, sem azul, sem neon.</div>
+    </div>
+    <div class="misuse-tile outline">
+      <div class="misuse-x"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></div>
+      <span class="vox-wordmark wm-48">VOX<span class="vox-dot"></span></span>
+      <div class="label">Sem versão outline. O wordmark é massa, não contorno.</div>
+    </div>
+    <div class="misuse-tile shadow">
+      <div class="misuse-x"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></div>
+      <span class="vox-wordmark wm-48">VOX<span class="vox-dot"></span></span>
+      <div class="label">Sem sombra projetada, efeito 3D, bevel ou gradiente sobre as letras.</div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================== -->
+<!-- APPLICATIONS -->
+<!-- =========================================================== -->
+<section>
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">10 · Aplicações</span>
+      <div class="pageno" style="margin-top: 8px;">página 10</div>
+    </div>
+    <div>
+      <h2 class="section">Em uso</h2>
+      <p class="body" style="margin-top: 18px;">
+        Como a marca se comporta em três contextos reais do produto.
+      </p>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+    <!-- Sidebar -->
+    <div style="background: var(--surface-elev); border: 1px solid var(--whisper); border-radius: 12px; overflow: hidden; box-shadow: 0 1px 0 rgba(22,101,52,0.04), 0 4px 24px rgba(22,101,52,0.06);">
+      <div style="padding: 22px 18px 18px;">
+        <div style="display: flex; align-items: baseline; gap: 8px;">
+          <span class="vox-wordmark wm-22">VOX<span class="vox-dot"></span></span>
+          <span class="mono" style="font-size: 10.5px; color: var(--muted);">v1.4</span>
+        </div>
+        <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 6px;">
+          <div style="height: 36px; background: var(--forest-soft); border-radius: 8px; padding: 0 10px; display: flex; align-items: center; gap: 12px; color: var(--forest); font-size: 13px; font-weight: 500;">
+            <span style="width: 14px; height: 14px; background: var(--forest); mask: radial-gradient(circle, transparent 6px, black 7px) no-repeat center;"></span>
+            Biblioteca
+          </div>
+          <div style="height: 36px; padding: 0 10px; display: flex; align-items: center; gap: 12px; color: var(--prose); font-size: 13px;">
+            Em rascunho
+          </div>
+          <div style="height: 36px; padding: 0 10px; display: flex; align-items: center; gap: 12px; color: var(--prose); font-size: 13px;">
+            Apresentar
+          </div>
+        </div>
+      </div>
+      <div style="padding: 14px 18px 18px; background: var(--surface-elev); border-top: 1px solid var(--whisper); display: flex; align-items: center; gap: 12px;">
+        <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #2D7A3F, #166534); display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-display); font-weight: 600; font-size: 13px;">EM</div>
+        <div style="font-size: 13px;">
+          <div style="color: var(--ink); font-weight: 500;">Pr. Edmundo</div>
+          <div class="mono" style="font-size: 10.5px; color: var(--muted);">IBP Vila Pauliceia</div>
+        </div>
+      </div>
+      <div style="padding: 12px 18px; font-size: 11px; color: var(--muted); border-top: 1px solid var(--whisper); background: var(--bg);">Sidebar · 22 px wordmark</div>
+    </div>
+
+    <!-- App icon set on home screen -->
+    <div style="background: #1F2937; border-radius: 12px; padding: 28px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 0 rgba(22,101,52,0.04), 0 4px 24px rgba(22,101,52,0.06); position: relative; overflow: hidden;">
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;">
+        <div style="aspect-ratio: 1; background: #3B82F6; border-radius: 18%;"></div>
+        <div style="aspect-ratio: 1; background: #EF4444; border-radius: 18%;"></div>
+        <div style="aspect-ratio: 1; background: #F59E0B; border-radius: 18%;"></div>
+        <div style="aspect-ratio: 1; background: #6366F1; border-radius: 18%;"></div>
+        <div style="aspect-ratio: 1; background: linear-gradient(135deg, #1F8B4A, #166534); border-radius: 18%; position: relative; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); color: #F9F7F4; font-size: 36px; font-weight: 700; box-shadow: 0 2px 12px rgba(0,0,0,0.3);">
+          V
+          <span style="position: absolute; width: 5px; height: 5px; border-radius: 50%; background: #FBBF24; top: 18%; right: 22%;"></span>
+        </div>
+        <div style="aspect-ratio: 1; background: #EC4899; border-radius: 18%;"></div>
+        <div style="aspect-ratio: 1; background: #10B981; border-radius: 18%;"></div>
+        <div style="aspect-ratio: 1; background: #8B5CF6; border-radius: 18%;"></div>
+      </div>
+      <div style="margin-top: auto; font-size: 11px; color: rgba(255,255,255,0.5);">Home screen · monograma destaca-se entre apps</div>
+    </div>
+
+    <!-- Sermon cover with seal -->
+    <div style="background: var(--surface); border: 1px solid var(--whisper); border-radius: 12px; padding: 32px 28px; display: flex; flex-direction: column; gap: 22px; box-shadow: 0 1px 0 rgba(22,101,52,0.04), 0 4px 24px rgba(22,101,52,0.06); min-height: 280px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="vox-mark mk-80 mk-forest" style="width: 32px; height: 32px; font-size: 22px; border-radius: 22%;">V<span style="position: absolute; width: 3.5px; height: 3.5px; border-radius: 50%; background: #FBBF24; top: 19%; right: 22%;"></span></div>
+        <span class="mono" style="font-size: 11px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase;">Série Romanos · #07</span>
+      </div>
+      <div>
+        <span class="mono" style="font-size: 11.5px; color: var(--gold); display: block; margin-bottom: 8px;">Romanos 5:1—11</span>
+        <h3 class="sub" style="font-size: 24px; font-weight: 600;">A graça que sustenta</h3>
+      </div>
+      <div style="flex: 1;"></div>
+      <div style="display: flex; align-items: center; gap: 12px; padding-top: 16px; border-top: 1px dashed var(--whisper-strong);">
+        <span style="width: 24px; height: 24px; border-radius: 50%; background: var(--gold); flex-shrink: 0;"></span>
+        <div>
+          <div style="font-family: var(--font-display); font-size: 13px; color: var(--ink); font-style: italic;">Revisado</div>
+          <div class="mono" style="font-size: 10px; color: var(--muted);">— 12 mai 2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================== -->
+<!-- FILES -->
+<!-- =========================================================== -->
+<section>
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">11 · Arquivos</span>
+      <div class="pageno" style="margin-top: 8px;">página 11</div>
+    </div>
+    <div>
+      <h2 class="section">Pacote da marca</h2>
+      <p class="body" style="margin-top: 18px;">
+        Todos os ativos estão em <span class="mono">logo/</span>. Os SVGs usam tipografia
+        viva (Fraunces) — abra no seu app de design e <em>converta texto em curvas</em>
+        antes de enviar para produção em ambientes sem a fonte instalada.
+      </p>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+    <div class="lockup-pane" style="padding: 28px;">
+      <h3 class="sub" style="font-size: 16px;">Wordmark</h3>
+      <ul class="mono" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--prose);">
+        <li>vox-wordmark.svg</li>
+        <li>vox-wordmark-dark.svg</li>
+        <li>vox-wordmark-mono-ink.svg</li>
+        <li>vox-wordmark-mono-paper.svg</li>
+        <li>vox-wordmark-gold.svg</li>
+      </ul>
+    </div>
+    <div class="lockup-pane" style="padding: 28px;">
+      <h3 class="sub" style="font-size: 16px;">Monograma</h3>
+      <ul class="mono" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--prose);">
+        <li>vox-mark.svg</li>
+        <li>vox-mark-parchment.svg</li>
+        <li>vox-mark-forest.svg</li>
+        <li>vox-mark-stage.svg</li>
+        <li>vox-mark-mono-ink.svg</li>
+      </ul>
+    </div>
+    <div class="lockup-pane" style="padding: 28px;">
+      <h3 class="sub" style="font-size: 16px;">Lockups & punctum</h3>
+      <ul class="mono" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--prose);">
+        <li>vox-lockup-horizontal.svg</li>
+        <li>vox-lockup-stacked.svg</li>
+        <li>vox-punctum.svg</li>
+        <li>vox-punctum-gold.svg</li>
+      </ul>
+    </div>
+    <div class="lockup-pane" style="padding: 28px;">
+      <h3 class="sub" style="font-size: 16px;">App / favicon</h3>
+      <ul class="mono" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--prose);">
+        <li>vox-favicon-16.svg</li>
+        <li>vox-favicon-32.svg</li>
+        <li>vox-app-icon-512.svg</li>
+        <li>png/vox-mark-{16,32,64,128,192,512}.png</li>
+        <li>png/vox-wordmark-{160,320,640}.png</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="body" style="margin-top: 28px;">
+    <span class="eyebrow" style="display: block; margin-bottom: 8px;">Nota técnica</span>
+    Para usar em sistemas que renderizam SVG sem ter Fraunces instalada (ex.: e-mail
+    transacional, alguns CMSs), prefira os PNGs ou abra cada SVG no Figma / Illustrator
+    e selecione <span class="mono">Texto › Converter em curvas</span>. Reexporte.
+  </p>
+</section>
+
+<!-- =========================================================== -->
+<!-- COLOPHON -->
+<!-- =========================================================== -->
+<section style="border-bottom: none; padding-bottom: 24px;">
+  <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; padding-top: 48px;">
+    <div>
+      <div class="eyebrow">Colofão</div>
+      <p class="body" style="margin-top: 12px; max-width: 480px;">
+        Este livro da marca foi composto em Fraunces &amp; Geist, sobre Parchment Canvas.
+        Para revisões deste documento, contate o time de design do VOX.
+      </p>
+    </div>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <span class="vox-wordmark wm-48">VOX<span class="vox-dot"></span></span>
+      <div style="border-left: 1px solid var(--whisper-strong); padding-left: 16px;">
+        <div class="mono" style="font-size: 11px; color: var(--muted);">v1 · mai 2026</div>
+        <div class="mono" style="font-size: 11px; color: var(--muted);">11 páginas</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+</body>
+</html>
