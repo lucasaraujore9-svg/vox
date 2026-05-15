@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ContentCard } from "@/components/sermon/ContentCard";
 import { listSermons } from "@/lib/sermons/queries";
-import { MOCK_SERMONS, MOCK_SERIES, type MockSermon } from "@/lib/mocks/sermons";
+import type { MockSermon } from "@/lib/mocks/sermons";
 import { VOX_FRAMEWORKS, type FrameworkId } from "@/lib/mocks/frameworks";
 import { CONTENT_TYPES } from "@/lib/mocks/content-types";
+import { createClient } from "@/lib/supabase/server";
 import type { ContentType, SermonStatus, SermonType } from "@/types/database";
 
 export const metadata = { title: "Banco" };
@@ -58,23 +59,33 @@ async function loadSermons(filters: Awaited<PageProps["searchParams"]>): Promise
         created_at: s.created_at,
       }));
     } catch {
-      // cai pro mock
+      // Supabase indisponível — retorna vazio
     }
   }
+  return [];
+}
 
-  // Filtros aplicados no mock
-  return MOCK_SERMONS.filter((s) => {
-    if (filters.framework && s.framework !== filters.framework) return false;
-    if (filters.content && s.content_type !== filters.content) return false;
-    if (filters.type && s.type !== filters.type) return false;
-    if (filters.series && s.series?.id !== filters.series) return false;
-    if (filters.q) {
-      const q = filters.q.toLowerCase();
-      const hay = `${s.title} ${s.bible_ref} ${s.tags.join(" ")}`.toLowerCase();
-      if (!hay.includes(q)) return false;
-    }
-    return true;
-  }) as unknown as MockSermon[];
+interface SeriesRow {
+  id: string;
+  title: string;
+  sermon_count: number;
+}
+
+async function loadSeries(): Promise<SeriesRow[]> {
+  const useSupabase =
+    Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) &&
+    Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  if (!useSupabase) return [];
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("series")
+      .select("id, title, sermon_count")
+      .order("created_at", { ascending: false });
+    return (data as SeriesRow[] | null) ?? [];
+  } catch {
+    return [];
+  }
 }
 
 function buildUrl(base: Record<string, string | undefined>, key: string, value: string | undefined): string {
@@ -89,7 +100,10 @@ function buildUrl(base: Record<string, string | undefined>, key: string, value: 
 
 export default async function SermonsBankPage({ searchParams }: PageProps) {
   const filters = await searchParams;
-  const sermons = await loadSermons(filters);
+  const [sermons, seriesList] = await Promise.all([
+    loadSermons(filters),
+    loadSeries(),
+  ]);
 
   return (
     <div className="space-y-8">
@@ -174,24 +188,26 @@ export default async function SermonsBankPage({ searchParams }: PageProps) {
             </div>
           </div>
 
-          <div>
-            <p className="vox-eyebrow mb-3">Série</p>
-            <div className="space-y-2 text-sm">
-              {MOCK_SERIES.map((s) => {
-                const active = filters.series === s.id;
-                return (
-                  <Link
-                    key={s.id}
-                    href={buildUrl(filters, "series", active ? undefined : s.id)}
-                    className={active ? "text-vox-forest font-medium" : "text-vox-prose hover:text-vox-ink"}
-                  >
-                    {s.title}{" "}
-                    <span className="vox-mono text-xs text-vox-muted">({s.sermon_count})</span>
-                  </Link>
-                );
-              })}
+          {seriesList.length > 0 ? (
+            <div>
+              <p className="vox-eyebrow mb-3">Série</p>
+              <div className="space-y-2 text-sm flex flex-col">
+                {seriesList.map((s) => {
+                  const active = filters.series === s.id;
+                  return (
+                    <Link
+                      key={s.id}
+                      href={buildUrl(filters, "series", active ? undefined : s.id)}
+                      className={active ? "text-vox-forest font-medium" : "text-vox-prose hover:text-vox-ink"}
+                    >
+                      {s.title}{" "}
+                      <span className="vox-mono text-xs text-vox-muted">({s.sermon_count})</span>
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          ) : null}
 
           {Object.keys(filters).length > 0 ? (
             <Link href="/sermons" className="text-xs text-vox-muted underline-offset-4 hover:underline">

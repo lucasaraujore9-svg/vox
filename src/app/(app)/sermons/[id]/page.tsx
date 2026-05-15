@@ -12,11 +12,13 @@ import { SlidesPanel } from "@/components/slides/SlidesPanel";
 import { VersionsDialog } from "@/components/editor/VersionsDialog";
 import { EngagementsSection } from "@/components/sermon/EngagementsSection";
 import { SermonActionsMenu } from "@/components/sermon/SermonActionsMenu";
-import { MOCK_SERMONS, mockSermonContent } from "@/lib/mocks/sermons";
+import { getSermon } from "@/lib/sermons/queries";
+import { parseSermonContent } from "@/lib/sermons/sessions";
 import { getMockSlides } from "@/lib/mocks/slides";
 import { getMockVersions } from "@/lib/mocks/versions";
 import { getMockEngagements } from "@/lib/mocks/engagements";
-import { VOX_FRAMEWORKS } from "@/lib/mocks/frameworks";
+import { VOX_FRAMEWORKS, type FrameworkId } from "@/lib/mocks/frameworks";
+import type { ContentType, SermonStatus, SermonType } from "@/types/database";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -29,11 +31,37 @@ const STATUS_LABEL = {
 
 export default async function SermonEditorPage({ params }: PageProps) {
   const { id } = await params;
-  const sermon = MOCK_SERMONS.find((s) => s.id === id);
-  if (!sermon) notFound();
+
+  const useSupabase =
+    Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) &&
+    Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  if (!useSupabase) notFound();
+
+  const row = await getSermon(id).catch(() => null);
+  if (!row) notFound();
+
+  const sermon = {
+    id: row.id as string,
+    title: row.title as string,
+    framework: row.framework as FrameworkId,
+    type: row.type as SermonType,
+    content_type: row.content_type as ContentType,
+    bible_ref: (row.bible_ref as string | null) ?? "",
+    bible_book: (row.bible_book as string | null) ?? "",
+    status: row.status as SermonStatus,
+    tags: (row.tags as string[] | null) ?? [],
+    word_count: (row.word_count as number | null) ?? 0,
+    preview: "",
+    series: row.series_id
+      ? { id: row.series_id as string, title: "" }
+      : undefined,
+    preached_at: row.preached_at as string | null,
+    updated_at: row.updated_at as string,
+    created_at: row.created_at as string,
+  };
 
   const framework = VOX_FRAMEWORKS.find((f) => f.id === sermon.framework);
-  const content = mockSermonContent(sermon);
+  const content = parseSermonContent(row.content, sermon.framework);
   const versions = getMockVersions(sermon.id);
   const engagements = getMockEngagements(sermon.id);
 

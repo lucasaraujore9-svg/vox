@@ -397,6 +397,48 @@ export type Database = {
           },
         ]
       }
+      signup_interests: {
+        Row: {
+          created_at: string
+          denomination: string | null
+          email: string
+          id: string
+          invited_at: string | null
+          message: string | null
+          name: string | null
+          notes: string | null
+          source_ip: string | null
+          source_ua: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          denomination?: string | null
+          email: string
+          id?: string
+          invited_at?: string | null
+          message?: string | null
+          name?: string | null
+          notes?: string | null
+          source_ip?: string | null
+          source_ua?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          denomination?: string | null
+          email?: string
+          id?: string
+          invited_at?: string | null
+          message?: string | null
+          name?: string | null
+          notes?: string | null
+          source_ip?: string | null
+          source_ua?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       slides: {
         Row: {
           comment: string
@@ -655,3 +697,4 @@ export type StudyCategory =
   | "liderança"
   | "discipulado"
 export type UserRole = "pastor" | "admin" | "super_admin"
+export type SignupInterestStatus = "pending" | "invited" | "rejected" | "spam"

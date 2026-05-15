@@ -12,9 +12,11 @@ import { SlideProjection } from "@/components/present/SlideProjection";
 import { PresentationChooser } from "@/components/present/PresentationChooser";
 import { PresenterControl } from "@/components/present/PresenterControl";
 import { AudienceView } from "@/components/present/AudienceView";
-import { MOCK_SERMONS, mockSermonContent } from "@/lib/mocks/sermons";
+import { getSermon } from "@/lib/sermons/queries";
+import { parseSermonContent } from "@/lib/sermons/sessions";
 import { getMockSlides } from "@/lib/mocks/slides";
-import { VOX_FRAMEWORKS } from "@/lib/mocks/frameworks";
+import { VOX_FRAMEWORKS, type FrameworkId } from "@/lib/mocks/frameworks";
+import type { SermonType } from "@/types/database";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -27,8 +29,22 @@ interface PageProps {
 export default async function PresentPage({ params, searchParams }: PageProps) {
   const { id } = await params;
   const { mode, role } = await searchParams;
-  const sermon = MOCK_SERMONS.find((s) => s.id === id);
-  if (!sermon) notFound();
+
+  const useSupabase =
+    Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) &&
+    Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  if (!useSupabase) notFound();
+
+  const row = await getSermon(id).catch(() => null);
+  if (!row) notFound();
+
+  const sermon = {
+    id: row.id as string,
+    title: row.title as string,
+    framework: row.framework as FrameworkId,
+    type: row.type as SermonType,
+    bible_ref: (row.bible_ref as string | null) ?? "",
+  };
 
   const isSlides = sermon.type === "apresentação";
   const slides = isSlides
@@ -39,7 +55,9 @@ export default async function PresentPage({ params, searchParams }: PageProps) {
         comment_items: s.comment_items,
       }))
     : undefined;
-  const sessions = !isSlides ? mockSermonContent(sermon).sessions : undefined;
+  const sessions = !isSlides
+    ? parseSermonContent(row.content, sermon.framework).sessions
+    : undefined;
   const framework = VOX_FRAMEWORKS.find((f) => f.id === sermon.framework);
   const backHref = `/sermons/${sermon.id}`;
 

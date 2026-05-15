@@ -3,10 +3,10 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ContentCard } from "@/components/sermon/ContentCard";
 import { VerseOfTheDay } from "@/components/bible/VerseOfTheDay";
-import { MOCK_SERMONS, MOCK_SERIES, recentSermons, type MockSermon } from "@/lib/mocks/sermons";
+import type { MockSermon } from "@/lib/mocks/sermons";
 import { dashboardStats, listSermons } from "@/lib/sermons/queries";
 import type { FrameworkId, ContentType, SermonType, SermonStatus } from "@/types/database";
 
@@ -59,20 +59,17 @@ async function loadData(): Promise<DashboardData> {
     }
   }
 
-  const recents = recentSermons(4);
-  const lastSermon = recents[0];
   return {
-    total: MOCK_SERMONS.length,
-    drafts: MOCK_SERMONS.filter((s) => s.status === "rascunho").length,
-    lastTitle: lastSermon?.title ?? "—",
-    lastDate: lastSermon?.preached_at ?? null,
-    recents,
+    total: 0,
+    drafts: 0,
+    lastTitle: "—",
+    lastDate: null,
+    recents: [],
   };
 }
 
 export default async function DashboardPage() {
   const data = await loadData();
-  const activeSeries = MOCK_SERIES[0];
 
   return (
     <div className="space-y-10 max-w-6xl">
@@ -164,62 +161,25 @@ export default async function DashboardPage() {
             Ver todos
           </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {data.recents.map((sermon) => (
-            <ContentCard key={sermon.id} sermon={sermon} />
-          ))}
-        </div>
-      </section>
-
-      <section className="grid lg:grid-cols-[1.4fr_1fr] gap-6">
-        <Card>
-          <CardHeader>
-            <p className="vox-eyebrow">Série ativa</p>
-            <CardTitle className="mt-2 text-xl">{activeSeries?.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="vox-body text-sm">{activeSeries?.description}</p>
-            <div className="mt-5 flex items-center gap-4 text-sm">
-              <span className="vox-mono text-vox-muted">
-                {activeSeries?.sermon_count} sermões
-              </span>
-              <Link
-                href={`/sermons?series=${activeSeries?.id}`}
-                className="text-vox-forest hover:underline underline-offset-4"
-              >
-                Continuar série →
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <p className="vox-eyebrow">Estudo em andamento</p>
-            <CardTitle className="mt-2 text-xl">
-              Fundamentos da Pregação Expositiva
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div
-              className="h-1 rounded-full overflow-hidden"
-              style={{ background: "var(--vox-whisper)" }}
-            >
-              <div
-                className="h-full rounded-full"
-                style={{ width: "40%", background: "var(--vox-forest)" }}
-              />
-            </div>
-            <p className="vox-mono text-xs text-vox-muted mt-2">
-              Sessão 3 de 6 · 40% concluído
+        {data.recents.length === 0 ? (
+          <div
+            className="rounded-xl border-2 border-dashed p-10 text-center"
+            style={{ borderColor: "var(--vox-whisper-strong)" }}
+          >
+            <p className="vox-body text-sm">
+              Você ainda não tem manuscritos. Comece pelo seu primeiro.
             </p>
-            <Link
-              href="/study"
-              className="mt-4 inline-block text-sm text-vox-forest hover:underline underline-offset-4"
-            >
-              Retomar estudo →
-            </Link>
-          </CardContent>
-        </Card>
+            <Button asChild className="mt-5">
+              <Link href="/sermons/new">Novo manuscrito</Link>
+            </Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {data.recents.map((sermon) => (
+              <ContentCard key={sermon.id} sermon={sermon} />
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

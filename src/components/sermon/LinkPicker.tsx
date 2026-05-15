@@ -4,20 +4,25 @@
 // Permite escolher uma série/curso existente, criar nova, ou pular.
 // content_type='aula' mostra ambos (série + curso); demais só série.
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { MOCK_SERIES } from "@/lib/mocks/sermons";
 import type { ContentType } from "@/types/database";
 import { cn } from "@/lib/utils";
 
-// Mock cursos (em paralelo aos sermões mock). Em prod virá do Supabase.
-const MOCK_COURSES_LITE = [
-  { id: "c-001", title: "Provérbios para a vida cotidiana", lessons: 4 },
-  { id: "c-002", title: "Hermenêutica para pregadores", lessons: 8 },
-];
+interface SeriesOption {
+  id: string;
+  title: string;
+  sermon_count: number;
+}
+
+interface CourseOption {
+  id: string;
+  title: string;
+  lessons: number;
+}
 
 export interface LinkSelection {
   /** id da série escolhida (null = sem vínculo) */
@@ -40,6 +45,25 @@ export function LinkPicker({ contentType, value, onChange }: LinkPickerProps) {
   const [mode, setMode] = useState<Mode>(
     value.seriesId || value.courseId ? "existing" : value.newSeriesTitle ? "new" : "none"
   );
+  const [series, setSeries] = useState<SeriesOption[]>([]);
+  const [courses, setCourses] = useState<CourseOption[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/series-and-courses", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : { series: [], courses: [] }))
+      .then((data: { series?: SeriesOption[]; courses?: CourseOption[] }) => {
+        if (cancelled) return;
+        setSeries(data.series ?? []);
+        setCourses(data.courses ?? []);
+      })
+      .catch(() => {
+        // silencioso — usuário ainda pode criar nova série
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   function set(s: Partial<LinkSelection>) {
     onChange({ ...value, ...s });
@@ -85,10 +109,17 @@ export function LinkPicker({ contentType, value, onChange }: LinkPickerProps) {
 
       {mode === "existing" ? (
         <div className="space-y-6">
+          {series.length === 0 && courses.length === 0 ? (
+            <p className="vox-body text-sm text-vox-muted">
+              Você ainda não tem séries ou cursos. Use{" "}
+              <em>Criar série nova</em> ao lado pra começar.
+            </p>
+          ) : null}
+          {series.length > 0 ? (
           <section>
             <p className="vox-eyebrow mb-3">Séries</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {MOCK_SERIES.map((s) => {
+              {series.map((s) => {
                 const selected = value.seriesId === s.id;
                 return (
                   <button
@@ -121,12 +152,13 @@ export function LinkPicker({ contentType, value, onChange }: LinkPickerProps) {
               })}
             </div>
           </section>
+          ) : null}
 
-          {contentType === "aula" ? (
+          {contentType === "aula" && courses.length > 0 ? (
             <section>
               <p className="vox-eyebrow mb-3">Cursos</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {MOCK_COURSES_LITE.map((c) => {
+                {courses.map((c) => {
                   const selected = value.courseId === c.id;
                   return (
                     <button

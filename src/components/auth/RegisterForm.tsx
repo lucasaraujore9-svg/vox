@@ -1,22 +1,29 @@
 "use client";
 
-import { useActionState } from "react";
+// Formulário de "deixe seu interesse" — o sistema é fechado, signup público
+// está desligado. O super admin vê os interesses em /admin e libera quem
+// julgar conveniente.
+
+import { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { registerAction, type ActionState } from "@/lib/supabase/actions";
+import {
+  submitInterestAction,
+  type InterestState,
+} from "@/lib/interests/actions";
 import { cn } from "@/lib/utils";
 
-const initialState: ActionState = { ok: false };
+const initialState: InterestState = { ok: false };
 
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" size="lg" disabled={pending} className="w-full">
-      {pending ? "Criando conta…" : "Criar conta"}
+      {pending ? "Enviando…" : "Enviar interesse"}
     </Button>
   );
 }
@@ -27,10 +34,61 @@ function FieldError({ message }: { message?: string }) {
 }
 
 export function RegisterForm({ className }: { className?: string }) {
-  const [state, formAction] = useActionState(registerAction, initialState);
+  const [state, formAction] = useActionState(submitInterestAction, initialState);
+  const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (state.ok) setSubmitted(true);
+  }, [state.ok]);
+
+  if (submitted) {
+    return (
+      <div className={cn("space-y-5", className)}>
+        <div
+          className="rounded-xl p-6 text-center"
+          style={{
+            background: "var(--vox-forest-soft)",
+            border: "1px solid var(--vox-forest)",
+          }}
+        >
+          <p
+            className="vox-eyebrow mb-3"
+            style={{ color: "var(--vox-forest)" }}
+          >
+            Recebido
+          </p>
+          <h3 className="vox-h3 text-lg">Seu interesse foi registrado.</h3>
+          <p className="vox-body text-sm mt-3">
+            Vamos avaliar e entrar em contato pelo email que você deixou
+            quando uma vaga estiver disponível. O VOX hoje é por convite.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setSubmitted(false)}
+          className="text-sm text-vox-prose hover:text-vox-ink underline-offset-4 hover:underline w-full"
+        >
+          Enviar outro interesse
+        </button>
+      </div>
+    );
+  }
 
   return (
     <form action={formAction} className={cn("space-y-5", className)} noValidate>
+      <div
+        className="rounded-lg p-4 text-sm"
+        style={{
+          background: "var(--vox-surface-deep)",
+          border: "1px solid var(--vox-whisper)",
+        }}
+      >
+        <p className="text-vox-prose">
+          O VOX é por convite. Deixe seu contato abaixo e entraremos em
+          contato quando uma vaga abrir.
+        </p>
+      </div>
+
       {state.error ? (
         <Alert variant="destructive">
           <AlertDescription>{state.error}</AlertDescription>
@@ -52,19 +110,6 @@ export function RegisterForm({ className }: { className?: string }) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="denomination">
-          Denominação{" "}
-          <span className="text-vox-muted text-xs font-normal">(opcional)</span>
-        </Label>
-        <Input
-          id="denomination"
-          name="denomination"
-          type="text"
-          placeholder="Igreja, ministério ou organização"
-        />
-      </div>
-
-      <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input
           id="email"
@@ -79,40 +124,30 @@ export function RegisterForm({ className }: { className?: string }) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password">Senha</Label>
+        <Label htmlFor="denomination">
+          Denominação ou organização{" "}
+          <span className="text-vox-muted text-xs font-normal">(opcional)</span>
+        </Label>
         <Input
-          id="password"
-          name="password"
-          type="password"
-          autoComplete="new-password"
-          required
-          placeholder="Pelo menos 8 caracteres"
-          aria-invalid={Boolean(state.fieldErrors?.password)}
+          id="denomination"
+          name="denomination"
+          type="text"
+          placeholder="Igreja, ministério ou organização"
         />
-        <FieldError message={state.fieldErrors?.password} />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword">Confirmar senha</Label>
-        <Input
-          id="confirmPassword"
-          name="confirmPassword"
-          type="password"
-          autoComplete="new-password"
-          required
-          placeholder="Repita a senha"
-          aria-invalid={Boolean(state.fieldErrors?.confirmPassword)}
-        />
-        <FieldError message={state.fieldErrors?.confirmPassword} />
-      </div>
-
-      <div className="flex items-start gap-3">
-        <Checkbox id="terms" name="terms" required />
-        <Label htmlFor="terms" className="text-sm font-normal leading-5">
-          Aceito os termos de uso e a política de privacidade do VOX.
+        <Label htmlFor="message">
+          Como pretende usar?{" "}
+          <span className="text-vox-muted text-xs font-normal">(opcional)</span>
         </Label>
+        <Textarea
+          id="message"
+          name="message"
+          rows={3}
+          placeholder="Conte rapidamente seu contexto pastoral, frequência de pregação, etc."
+        />
       </div>
-      <FieldError message={state.fieldErrors?.terms} />
 
       <SubmitButton />
     </form>

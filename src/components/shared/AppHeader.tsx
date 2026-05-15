@@ -21,6 +21,7 @@ function initialsFromName(name: string | null | undefined, email?: string) {
 export async function AppHeader() {
   let displayName = "Pastor";
   let email = "";
+  let role = "pastor";
 
   if (
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -35,17 +36,20 @@ export async function AppHeader() {
         email = user.email ?? "";
         const { data: profile } = await supabase
           .from("profiles")
-          .select("name")
+          .select("name, role")
           .eq("id", user.id)
-          .maybeSingle<{ name: string }>();
+          .maybeSingle<{ name: string; role: string }>();
         const metaName =
           (user.user_metadata as { name?: string } | null | undefined)?.name ?? "";
         displayName = profile?.name || metaName || email || "Pastor";
+        role = profile?.role ?? "pastor";
       }
     } catch {
       // Supabase não disponível em dev — ignora
     }
   }
+
+  const isAdmin = role === "admin" || role === "super_admin";
 
   return (
     <header className="flex items-center justify-end gap-3 mb-8">
@@ -86,6 +90,23 @@ export async function AppHeader() {
           <DropdownMenuItem asChild>
             <a href="/settings/blocks">Cores dos blocos</a>
           </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <a href="/help">Ajuda</a>
+          </DropdownMenuItem>
+          {isAdmin ? (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel className="text-xs vox-mono text-vox-muted">
+                Administração
+              </DropdownMenuLabel>
+              <DropdownMenuItem asChild>
+                <a href="/admin/users">Usuários</a>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a href="/admin/interests">Interesses</a>
+              </DropdownMenuItem>
+            </>
+          ) : null}
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
             <form action={logoutAction}>
