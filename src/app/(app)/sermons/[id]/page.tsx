@@ -155,7 +155,11 @@ export default async function SermonEditorPage({ params }: PageProps) {
           empty={getMockSlides(sermon.id).length === 0}
         />
       ) : (
-        <SermonEditor framework={sermon.framework} initialContent={content} />
+        <SermonEditor
+          sermonId={sermon.id}
+          framework={sermon.framework}
+          initialContent={content}
+        />
       )}
 
       <EngagementsSection

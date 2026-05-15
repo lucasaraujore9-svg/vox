@@ -1,14 +1,12 @@
 // Issue 003 (proto) + 032 (behavior) — Banco de Conteúdo com busca + filtros via URL state.
 
 import Link from "next/link";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { ContentCard } from "@/components/sermon/ContentCard";
+import { SermonFiltersAside } from "@/components/sermon/SermonFiltersAside";
 import { listSermons } from "@/lib/sermons/queries";
 import type { MockSermon } from "@/lib/mocks/sermons";
-import { VOX_FRAMEWORKS, type FrameworkId } from "@/lib/mocks/frameworks";
-import { CONTENT_TYPES } from "@/lib/mocks/content-types";
+import type { FrameworkId } from "@/lib/mocks/frameworks";
 import { createClient } from "@/lib/supabase/server";
 import type { ContentType, SermonStatus, SermonType } from "@/types/database";
 
@@ -120,103 +118,10 @@ export default async function SermonsBankPage({ searchParams }: PageProps) {
         </Button>
       </header>
 
-      <section className="grid lg:grid-cols-[220px_minmax(0,1fr)] gap-8">
-        <aside className="space-y-7">
-          <form className="space-y-2">
-            <label htmlFor="q" className="vox-eyebrow">
-              Buscar
-            </label>
-            <Input
-              id="q"
-              name="q"
-              type="search"
-              defaultValue={filters.q ?? ""}
-              placeholder="Título, referência, tema…"
-              autoComplete="off"
-            />
-            {Object.entries(filters).map(([k, v]) =>
-              k !== "q" && v ? <input key={k} type="hidden" name={k} value={v} /> : null
-            )}
-          </form>
+      <section className="flex flex-col lg:flex-row gap-8">
+        <SermonFiltersAside filters={filters} series={seriesList} />
 
-          <div>
-            <p className="vox-eyebrow mb-3">Tipo</p>
-            <div className="flex flex-wrap gap-2">
-              {CONTENT_TYPES.map((t) => {
-                const active = filters.content === t.id;
-                return (
-                  <Link
-                    key={t.id}
-                    href={buildUrl(filters, "content", active ? undefined : t.id)}
-                  >
-                    <Badge
-                      variant={active ? "default" : "outline"}
-                      className="cursor-pointer px-3 py-1.5 text-xs font-normal"
-                    >
-                      {t.label}
-                    </Badge>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-
-          <div>
-            <p className="vox-eyebrow mb-3">Framework</p>
-            <div className="flex flex-wrap gap-2">
-              {VOX_FRAMEWORKS.map((fw) => {
-                const active = filters.framework === fw.id;
-                return (
-                  <Link
-                    key={fw.id}
-                    href={buildUrl(filters, "framework", active ? undefined : fw.id)}
-                  >
-                    <Badge
-                      variant={active ? "default" : "outline"}
-                      className="cursor-pointer px-3 py-1.5 text-xs font-normal"
-                      style={{
-                        borderColor: `var(--vox-fw-${fw.id})`,
-                        color: active ? undefined : `var(--vox-fw-${fw.id})`,
-                        background: active ? `var(--vox-fw-${fw.id})` : undefined,
-                      }}
-                    >
-                      {fw.name}
-                    </Badge>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-
-          {seriesList.length > 0 ? (
-            <div>
-              <p className="vox-eyebrow mb-3">Série</p>
-              <div className="space-y-2 text-sm flex flex-col">
-                {seriesList.map((s) => {
-                  const active = filters.series === s.id;
-                  return (
-                    <Link
-                      key={s.id}
-                      href={buildUrl(filters, "series", active ? undefined : s.id)}
-                      className={active ? "text-vox-forest font-medium" : "text-vox-prose hover:text-vox-ink"}
-                    >
-                      {s.title}{" "}
-                      <span className="vox-mono text-xs text-vox-muted">({s.sermon_count})</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          ) : null}
-
-          {Object.keys(filters).length > 0 ? (
-            <Link href="/sermons" className="text-xs text-vox-muted underline-offset-4 hover:underline">
-              Limpar filtros
-            </Link>
-          ) : null}
-        </aside>
-
-        <div>
+        <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-5 gap-3 flex-wrap">
             <p className="vox-mono text-xs text-vox-muted">
               {sermons.length} manuscritos {filters.q ? `· busca "${filters.q}"` : ""}

@@ -12,7 +12,7 @@ export default function AppLayout({
   return (
     <div className="min-h-screen flex">
       <AppSidebar />
-      <main className="flex-1 px-6 sm:px-10 py-8 max-w-full overflow-x-hidden min-w-0">
+      <main className="flex-1 px-4 sm:px-6 lg:px-10 py-6 sm:py-8 max-w-full overflow-x-hidden min-w-0">
         <AppHeader />
         {children}
       </main>

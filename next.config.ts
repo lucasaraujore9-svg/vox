@@ -1,7 +1,16 @@
 import type { NextConfig } from "next";
+import withSerwistInit from "@serwist/next";
+
+const withSerwist = withSerwistInit({
+  swSrc: "src/app/sw.ts",
+  swDest: "public/sw.js",
+  cacheOnNavigation: true,
+  reloadOnOnline: true,
+  // Em dev o SW dá ruído (refresh constante). Liga só em prod.
+  disable: process.env.NODE_ENV !== "production",
+});
 
 const nextConfig: NextConfig = {
-  // Packages que precisam ser tratados como externos pelo bundler (binários nativos)
   serverExternalPackages: ["@napi-rs/canvas", "sharp", "pdfjs-dist"],
   images: {
     remotePatterns: [
@@ -17,4 +26,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSerwist(nextConfig);

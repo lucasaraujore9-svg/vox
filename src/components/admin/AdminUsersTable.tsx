@@ -94,10 +94,10 @@ export function AdminUsersTable({ users }: { users: AdminUser[] }) {
 
   return (
     <div
-      className="rounded-xl border overflow-hidden bg-card"
+      className="rounded-xl border bg-card overflow-x-auto"
       style={{ borderColor: "var(--vox-whisper)" }}
     >
-      <table className="w-full text-sm">
+      <table className="w-full text-sm min-w-[720px]">
         <thead
           className="text-xs text-vox-muted vox-mono uppercase"
           style={{ borderBottom: "1px solid var(--vox-whisper)" }}

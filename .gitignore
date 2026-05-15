@@ -37,10 +37,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# PWA
+# PWA (gerados pelo @serwist/next no build)
 /public/sw.js
+/public/sw.js.map
 /public/workbox-*.js
 /public/worker-*.js
+/public/swe-worker-*.js
 /public/fallback-*.js
 
 # Deploy notes locais (memória de configuração — não versionar)

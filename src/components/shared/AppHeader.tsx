@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { logoutAction } from "@/lib/supabase/actions";
 import { createClient } from "@/lib/supabase/server";
 import { OfflineBadge } from "@/components/shared/OfflineBadge";
+import { MobileNav } from "@/components/shared/MobileNav";
 
 function initialsFromName(name: string | null | undefined, email?: string) {
   const source = (name?.trim() || email?.split("@")[0] || "VO").toUpperCase();
@@ -52,7 +53,9 @@ export async function AppHeader() {
   const isAdmin = role === "admin" || role === "super_admin";
 
   return (
-    <header className="flex items-center justify-end gap-3 mb-8">
+    <header className="flex items-center justify-between gap-3 mb-8">
+      <MobileNav />
+      <div className="flex items-center gap-3 ml-auto">
       <span
         className="hidden md:inline-flex items-center gap-1.5 text-xs vox-mono text-vox-muted mr-1"
         aria-hidden
@@ -120,6 +123,7 @@ export async function AppHeader() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      </div>
     </header>
   );
 }

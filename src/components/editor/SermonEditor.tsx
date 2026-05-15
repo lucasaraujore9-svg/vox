@@ -1,9 +1,10 @@
 "use client";
 
 // Editor de sermão com sessões. Wraps SessionCard com estado local + "+ Sessão"
-// + reordering simples (up/down). Auto-save é responsabilidade do consumer.
+// + reordering simples (up/down). Faz auto-save offline-first: salva no Supabase
+// e, se a rede falhar, persiste no IndexedDB pra sync quando voltar online.
 
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SessionCard } from "@/components/editor/SessionCard";
 import {
@@ -15,14 +16,26 @@ import {
 import { getBlockType, type BlockTypeId } from "@/lib/mocks/blocks";
 import type { FrameworkId } from "@/lib/mocks/frameworks";
 import type { BibleVersionId } from "@/lib/bible/versions";
+import { useAutoSave, type AutoSaveStatus } from "@/hooks/useAutoSave";
+import { createClient } from "@/lib/supabase/client";
 
 interface SermonEditorProps {
+  /** ID do sermão no Supabase — necessário pra auto-save. Quando omitido, o editor opera só no estado local. */
+  sermonId?: string;
   framework: FrameworkId;
   initialContent: SermonContent;
   /** Versão bíblica usada pelo autocomplete (default acf) */
   bibleVersion?: BibleVersionId;
   onChange?: (content: SermonContent) => void;
 }
+
+const STATUS_LABEL: Record<AutoSaveStatus, string> = {
+  idle: "Salvo",
+  dirty: "Editando…",
+  saving: "Salvando…",
+  saved: "Salvo",
+  offline: "Salvo localmente · sincroniza quando voltar online",
+};
 
 function newId() {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -32,12 +45,45 @@ function newId() {
 }
 
 export function SermonEditor({
+  sermonId,
   framework,
   initialContent,
   bibleVersion = "acf",
   onChange,
 }: SermonEditorProps) {
   const [content, setContent] = useState<SermonContent>(initialContent);
+
+  const supabase = useMemo(() => {
+    if (typeof window === "undefined") return null;
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return null;
+    if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return null;
+    try {
+      return createClient();
+    } catch {
+      return null;
+    }
+  }, []);
+
+  const save = useCallback(
+    async (next: SermonContent) => {
+      if (!sermonId || !supabase) return;
+      // SermonContent é um JSON serializável (sessions + items); cast pra
+      // Json esperado pela coluna jsonb sem perder tipo no editor.
+      const payload = JSON.parse(JSON.stringify(next));
+      const { error } = await supabase
+        .from("sermons")
+        .update({ content: payload })
+        .eq("id", sermonId);
+      if (error) throw error;
+    },
+    [sermonId, supabase]
+  );
+
+  const status = useAutoSave({
+    value: content,
+    save,
+    fallbackId: sermonId ?? "anon",
+  });
 
   const update = useCallback(
     (next: SermonContent) => {
@@ -160,8 +206,27 @@ export function SermonEditor({
     });
   }
 
+  const statusColor =
+    status === "offline"
+      ? "var(--vox-gold)"
+      : status === "saving" || status === "dirty"
+        ? "var(--vox-prose)"
+        : "var(--vox-muted)";
+
   return (
     <div className="space-y-6">
+      {sermonId ? (
+        <div className="flex items-center justify-end">
+          <span
+            className="vox-mono text-[11px]"
+            style={{ color: statusColor }}
+            aria-live="polite"
+          >
+            {STATUS_LABEL[status]}
+          </span>
+        </div>
+      ) : null}
+
       {content.sessions.map((session, idx) => {
         const advice = adviseSession(session, framework);
         return (
