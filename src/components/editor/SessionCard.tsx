@@ -83,7 +83,7 @@ export function SessionCard({
   const accent = ROLE_COLOR[session.role];
 
   return (
-    <section className={cn("relative", !isFirst && "pt-6")}>
+    <section className={cn("relative", !isFirst && "pt-12")}>
       {/* Barra vertical de cor à esquerda — marca o tópico/sessão.
          A folha branca em volta é o container do SermonEditor. */}
       <span
