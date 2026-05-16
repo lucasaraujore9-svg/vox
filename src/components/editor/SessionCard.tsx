@@ -83,7 +83,7 @@ export function SessionCard({
   const accent = ROLE_COLOR[session.role];
 
   return (
-    <section className={cn("relative py-4", !isFirst && "mt-16")}>
+    <section className={cn("group relative py-4", !isFirst && "mt-16")}>
       {/* Barra vertical de cor à esquerda — abraça o conteúdo do section,
          com 16px de respiro topo/baixo (py-4) e 16px de distância até o texto. */}
       <span
