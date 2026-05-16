@@ -14,6 +14,7 @@ import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import { cn } from "@/lib/utils";
 import { BubbleToolbar } from "./BubbleToolbar";
+import { SlashCommandMenu } from "./SlashCommandMenu";
 
 interface RichTextItemProps {
   initialContent: string;
@@ -97,6 +98,7 @@ export function RichTextItem({
     >
       <EditorContent editor={editor} />
       <BubbleToolbar editor={editor} bibleVersion={bibleVersion} />
+      <SlashCommandMenu editor={editor} bibleVersion={bibleVersion} />
     </div>
   );
 }

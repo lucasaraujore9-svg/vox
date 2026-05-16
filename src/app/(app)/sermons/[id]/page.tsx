@@ -12,6 +12,7 @@ import { SlidesPanel } from "@/components/slides/SlidesPanel";
 import { VersionsDialog } from "@/components/editor/VersionsDialog";
 import { EngagementsSection } from "@/components/sermon/EngagementsSection";
 import { SermonActionsMenu } from "@/components/sermon/SermonActionsMenu";
+import { BibleSidePanel } from "@/components/bible/BibleSidePanel";
 import { getSermon } from "@/lib/sermons/queries";
 import { parseSermonContent } from "@/lib/sermons/sessions";
 import { listSlidesForSermon } from "@/lib/sermons/slides";
@@ -128,6 +129,7 @@ export default async function SermonEditorPage({ params }: PageProps) {
                 </Button>
               }
             />
+            <BibleSidePanel defaultReference={sermon.bible_ref} />
             <Button asChild variant="outline" size="sm">
               <Link href={`/sermons/${sermon.id}/present`}>Apresentar</Link>
             </Button>

@@ -15,6 +15,7 @@ import {
   Home,
   Menu,
   Settings,
+  StickyNote,
   Upload,
 } from "lucide-react";
 import {
@@ -30,6 +31,7 @@ import { cn } from "@/lib/utils";
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Início", icon: Home },
   { href: "/sermons", label: "Esboços", icon: FileText },
+  { href: "/notes", label: "Notas", icon: StickyNote },
   { href: "/sermons?view=arquivo", label: "Arquivados", icon: Archive },
   { href: "/bible", label: "Bíblia", icon: BookMarked },
   { href: "/courses", label: "Cursos", icon: GraduationCap },
