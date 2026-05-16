@@ -14,6 +14,8 @@ import {
 } from "@/lib/mocks/blocks";
 import type { SessionNode } from "@/lib/sermons/sessions";
 import type { SlideItem } from "@/components/slides/SlidesPanel";
+import { ItemContent } from "@/components/present/ItemContent";
+import { stripHtml } from "@/lib/editor/html";
 
 const VISIBLE_TYPES = new Set<BlockTypeId>(
   VOX_BLOCK_TYPES.filter((b) => b.visibleInPresentation).map((b) => b.id)
@@ -186,7 +188,8 @@ function SlideRender({ slide }: { slide: SlideItem }) {
         >
           {blockType.label}
         </p>
-        <p
+        <ItemContent
+          html={firstItem.content}
           style={{
             fontFamily: "var(--vox-font-display)",
             fontStyle: isScripture ? "italic" : "normal",
@@ -194,9 +197,7 @@ function SlideRender({ slide }: { slide: SlideItem }) {
             lineHeight: 1.35,
             color: isScripture ? "var(--vox-gold)" : "#F1EDE7",
           }}
-        >
-          {firstItem.content}
-        </p>
+        />
       </article>
     );
   }
@@ -219,7 +220,7 @@ function SessionRender({ session }: { session: SessionNode }) {
       <div className="space-y-7">
         {visibleItems.map((item) => {
           const t = getBlockType(item.type);
-          if (!t || !item.content.trim()) return null;
+          if (!t || !stripHtml(item.content).trim()) return null;
           const isScripture = item.type === "texto_biblico";
           return (
             <div
@@ -227,7 +228,8 @@ function SessionRender({ session }: { session: SessionNode }) {
               className="pl-5"
               style={{ borderLeft: `2px solid ${t.color}` }}
             >
-              <p
+              <ItemContent
+                html={item.content}
                 style={{
                   fontFamily: "var(--vox-font-display)",
                   fontStyle: isScripture ? "italic" : "normal",
@@ -235,9 +237,7 @@ function SessionRender({ session }: { session: SessionNode }) {
                   lineHeight: 1.4,
                   color: isScripture ? "var(--vox-gold)" : "#F1EDE7",
                 }}
-              >
-                {item.content}
-              </p>
+              />
             </div>
           );
         })}

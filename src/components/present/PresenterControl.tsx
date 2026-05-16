@@ -25,6 +25,8 @@ import {
 } from "@/lib/mocks/blocks";
 import type { SessionNode } from "@/lib/sermons/sessions";
 import type { SlideItem } from "@/components/slides/SlidesPanel";
+import { ItemContent } from "@/components/present/ItemContent";
+import { stripHtml } from "@/lib/editor/html";
 
 const VISIBLE_TYPES = new Set<BlockTypeId>(
   VOX_BLOCK_TYPES.filter((b) => b.visibleInPresentation).map((b) => b.id)
@@ -357,7 +359,7 @@ function SessionFirstItemPreview({
   large?: boolean;
 }) {
   const first = session.items.find(
-    (i) => VISIBLE_TYPES.has(i.type) && i.content.trim()
+    (i) => VISIBLE_TYPES.has(i.type) && stripHtml(i.content).trim()
   );
   if (!first) {
     return (
@@ -367,7 +369,8 @@ function SessionFirstItemPreview({
   const t = getBlockType(first.type);
   const isScripture = first.type === "texto_biblico";
   return (
-    <p
+    <ItemContent
+      html={first.content}
       style={{
         fontFamily: "var(--vox-font-display)",
         fontStyle: isScripture ? "italic" : "normal",
@@ -376,9 +379,7 @@ function SessionFirstItemPreview({
         color: isScripture ? "var(--vox-gold)" : t?.color ?? "var(--vox-ink)",
       }}
       className="line-clamp-4"
-    >
-      {first.content}
-    </p>
+    />
   );
 }
 
@@ -415,7 +416,7 @@ function ContentList({
     <div className="space-y-3">
       {items.map((item) => {
         const t = getBlockType(item.type);
-        if (!t || !item.content.trim()) return null;
+        if (!t || !stripHtml(item.content).trim()) return null;
         const isScripture = item.type === "texto_biblico";
         const isHidden = !VISIBLE_TYPES.has(item.type);
         return (
@@ -440,7 +441,8 @@ function ContentList({
                 </span>
               ) : null}
             </div>
-            <p
+            <ItemContent
+              html={item.content}
               className="mt-1"
               style={{
                 fontFamily: "var(--vox-font-display)",
@@ -449,9 +451,7 @@ function ContentList({
                 lineHeight: 1.45,
                 color: isScripture ? "var(--vox-gold)" : "var(--vox-ink)",
               }}
-            >
-              {item.content}
-            </p>
+            />
           </div>
         );
       })}

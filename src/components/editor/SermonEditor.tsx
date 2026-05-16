@@ -249,7 +249,7 @@ export function SermonEditor({
          separados apenas por espaço e uma barra de cor à esquerda. Não há
          cards individuais. */}
       <article
-        className="vox-paper rounded-xl bg-card px-6 py-8 sm:px-12 sm:py-12"
+        className="vox-paper rounded-xl bg-card px-4 py-6 sm:px-12 sm:py-12"
         style={{
           border: "1px solid var(--vox-whisper)",
           boxShadow: "var(--vox-shadow-card)",

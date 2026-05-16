@@ -13,6 +13,7 @@ import {
   type BlockTypeId,
 } from "@/lib/mocks/blocks";
 import type { SlideItem } from "@/components/slides/SlidesPanel";
+import { ItemContent } from "@/components/present/ItemContent";
 
 const VISIBLE_TYPES = new Set<BlockTypeId>(
   VOX_BLOCK_TYPES.filter((b) => b.visibleInPresentation).map((b) => b.id)
@@ -186,7 +187,8 @@ function SlideRender({ slide }: { slide: SlideItem | undefined }) {
         >
           {blockType.label}
         </p>
-        <p
+        <ItemContent
+          html={firstItem.content}
           style={{
             fontFamily: "var(--vox-font-display)",
             fontStyle: isScripture ? "italic" : "normal",
@@ -194,9 +196,7 @@ function SlideRender({ slide }: { slide: SlideItem | undefined }) {
             lineHeight: 1.35,
             color: isScripture ? "var(--vox-gold)" : "#F1EDE7",
           }}
-        >
-          {firstItem.content}
-        </p>
+        />
       </article>
     );
   }

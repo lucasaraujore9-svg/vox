@@ -7,6 +7,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Archive,
   BookMarked,
   BookOpen,
   FileText,
@@ -29,6 +30,7 @@ import { cn } from "@/lib/utils";
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Início", icon: Home },
   { href: "/sermons", label: "Esboços", icon: FileText },
+  { href: "/sermons?view=arquivo", label: "Arquivados", icon: Archive },
   { href: "/bible", label: "Bíblia", icon: BookMarked },
   { href: "/courses", label: "Cursos", icon: GraduationCap },
   { href: "/study", label: "Estudo", icon: BookOpen },

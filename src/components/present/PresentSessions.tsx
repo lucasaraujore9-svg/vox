@@ -16,6 +16,8 @@ import { Button } from "@/components/ui/button";
 import { VOX_BLOCK_TYPES, type BlockTypeId, getBlockType } from "@/lib/mocks/blocks";
 import type { SessionNode } from "@/lib/sermons/sessions";
 import { nextSessionPeek } from "@/lib/sermons/sessions";
+import { ItemContent } from "@/components/present/ItemContent";
+import { stripHtml, previewSnippet } from "@/lib/editor/html";
 
 type FontSize = "sm" | "md" | "lg" | "xl";
 const FONT_SIZE: Record<FontSize, { px: number; lh: number }> = {
@@ -206,9 +208,8 @@ export function PresentSessions({
           <div className={isCompact ? "space-y-5" : "space-y-7"}>
             {visibleItems.map((item) => {
               const t = getBlockType(item.type);
-              if (!t || !item.content.trim()) return null;
+              if (!t || !stripHtml(item.content).trim()) return null;
               const isScripture = item.type === "texto_biblico";
-              const isQuote = item.type === "citacao";
               return (
                 <div
                   key={item.id}
@@ -221,12 +222,10 @@ export function PresentSessions({
                   >
                     {t.label}
                   </p>
-                  <p
+                  <ItemContent
+                    html={item.content}
                     style={{
-                      fontFamily:
-                        isScripture || isQuote
-                          ? "var(--vox-font-display)"
-                          : "var(--vox-font-display)",
+                      fontFamily: "var(--vox-font-display)",
                       fontStyle: isScripture ? "italic" : "normal",
                       fontSize: `${f.px}px`,
                       lineHeight: f.lh,
@@ -237,9 +236,7 @@ export function PresentSessions({
                           : "var(--vox-ink)",
                       wordBreak: "break-word",
                     }}
-                  >
-                    {item.content}
-                  </p>
+                  />
                 </div>
               );
             })}
@@ -271,10 +268,8 @@ export function PresentSessions({
             {peek.firstItemType ? (
               <span className="vox-mono opacity-60 truncate hidden sm:inline">
                 · {getBlockType(peek.firstItemType)?.label}
-                {peek.firstItemContent.trim()
-                  ? ` — ${peek.firstItemContent.slice(0, 40)}${
-                      peek.firstItemContent.length > 40 ? "…" : ""
-                    }`
+                {peek.firstItemContent && stripHtml(peek.firstItemContent).trim()
+                  ? ` — ${previewSnippet(peek.firstItemContent, 40)}`
                   : ""}
               </span>
             ) : null}
@@ -300,10 +295,8 @@ export function PresentSessions({
             {peek.firstItemType ? (
               <p className="vox-mono text-xs opacity-60 mt-2">
                 {getBlockType(peek.firstItemType)?.label}
-                {peek.firstItemContent.trim()
-                  ? ` · ${peek.firstItemContent.slice(0, 60)}${
-                      peek.firstItemContent.length > 60 ? "…" : ""
-                    }`
+                {peek.firstItemContent && stripHtml(peek.firstItemContent).trim()
+                  ? ` · ${previewSnippet(peek.firstItemContent, 60)}`
                   : ""}
               </p>
             ) : null}

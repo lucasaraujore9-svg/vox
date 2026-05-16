@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import type { BlockType } from "@/lib/mocks/blocks";
 import { cn } from "@/lib/utils";
+import { ItemContent } from "@/components/present/ItemContent";
 
 interface PresentEsbocoProps {
   title: string;
@@ -123,7 +124,8 @@ export function PresentEsboco({
       <main className="flex-1 px-12 lg:px-32 flex items-center justify-center">
         <article className="max-w-5xl mx-auto w-full">
           {current?.type.id === "texto_biblico" ? (
-            <p
+            <ItemContent
+              html={current.content}
               style={{
                 fontFamily: "var(--vox-font-display)",
                 fontStyle: "italic",
@@ -131,20 +133,17 @@ export function PresentEsboco({
                 lineHeight: fontConfig.lh,
                 color: "var(--vox-gold)",
               }}
-            >
-              &ldquo;{current.content}&rdquo;
-            </p>
+            />
           ) : (
-            <p
+            <ItemContent
+              html={current?.content ?? ""}
               style={{
                 fontFamily: "var(--vox-font-display)",
                 fontSize: `${fontConfig.px}px`,
                 lineHeight: fontConfig.lh,
                 color: stageDark ? "#F1EDE7" : "var(--vox-ink)",
               }}
-            >
-              {current?.content}
-            </p>
+            />
           )}
           {current?.type.id === "texto_biblico" ? (
             <p

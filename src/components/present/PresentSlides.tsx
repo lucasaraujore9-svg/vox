@@ -20,6 +20,8 @@ import {
   postMessage,
   type PresenterMessage,
 } from "@/lib/presenter/channel";
+import { ItemContent } from "@/components/present/ItemContent";
+import { stripHtml, previewSnippet } from "@/lib/editor/html";
 
 const VISIBLE_TYPES = new Set<BlockTypeId>(
   VOX_BLOCK_TYPES.filter((b) => b.visibleInPresentation).map((b) => b.id)
@@ -285,7 +287,7 @@ function SlideCommentRender({ slide }: { slide: PresentSlide | undefined }) {
               ) : null}
               {visibleItems.map((item) => {
                 const t = getBlockType(item.type);
-                if (!t || !item.content.trim()) return null;
+                if (!t || !stripHtml(item.content).trim()) return null;
                 const isScripture = item.type === "texto_biblico";
                 const isQuote = item.type === "citacao";
                 return (
@@ -300,7 +302,8 @@ function SlideCommentRender({ slide }: { slide: PresentSlide | undefined }) {
                     >
                       {t.label}
                     </p>
-                    <p
+                    <ItemContent
+                      html={item.content}
                       style={{
                         fontFamily: "var(--vox-font-display)",
                         fontStyle: isScripture || isQuote ? "italic" : "normal",
@@ -308,9 +311,7 @@ function SlideCommentRender({ slide }: { slide: PresentSlide | undefined }) {
                         lineHeight: 1.5,
                         color: isScripture ? "var(--vox-gold)" : "#F1EDE7",
                       }}
-                    >
-                      {item.content}
-                    </p>
+                    />
                   </div>
                 );
               })}
@@ -391,7 +392,7 @@ function NextSlideBlock({ slide }: { slide: PresentSlide }) {
                     lineHeight: 1.4,
                   }}
                 >
-                  {firstItem.content}
+                  {previewSnippet(firstItem.content, 120)}
                 </p>
               </div>
             ) : null}
@@ -409,8 +410,8 @@ function NextSlideBlock({ slide }: { slide: PresentSlide }) {
       {slide.image_url && firstItem && blockType ? (
         <p className="vox-mono text-xs opacity-60 mt-3">
           <span style={{ color: blockType.color }}>{blockType.label}</span>
-          {firstItem.content
-            ? ` · ${firstItem.content.slice(0, 80)}${firstItem.content.length > 80 ? "…" : ""}`
+          {firstItem.content && stripHtml(firstItem.content).trim()
+            ? ` · ${previewSnippet(firstItem.content, 80)}`
             : ""}
         </p>
       ) : null}

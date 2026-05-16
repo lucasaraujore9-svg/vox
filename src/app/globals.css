@@ -428,4 +428,66 @@
     font-style: italic;
     color: var(--vox-ink);
   }
+
+  /* =====================================================================
+     Conteúdo renderizado em modos de apresentação / leitura.
+     Os filhos herdam font/cor/tamanho do container — assim os mesmos
+     itens funcionam em teleprompter, slides e popups.
+     ===================================================================== */
+  .vox-present-content > *:first-child { margin-top: 0; }
+  .vox-present-content > *:last-child { margin-bottom: 0; }
+  .vox-present-content p {
+    margin: 0 0 0.6em 0;
+    font: inherit;
+    color: inherit;
+  }
+  .vox-present-content p:last-child {
+    margin-bottom: 0;
+  }
+  .vox-present-content strong {
+    font-weight: 700;
+    color: inherit;
+  }
+  .vox-present-content em {
+    font-style: italic;
+  }
+  .vox-present-content u {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .vox-present-content s {
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+  .vox-present-content h2 {
+    font-family: var(--vox-font-display);
+    font-weight: 600;
+    font-size: 1.15em;
+    line-height: 1.3;
+    margin: 0.5em 0 0.3em 0;
+    color: inherit;
+  }
+  .vox-present-content blockquote {
+    border-left: 3px solid var(--vox-gold);
+    padding-left: 0.8em;
+    margin: 0.5em 0;
+    font-family: var(--vox-font-display);
+    font-style: italic;
+    color: inherit;
+  }
+  .vox-present-content blockquote p {
+    margin: 0 0 0.3em 0;
+  }
+  .vox-present-content ul,
+  .vox-present-content ol {
+    padding-left: 1.4em;
+    margin: 0.4em 0;
+  }
+  .vox-present-content ul li { list-style: disc; }
+  .vox-present-content ol li { list-style: decimal; }
+  .vox-present-content a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
 }
