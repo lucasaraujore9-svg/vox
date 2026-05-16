@@ -175,7 +175,8 @@ export const FRAMEWORK_SKELETONS: Record<FrameworkId, SkeletonSession[]> = {
   ],
   livre: [
     {
-      title: "Notas",
+      // Folha em branco: sem título inicial, item único de texto livre.
+      title: "",
       role: "livre",
       items: ["notas_pessoais"],
     },

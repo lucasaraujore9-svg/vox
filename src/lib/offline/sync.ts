@@ -44,10 +44,14 @@ export async function syncPendingSermons(): Promise<SyncResult> {
       const localTimestamp = record.updated_at;
 
       if (!remoteTimestamp || localTimestamp >= remoteTimestamp) {
-        const payload = record.payload as TablesUpdate<"sermons">;
+        // O hook useAutoSave guarda o SermonContent ({ sessions: [...] }) cru —
+        // aqui envolvemos no campo `content` da tabela.
+        const update: TablesUpdate<"sermons"> = {
+          content: record.payload as TablesUpdate<"sermons">["content"],
+        };
         const { error } = await supabase
           .from("sermons")
-          .update(payload)
+          .update(update)
           .eq("id", record.id);
         if (error) throw error;
       }

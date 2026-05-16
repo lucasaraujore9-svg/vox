@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Archive,
   BookMarked,
   BookOpen,
   ChevronLeft,
@@ -33,6 +34,7 @@ import { cn } from "@/lib/utils";
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Início", icon: Home },
   { href: "/sermons", label: "Esboços", icon: FileText },
+  { href: "/sermons?view=arquivo", label: "Arquivados", icon: Archive },
   { href: "/bible", label: "Bíblia", icon: BookMarked },
   { href: "/courses", label: "Cursos", icon: GraduationCap },
   { href: "/study", label: "Estudo", icon: BookOpen },
@@ -46,6 +48,7 @@ export function AppSidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isArchiveView, setIsArchiveView] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -55,6 +58,20 @@ export function AppSidebar() {
       // localStorage indisponível
     }
   }, []);
+
+  // Detecta ?view=arquivo via window.location pra evitar prerender bailout
+  // que viria de useSearchParams() sem suspense boundary.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const sync = () => {
+      const params = new URLSearchParams(window.location.search);
+      setIsArchiveView(params.get("view") === "arquivo");
+    };
+    sync();
+    // Atualiza no client-side navigation (Next dispara popstate em navegação)
+    window.addEventListener("popstate", sync);
+    return () => window.removeEventListener("popstate", sync);
+  }, [pathname]);
 
   function toggle() {
     setCollapsed((prev) => {
@@ -72,6 +89,16 @@ export function AppSidebar() {
   const showCollapsed = mounted && collapsed;
 
   function isActive(href: string): boolean {
+    // Itens com query (?view=arquivo) só ativam quando a query bate.
+    if (href === "/sermons?view=arquivo") {
+      return pathname === "/sermons" && isArchiveView;
+    }
+    if (href === "/sermons") {
+      return (
+        (pathname === "/sermons" && !isArchiveView) ||
+        pathname.startsWith("/sermons/")
+      );
+    }
     if (pathname === href) return true;
     if (href === "/dashboard") return false;
     return pathname.startsWith(href + "/");

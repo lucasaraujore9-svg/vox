@@ -4,8 +4,13 @@ import { useState } from "react";
 import type { SermonType } from "@/types/database";
 import { cn } from "@/lib/utils";
 
+// O wizard usa um "modo de escrita" expandido — Folha em branco é um perfil
+// do esboço (type=esboço + framework=livre) sem wizard de framework. Não muda
+// o schema; o id "branco" só vive no wizard.
+export type WritingMode = SermonType | "branco";
+
 interface TypeOption {
-  id: SermonType;
+  id: WritingMode;
   label: string;
   tagline: string;
   description: string;
@@ -13,11 +18,18 @@ interface TypeOption {
 
 const OPTIONS: readonly TypeOption[] = [
   {
+    id: "branco",
+    label: "Folha em branco",
+    tagline: "Escrita corrida",
+    description:
+      "Página em branco, sem framework e sem blocos. Escreva como num editor de texto comum. Pode inserir tópicos se quiser estruturar depois.",
+  },
+  {
     id: "esboço",
     label: "Esboço guia",
     tagline: "Manuscrito por blocos",
     description:
-      "Escreva o sermão em blocos estruturados por um framework homilético. Texto bíblico, contexto, pontos, aplicação.",
+      "Escreva o sermão em blocos estruturados por um framework homilético: texto bíblico, contexto, pontos, aplicação.",
   },
   {
     id: "apresentação",
@@ -29,30 +41,30 @@ const OPTIONS: readonly TypeOption[] = [
 ];
 
 interface TypePickerProps {
-  value?: SermonType;
-  defaultValue?: SermonType;
-  onChange?: (value: SermonType) => void;
+  value?: WritingMode;
+  defaultValue?: WritingMode;
+  onChange?: (value: WritingMode) => void;
   name?: string;
   className?: string;
 }
 
 export function TypePicker({
   value,
-  defaultValue = "esboço",
+  defaultValue = "branco",
   onChange,
   name,
   className,
 }: TypePickerProps) {
-  const [internal, setInternal] = useState<SermonType>(defaultValue);
+  const [internal, setInternal] = useState<WritingMode>(defaultValue);
   const current = value ?? internal;
 
-  function handleSelect(id: SermonType) {
+  function handleSelect(id: WritingMode) {
     if (value === undefined) setInternal(id);
     onChange?.(id);
   }
 
   return (
-    <div className={cn("grid sm:grid-cols-2 gap-4", className)}>
+    <div className={cn("grid sm:grid-cols-2 lg:grid-cols-3 gap-4", className)}>
       {OPTIONS.map((option) => {
         const selected = option.id === current;
         return (
@@ -77,7 +89,10 @@ export function TypePicker({
               onChange={() => handleSelect(option.id)}
               className="sr-only"
             />
-            <p className="vox-eyebrow" style={{ color: selected ? "var(--vox-forest)" : undefined }}>
+            <p
+              className="vox-eyebrow"
+              style={{ color: selected ? "var(--vox-forest)" : undefined }}
+            >
               {option.tagline}
             </p>
             <h3 className="vox-h3 mt-3">{option.label}</h3>

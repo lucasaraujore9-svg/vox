@@ -1,10 +1,12 @@
 "use client";
 
-// Menu "..." no header do editor. Concentra todas as ações secundárias
-// pra liberar espaço lateral.
+// Menu "..." no header do editor. Concentra todas as ações secundárias.
+// Quando o manuscrito está arquivado, exibe "Desarquivar" + "Apagar permanente".
 
 import { useEffect, useState } from "react";
 import {
+  Archive,
+  ArchiveRestore,
   FileDown,
   Info,
   Lightbulb,
@@ -24,20 +26,28 @@ import {
 import { FrameworkHintDialog } from "@/components/sermon/FrameworkHintDialog";
 import { MetadataDialog } from "@/components/sermon/MetadataDialog";
 import { DeleteSermonDialog } from "@/components/sermon/DeleteSermonDialog";
+import { ArchiveSermonDialog } from "@/components/sermon/ArchiveSermonDialog";
+import { PermanentDeleteDialog } from "@/components/sermon/PermanentDeleteDialog";
 import type { MockSermon } from "@/lib/mocks/sermons";
 
 interface SermonActionsMenuProps {
   sermon: MockSermon;
+  /** Quando true, mostra ações de "Desarquivar" e "Apagar permanente" no lugar de "Arquivar". */
+  isArchived?: boolean;
 }
 
-export function SermonActionsMenu({ sermon }: SermonActionsMenuProps) {
+export function SermonActionsMenu({
+  sermon,
+  isArchived = false,
+}: SermonActionsMenuProps) {
   const [metadataOpen, setMetadataOpen] = useState(false);
   const [hintOpen, setHintOpen] = useState(false);
-  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [archiveOpen, setArchiveOpen] = useState(false);
+  const [trashOpen, setTrashOpen] = useState(false);
+  const [permDeleteOpen, setPermDeleteOpen] = useState(false);
   const [isDemoMode, setIsDemoMode] = useState(false);
 
   useEffect(() => {
-    // NEXT_PUBLIC_SUPABASE_URL é exposto ao client; ausência = modo demo
     setIsDemoMode(!process.env.NEXT_PUBLIC_SUPABASE_URL);
   }, []);
 
@@ -45,7 +55,7 @@ export function SermonActionsMenu({ sermon }: SermonActionsMenuProps) {
     if (isDemoMode) {
       toast.error("Modo demo", {
         description:
-          "Configure Supabase em .env.local pra exportar manuscritos. As exportações usam o conteúdo gravado no banco.",
+          "Configure Supabase em .env.local pra exportar manuscritos.",
       });
       return;
     }
@@ -96,13 +106,35 @@ export function SermonActionsMenu({ sermon }: SermonActionsMenuProps) {
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onSelect={() => setDeleteOpen(true)}
-            className="text-vox-destructive focus:text-vox-destructive"
-          >
-            <Trash2 className="size-4 mr-2" />
-            Mover para lixeira
-          </DropdownMenuItem>
+          {isArchived ? (
+            <>
+              <DropdownMenuItem onSelect={() => setArchiveOpen(true)}>
+                <ArchiveRestore className="size-4 mr-2" />
+                Tirar do arquivo
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={() => setPermDeleteOpen(true)}
+                className="text-vox-destructive focus:text-vox-destructive"
+              >
+                <Trash2 className="size-4 mr-2" />
+                Apagar permanentemente
+              </DropdownMenuItem>
+            </>
+          ) : (
+            <>
+              <DropdownMenuItem onSelect={() => setArchiveOpen(true)}>
+                <Archive className="size-4 mr-2" />
+                Arquivar
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={() => setTrashOpen(true)}
+                className="text-vox-destructive focus:text-vox-destructive"
+              >
+                <Trash2 className="size-4 mr-2" />
+                Mover para lixeira
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -116,11 +148,25 @@ export function SermonActionsMenu({ sermon }: SermonActionsMenuProps) {
         open={hintOpen}
         onOpenChange={setHintOpen}
       />
+      <ArchiveSermonDialog
+        sermonId={sermon.id}
+        sermonTitle={sermon.title}
+        mode={isArchived ? "unarchive" : "archive"}
+        open={archiveOpen}
+        onOpenChange={setArchiveOpen}
+      />
       <DeleteSermonDialog
         sermonId={sermon.id}
         sermonTitle={sermon.title}
-        open={deleteOpen}
-        onOpenChange={setDeleteOpen}
+        open={trashOpen}
+        onOpenChange={setTrashOpen}
+      />
+      <PermanentDeleteDialog
+        sermonId={sermon.id}
+        sermonTitle={sermon.title}
+        open={permDeleteOpen}
+        onOpenChange={setPermDeleteOpen}
+        redirectTo="/sermons?view=arquivo"
       />
     </>
   );

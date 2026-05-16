@@ -27,7 +27,7 @@ export interface FiltersState {
   type?: SermonType;
   series?: string;
   sort?: "recent" | "oldest" | "title" | "preached";
-  view?: "flat" | "grouped";
+  view?: "flat" | "grouped" | "arquivo";
 }
 
 export interface SeriesOption {

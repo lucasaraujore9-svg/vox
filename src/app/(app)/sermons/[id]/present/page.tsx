@@ -14,7 +14,7 @@ import { PresenterControl } from "@/components/present/PresenterControl";
 import { AudienceView } from "@/components/present/AudienceView";
 import { getSermon } from "@/lib/sermons/queries";
 import { parseSermonContent } from "@/lib/sermons/sessions";
-import { getMockSlides } from "@/lib/mocks/slides";
+import { listSlidesForSermon } from "@/lib/sermons/slides";
 import { VOX_FRAMEWORKS, type FrameworkId } from "@/lib/mocks/frameworks";
 import type { SermonType } from "@/types/database";
 
@@ -47,8 +47,11 @@ export default async function PresentPage({ params, searchParams }: PageProps) {
   };
 
   const isSlides = sermon.type === "apresentação";
+  const slidesRaw = isSlides
+    ? await listSlidesForSermon(sermon.id, sermon.framework)
+    : [];
   const slides = isSlides
-    ? getMockSlides(sermon.id).map((s) => ({
+    ? slidesRaw.map((s) => ({
         id: s.id,
         order: s.order,
         image_url: s.image_url,

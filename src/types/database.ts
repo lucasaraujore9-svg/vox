@@ -315,6 +315,7 @@ export type Database = {
       }
       sermons: {
         Row: {
+          archived_at: string | null
           bible_book: string | null
           bible_ref: string | null
           content: Json
@@ -337,6 +338,7 @@ export type Database = {
           word_count: number
         }
         Insert: {
+          archived_at?: string | null
           bible_book?: string | null
           bible_ref?: string | null
           content?: Json
@@ -359,6 +361,7 @@ export type Database = {
           word_count?: number
         }
         Update: {
+          archived_at?: string | null
           bible_book?: string | null
           bible_ref?: string | null
           content?: Json

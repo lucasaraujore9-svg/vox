@@ -13,6 +13,8 @@ export interface SermonFilters {
   sort?: "recent" | "oldest" | "title" | "preached";
   limit?: number;
   offset?: number;
+  /** Default "active" — exclui arquivados. "archived" mostra só arquivados. "all" mostra ambos. */
+  archived?: "active" | "archived" | "all";
 }
 
 export async function listSermons(filters: SermonFilters = {}) {
@@ -20,9 +22,16 @@ export async function listSermons(filters: SermonFilters = {}) {
   let query = supabase
     .from("sermons")
     .select(
-      "id, title, framework, type, content_type, bible_ref, bible_book, status, tags, word_count, preached_at, updated_at, created_at, series_id"
+      "id, title, framework, type, content_type, bible_ref, bible_book, status, tags, word_count, preached_at, updated_at, created_at, series_id, archived_at"
     )
     .is("deleted_at", null);
+
+  const archived = filters.archived ?? "active";
+  if (archived === "active") {
+    query = query.is("archived_at", null);
+  } else if (archived === "archived") {
+    query = query.not("archived_at", "is", null);
+  }
 
   if (filters.search) {
     // FTS column é search_vector — usar websearch_to_tsquery para busca natural

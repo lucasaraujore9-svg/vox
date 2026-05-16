@@ -1,9 +1,12 @@
 // Wizard de criação de esboço.
-// Steps: 1) Tipo conteúdo (Sermão/Palestra/Aula)
-//        2) Formato (Esboço vs Apresentação)
-//        3) Framework (só esboço)
-//        4) Informações básicas (título + ref bíblica)
-//        5) Vínculo (série/curso opcional)
+// Steps possíveis:
+//   1) Tipo de conteúdo (Sermão/Palestra/Aula)
+//   2) Modo de escrita (Folha em branco / Esboço guiado / Apresentação)
+//   3) Framework (apenas Esboço guiado)
+//   4) Informações básicas (título + ref bíblica)
+//   5) Vínculo (série/curso opcional — apenas Esboço guiado / Apresentação)
+//
+// Folha em branco: salta 3 e 5 — vai direto pra escrever, sem fricção.
 
 "use client";
 
@@ -12,7 +15,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ContentTypePicker } from "@/components/sermon/ContentTypePicker";
-import { TypePicker } from "@/components/sermon/TypePicker";
+import { TypePicker, type WritingMode } from "@/components/sermon/TypePicker";
 import { FrameworkPicker } from "@/components/sermon/FrameworkPicker";
 import { FrameworkHintDialog } from "@/components/sermon/FrameworkHintDialog";
 import { LinkPicker, type LinkSelection } from "@/components/sermon/LinkPicker";
@@ -29,29 +32,56 @@ export default function NewSermonWizardPage() {
   const [pending, startTransition] = useTransition();
   const [step, setStep] = useState<Step>(1);
   const [contentType, setContentType] = useState<ContentType>("sermão");
-  const [type, setType] = useState<SermonType>("esboço");
+  const [mode, setMode] = useState<WritingMode>("branco");
   const [framework, setFramework] = useState<FrameworkId>("expositivo");
   const [title, setTitle] = useState("");
   const [bibleRef, setBibleRef] = useState("");
   const [link, setLink] = useState<LinkSelection>({ seriesId: null, courseId: null });
   const [error, setError] = useState<string | null>(null);
 
-  // Step 3 só existe pra esboço.
-  const usesFramework = type === "esboço";
-  const totalSteps = usesFramework ? 5 : 4;
+  const isBlank = mode === "branco";
+  const isSlides = mode === "apresentação";
+  // Esboço guiado precisa de framework explícito; os outros não.
+  const usesFramework = mode === "esboço";
+  // Folha em branco: sem step de framework e sem step de vínculo (atalho).
+  const totalSteps = isBlank ? 3 : usesFramework ? 5 : 4;
 
   function visualStep(): number {
+    if (isBlank) {
+      // 1 → 1, 2 → 2, 4 → 3
+      if (step === 4) return 3;
+      return step;
+    }
     if (!usesFramework && step >= 4) return step - 1;
     return step;
   }
 
   function nextStep() {
     setError(null);
-    if (step === 1) setStep(2);
-    else if (step === 2) setStep(usesFramework ? 3 : 4);
-    else if (step === 3) setStep(4);
-    else if (step === 4) setStep(5);
-    else if (step === 5) submit();
+    if (step === 1) {
+      setStep(2);
+      return;
+    }
+    if (step === 2) {
+      // Folha em branco pula framework
+      if (isBlank) setStep(4);
+      else setStep(usesFramework ? 3 : 4);
+      return;
+    }
+    if (step === 3) {
+      setStep(4);
+      return;
+    }
+    if (step === 4) {
+      // Folha em branco: cria direto, sem vínculo
+      if (isBlank) {
+        submit();
+      } else {
+        setStep(5);
+      }
+      return;
+    }
+    if (step === 5) submit();
   }
 
   function prevStep() {
@@ -59,24 +89,33 @@ export default function NewSermonWizardPage() {
       router.push("/sermons");
       return;
     }
-    if (step === 4 && !usesFramework) {
+    if (step === 4 && (isBlank || !usesFramework)) {
       setStep(2);
       return;
     }
     setStep((step - 1) as Step);
   }
 
+  function resolvedType(): SermonType {
+    if (isSlides) return "apresentação";
+    return "esboço";
+  }
+
+  function resolvedFramework(): FrameworkId | undefined {
+    if (isBlank) return "livre";
+    if (usesFramework) return framework;
+    return undefined;
+  }
+
   function submit() {
     startTransition(async () => {
       const result = await createSermonAction({
-        title: title.trim() || "Novo manuscrito",
-        type,
+        title: title.trim() || (isBlank ? "Sem título" : "Novo manuscrito"),
+        type: resolvedType(),
         content_type: contentType,
-        framework: usesFramework ? framework : undefined,
+        framework: resolvedFramework(),
         bible_ref: bibleRef.trim() || undefined,
         series_id: link.seriesId ?? undefined,
-        // newSeriesTitle e courseId são tratados em behaviors futuros
-        // (createSeriesAction + linkLessonAction); criamos o sermão primeiro.
       });
       if (!result.ok) {
         setError(result.error);
@@ -88,14 +127,14 @@ export default function NewSermonWizardPage() {
 
   return (
     <div className="max-w-4xl">
-      <header className="flex items-center justify-between gap-4 mb-10">
+      <header className="flex items-center justify-between gap-4 mb-10 flex-wrap">
         <div>
           <p className="vox-eyebrow">
             Passo {visualStep()} de {totalSteps}
           </p>
           <h1 className="vox-h1 mt-3">
             {step === 1 ? "O que você vai preparar?" : null}
-            {step === 2 ? "Como você vai entregar?" : null}
+            {step === 2 ? "Como você quer escrever?" : null}
             {step === 3 ? "Qual estrutura?" : null}
             {step === 4 ? "Informações básicas" : null}
             {step === 5 ? "Vincular a uma coleção?" : null}
@@ -114,7 +153,7 @@ export default function NewSermonWizardPage() {
         <ContentTypePicker value={contentType} onChange={setContentType} />
       ) : null}
 
-      {step === 2 ? <TypePicker value={type} onChange={setType} /> : null}
+      {step === 2 ? <TypePicker value={mode} onChange={setMode} /> : null}
 
       {step === 3 && usesFramework ? (
         <>
@@ -131,7 +170,11 @@ export default function NewSermonWizardPage() {
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Como o manuscrito vai aparecer no banco"
+              placeholder={
+                isBlank
+                  ? "Deixe em branco se ainda não souber"
+                  : "Como o manuscrito vai aparecer no banco"
+              }
               autoFocus
             />
           </div>
@@ -155,15 +198,17 @@ export default function NewSermonWizardPage() {
         />
       ) : null}
 
-      <footer className="mt-10 flex items-center justify-between">
+      <footer className="mt-10 flex items-center justify-between gap-3">
         <Button variant="ghost" onClick={prevStep} disabled={pending}>
           {step === 1 ? "Cancelar" : "Voltar"}
         </Button>
         <Button size="lg" onClick={nextStep} disabled={pending}>
-          {step === 5
+          {(step === 5 || (step === 4 && isBlank))
             ? pending
               ? "Criando…"
-              : "Abrir editor"
+              : isBlank
+                ? "Começar a escrever"
+                : "Abrir editor"
             : "Continuar"}
         </Button>
       </footer>

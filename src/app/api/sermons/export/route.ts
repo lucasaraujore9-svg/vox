@@ -1,9 +1,14 @@
 // Issue 047 — Exportação de sermão em PDF, DOCX e TXT.
 // Recebe ?sermonId=<uuid>&format=pdf|docx|txt. Server-rendered, gera blob e retorna.
+// O conteúdo é { sessions: [{ title, items: [{ type, content }] }] } — itera nesse formato.
+// Tolera também o formato legado (array plano de blocos) via parseSermonContent.
 
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { parseSermonContent, type SessionNode } from "@/lib/sermons/sessions";
+import { getBlockType } from "@/lib/mocks/blocks";
+import type { FrameworkId } from "@/lib/mocks/frameworks";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -13,47 +18,57 @@ const querySchema = z.object({
   format: z.enum(["pdf", "docx", "txt"]),
 });
 
-interface BlockPayload {
-  type: string;
-  title?: string;
-  content?: string;
+/** Converte HTML simples do TipTap (p, br, strong, em…) em texto puro. */
+function htmlToPlainText(html: string): string {
+  if (!html) return "";
+  // Sem DOMParser server-side; usa regex defensivo.
+  return html
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>/gi, "\n\n")
+    .replace(/<\/(h[1-6]|div|li)>/gi, "\n")
+    .replace(/<li>/gi, "• ")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
-function safeBlocks(raw: unknown): BlockPayload[] {
-  if (!Array.isArray(raw)) return [];
-  return raw
-    .filter(
-      (b): b is { type?: unknown; title?: unknown; content?: unknown } =>
-        b !== null && typeof b === "object"
-    )
-    .map((b) => ({
-      type: typeof b.type === "string" ? b.type : "livre",
-      title: typeof b.title === "string" ? b.title : "",
-      content: typeof b.content === "string" ? b.content : "",
-    }));
+function blockLabel(type: string): string {
+  const block = getBlockType(type as never);
+  return block?.label ?? type;
 }
 
 function toPlainText(
   title: string,
   bibleRef: string | null,
-  blocks: BlockPayload[]
+  sessions: SessionNode[]
 ): string {
   const lines: string[] = [];
   lines.push(title);
   if (bibleRef) lines.push(bibleRef);
   lines.push("");
-  for (const block of blocks) {
-    lines.push(`— ${block.title || block.type.toUpperCase()} —`);
-    if (block.content) lines.push(block.content);
+  for (const session of sessions) {
+    lines.push(`═══ ${session.title} ═══`);
     lines.push("");
+    for (const item of session.items) {
+      const text = htmlToPlainText(item.content);
+      lines.push(`— ${blockLabel(item.type)} —`);
+      if (text) lines.push(text);
+      lines.push("");
+    }
   }
-  return lines.join("\n");
+  return lines.join("\n").trimEnd() + "\n";
 }
 
 async function buildDocx(
   title: string,
   bibleRef: string | null,
-  blocks: BlockPayload[]
+  sessions: SessionNode[]
 ): Promise<Buffer> {
   const { Document, Packer, Paragraph, TextRun, HeadingLevel } = await import("docx");
   const children: InstanceType<typeof Paragraph>[] = [
@@ -66,16 +81,31 @@ async function buildDocx(
     children.push(
       new Paragraph({ children: [new TextRun({ text: bibleRef, italics: true })] })
     );
+    children.push(new Paragraph({ children: [new TextRun({ text: "" })] }));
   }
-  for (const block of blocks) {
+  for (const session of sessions) {
     children.push(
       new Paragraph({
-        heading: HeadingLevel.HEADING_2,
-        children: [new TextRun({ text: block.title || block.type })],
+        heading: HeadingLevel.HEADING_1,
+        children: [new TextRun({ text: session.title, bold: true })],
       })
     );
-    if (block.content) {
-      children.push(new Paragraph({ children: [new TextRun({ text: block.content })] }));
+    for (const item of session.items) {
+      children.push(
+        new Paragraph({
+          heading: HeadingLevel.HEADING_3,
+          children: [new TextRun({ text: blockLabel(item.type), italics: true })],
+        })
+      );
+      const text = htmlToPlainText(item.content);
+      if (text) {
+        // quebra em parágrafos para preservar quebras de linha
+        for (const para of text.split(/\n{2,}/)) {
+          children.push(
+            new Paragraph({ children: [new TextRun({ text: para })] })
+          );
+        }
+      }
     }
   }
   const doc = new Document({ sections: [{ children }] });
@@ -85,7 +115,7 @@ async function buildDocx(
 async function buildPdf(
   title: string,
   bibleRef: string | null,
-  blocks: BlockPayload[]
+  sessions: SessionNode[]
 ): Promise<ArrayBuffer> {
   const { jsPDF } = await import("jspdf");
   const doc = new jsPDF({ unit: "pt", format: "a4" });
@@ -94,7 +124,11 @@ async function buildPdf(
   const maxWidth = pageWidth - margin * 2;
   let y = margin;
 
-  function addLine(text: string, size: number, opts?: { bold?: boolean; italic?: boolean }) {
+  function addLine(
+    text: string,
+    size: number,
+    opts?: { bold?: boolean; italic?: boolean; gap?: number }
+  ) {
     doc.setFont("helvetica", opts?.bold ? "bold" : opts?.italic ? "italic" : "normal");
     doc.setFontSize(size);
     const lines = doc.splitTextToSize(text, maxWidth);
@@ -106,16 +140,21 @@ async function buildPdf(
       doc.text(line, margin, y);
       y += size * 1.4;
     }
+    if (opts?.gap) y += opts.gap;
   }
 
   addLine(title, 22, { bold: true });
-  if (bibleRef) addLine(bibleRef, 12, { italic: true });
+  if (bibleRef) addLine(bibleRef, 12, { italic: true, gap: 8 });
   y += 12;
 
-  for (const block of blocks) {
-    addLine(block.title || block.type.toUpperCase(), 13, { bold: true });
-    if (block.content) addLine(block.content, 11);
-    y += 8;
+  for (const session of sessions) {
+    addLine(session.title, 15, { bold: true, gap: 4 });
+    for (const item of session.items) {
+      addLine(blockLabel(item.type), 11, { italic: true });
+      const text = htmlToPlainText(item.content);
+      if (text) addLine(text, 11, { gap: 6 });
+    }
+    y += 6;
   }
   return doc.output("arraybuffer") as ArrayBuffer;
 }
@@ -145,7 +184,7 @@ export async function GET(request: NextRequest) {
 
   const { data: sermon } = await supabase
     .from("sermons")
-    .select("title, bible_ref, content")
+    .select("title, bible_ref, content, framework")
     .eq("id", sermonId)
     .eq("user_id", user.id)
     .is("deleted_at", null)
@@ -153,12 +192,17 @@ export async function GET(request: NextRequest) {
   if (!sermon) {
     return NextResponse.json({ error: "Sermão não encontrado" }, { status: 404 });
   }
-  const blocks = safeBlocks(sermon.content);
+  const parsed = parseSermonContent(
+    sermon.content,
+    (sermon.framework ?? "livre") as FrameworkId
+  );
+  const sessions = parsed.sessions;
 
-  const safeName = sermon.title.replace(/[^a-z0-9-_]+/gi, "-").slice(0, 60);
+  const safeName =
+    sermon.title.replace(/[^a-z0-9-_]+/gi, "-").slice(0, 60) || "manuscrito";
 
   if (format === "txt") {
-    const body = toPlainText(sermon.title, sermon.bible_ref, blocks);
+    const body = toPlainText(sermon.title, sermon.bible_ref, sessions);
     return new NextResponse(body, {
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
@@ -167,7 +211,7 @@ export async function GET(request: NextRequest) {
     });
   }
   if (format === "docx") {
-    const buffer = await buildDocx(sermon.title, sermon.bible_ref, blocks);
+    const buffer = await buildDocx(sermon.title, sermon.bible_ref, sessions);
     return new NextResponse(new Uint8Array(buffer), {
       headers: {
         "Content-Type":
@@ -177,7 +221,7 @@ export async function GET(request: NextRequest) {
     });
   }
   // pdf
-  const pdf = await buildPdf(sermon.title, sermon.bible_ref, blocks);
+  const pdf = await buildPdf(sermon.title, sermon.bible_ref, sessions);
   return new NextResponse(pdf, {
     headers: {
       "Content-Type": "application/pdf",

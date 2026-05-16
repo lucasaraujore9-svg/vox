@@ -1,8 +1,11 @@
 "use client";
 
-// Card de uma sessão no editor. Contém todos os itens da sessão + "+ Item" inline.
-// Header: título editável + papel (Introdução/Tópico/Conclusão). Painel de sugestões
-// vive fora do card, no SermonEditorPanel.
+// Sessão dentro da "folha branca" do editor. Sem cards individuais por item:
+// cada item é uma área de texto rica (TipTap) com label de tipo em hover.
+// A barra de cor à esquerda fica no nível da SESSÃO, marcando o tópico.
+//
+// Modo `minimal` (folha em branco, framework=livre): esconde badge de papel,
+// dropdown de tipo, sugestões. Vira mesmo um doc corrido.
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -18,6 +21,7 @@ import { VOX_BLOCK_TYPES, type BlockTypeId, getBlockType } from "@/lib/mocks/blo
 import type { SessionNode, SessionRole } from "@/lib/sermons/sessions";
 import type { BibleVersionId } from "@/lib/bible/versions";
 import { InlineReferenceHints } from "@/components/bible/InlineReferenceHints";
+import { RichTextItem } from "@/components/editor/RichTextItem";
 import { cn } from "@/lib/utils";
 
 const ROLE_LABEL: Record<SessionRole, string> = {
@@ -37,21 +41,22 @@ const ROLE_COLOR: Record<SessionRole, string> = {
 interface SessionCardProps {
   session: SessionNode;
   index: number;
-  /** Versão bíblica usada pelo autocomplete de referências */
   bibleVersion?: BibleVersionId;
-  /** Sugestões do framework para esta sessão (informativo, não bloqueia) */
   suggestions?: {
     present: BlockTypeId[];
     missing: BlockTypeId[];
     extra: BlockTypeId[];
   };
+  /** Modo "folha em branco": esconde badges, dropdowns de tipo, sugestões. */
+  minimal?: boolean;
+  /** Primeira sessão da página? Usado para esconder o separador superior. */
+  isFirst?: boolean;
   onTitleChange?: (id: string, title: string) => void;
   onItemContentChange?: (sessionId: string, itemId: string, content: string) => void;
   onItemTypeChange?: (sessionId: string, itemId: string, type: BlockTypeId) => void;
   onAddItem?: (sessionId: string, type: BlockTypeId) => void;
   onRemoveItem?: (sessionId: string, itemId: string) => void;
   onRemoveSession?: (sessionId: string) => void;
-  /** Insere um item Texto Bíblico logo APÓS o item indicado */
   onInsertVerseAfter?: (
     sessionId: string,
     afterItemId: string,
@@ -65,6 +70,8 @@ export function SessionCard({
   index,
   bibleVersion = "acf",
   suggestions,
+  minimal = false,
+  isFirst = false,
   onTitleChange,
   onItemContentChange,
   onItemTypeChange,
@@ -74,62 +81,61 @@ export function SessionCard({
   onInsertVerseAfter,
 }: SessionCardProps) {
   const accent = ROLE_COLOR[session.role];
+
   return (
-    <section
-      className="relative rounded-2xl bg-card p-7"
-      style={{
-        border: "1px solid var(--vox-whisper)",
-        boxShadow: "var(--vox-shadow-card)",
-      }}
-    >
+    <section className={cn("relative", !isFirst && "pt-6")}>
+      {/* Barra vertical de cor à esquerda — marca o tópico/sessão.
+         A folha branca em volta é o container do SermonEditor. */}
       <span
-        className="absolute left-0 top-7 bottom-7 w-1 rounded-r"
+        className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full"
         style={{ background: accent }}
         aria-hidden
       />
 
-      <header className="flex items-start justify-between gap-4 mb-5">
+      <header className="flex items-start justify-between gap-4 mb-3 pl-5 sm:pl-7">
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-2">
-            <span
-              className="vox-mono text-xs text-vox-muted"
-              aria-label="Número da sessão"
-            >
-              {String(index + 1).padStart(2, "0")}
-            </span>
-            <Badge
-              variant="outline"
-              className="text-xs font-normal"
-              style={{ borderColor: accent, color: accent }}
-            >
-              {ROLE_LABEL[session.role]}
-            </Badge>
-            {suggestions ? (
-              <SuggestionPill
-                missingCount={suggestions.missing.length}
-                extraCount={suggestions.extra.length}
-              />
-            ) : null}
-          </div>
-          <Input
-            defaultValue={session.title}
-            onBlur={(e) => onTitleChange?.(session.id, e.target.value)}
-            className="border-0 px-0 focus-visible:ring-0 bg-transparent h-auto py-1"
-            style={{
-              fontFamily: "var(--vox-font-display)",
-              fontWeight: 600,
-              fontSize: "var(--vox-text-2xl)",
-              letterSpacing: "-0.01em",
-              color: "var(--vox-ink)",
-            }}
-          />
+          {!minimal ? (
+            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+              <span className="vox-mono text-xs text-vox-muted">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <Badge
+                variant="outline"
+                className="text-xs font-normal"
+                style={{ borderColor: accent, color: accent }}
+              >
+                {ROLE_LABEL[session.role]}
+              </Badge>
+              {suggestions ? (
+                <SuggestionPill
+                  missingCount={suggestions.missing.length}
+                  extraCount={suggestions.extra.length}
+                />
+              ) : null}
+            </div>
+          ) : null}
+          {!minimal || session.title || index > 0 ? (
+            <Input
+              defaultValue={session.title}
+              onBlur={(e) => onTitleChange?.(session.id, e.target.value)}
+              placeholder={minimal ? "Tópico (opcional)" : "Título da sessão"}
+              className="border-0 px-0 focus-visible:ring-0 bg-transparent h-auto py-0.5"
+              style={{
+                fontFamily: "var(--vox-font-display)",
+                fontWeight: 600,
+                fontSize: "var(--vox-text-2xl)",
+                letterSpacing: "-0.01em",
+                color: "var(--vox-ink)",
+              }}
+            />
+          ) : null}
         </div>
         {onRemoveSession ? (
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onRemoveSession(session.id)}
-            className="text-vox-muted hover:text-vox-destructive"
+            className="text-vox-muted hover:text-vox-destructive opacity-0 group-hover:opacity-100 hover:!opacity-100 transition-opacity -mr-2"
             aria-label="Remover sessão"
           >
             Remover
@@ -137,8 +143,8 @@ export function SessionCard({
         ) : null}
       </header>
 
-      {suggestions && suggestions.missing.length > 0 ? (
-        <p className="text-xs text-vox-prose mb-5">
+      {!minimal && suggestions && suggestions.missing.length > 0 ? (
+        <p className="text-xs text-vox-prose mb-4 pl-5 sm:pl-7">
           Sugestões do framework pra esta sessão:{" "}
           {suggestions.missing.map((id, idx) => {
             const block = getBlockType(id);
@@ -152,7 +158,7 @@ export function SessionCard({
         </p>
       ) : null}
 
-      <div className="space-y-3">
+      <div className="space-y-4 pl-5 sm:pl-7">
         {session.items.map((item) => {
           const type = getBlockType(item.type);
           if (!type) return null;
@@ -164,6 +170,7 @@ export function SessionCard({
               type={type.id}
               content={item.content}
               bibleVersion={bibleVersion}
+              minimal={minimal}
               onContentChange={onItemContentChange}
               onTypeChange={onItemTypeChange}
               onRemove={onRemoveItem}
@@ -173,7 +180,24 @@ export function SessionCard({
         })}
       </div>
 
-      <AddItemMenu sessionId={session.id} onAdd={onAddItem} />
+      {!minimal ? (
+        <div className="pl-5 sm:pl-7">
+          <AddItemMenu sessionId={session.id} onAdd={onAddItem} />
+        </div>
+      ) : (
+        <div className="pl-5 sm:pl-7 mt-3">
+          {onAddItem ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs text-vox-muted hover:text-vox-prose px-0 h-auto"
+              onClick={() => onAddItem(session.id, "notas_pessoais")}
+            >
+              + parágrafo
+            </Button>
+          ) : null}
+        </div>
+      )}
     </section>
   );
 }
@@ -213,6 +237,8 @@ interface SessionItemRowProps {
   type: BlockTypeId;
   content: string;
   bibleVersion?: BibleVersionId;
+  /** Modo folha em branco — sem header de tipo */
+  minimal?: boolean;
   onContentChange?: (sessionId: string, itemId: string, content: string) => void;
   onTypeChange?: (sessionId: string, itemId: string, type: BlockTypeId) => void;
   onRemove?: (sessionId: string, itemId: string) => void;
@@ -230,6 +256,7 @@ function SessionItemRow({
   type,
   content,
   bibleVersion = "acf",
+  minimal = false,
   onContentChange,
   onTypeChange,
   onRemove,
@@ -238,90 +265,68 @@ function SessionItemRow({
   const [localContent, setLocalContent] = useState(content);
   const blockType = getBlockType(type);
   if (!blockType) return null;
-  const wordCount = localContent.trim() ? localContent.trim().split(/\s+/).length : 0;
+
+  const isScripture = type === "texto_biblico" || type === "citacao";
 
   return (
-    <article
-      className={cn(
-        "relative rounded-lg p-4 group transition-all",
-        "bg-[var(--vox-surface-elev)]"
-      )}
-      style={{
-        border: "1px solid var(--vox-whisper)",
-      }}
-    >
-      <span
-        className="absolute left-0 top-4 bottom-4 w-0.5 rounded-r"
-        style={{ background: blockType.color }}
-        aria-hidden
-      />
-      <header className="flex items-center justify-between gap-3 mb-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
-            <span
-              className="inline-block size-1.5 rounded-full"
-              style={{ background: blockType.color }}
-            />
-            <p
-              className="vox-eyebrow hover:opacity-70 transition-opacity"
-              style={{ color: blockType.color }}
-            >
-              {blockType.label}
-            </p>
-            <span className="text-vox-muted text-xs">▾</span>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="max-h-72 overflow-y-auto">
-            {VOX_BLOCK_TYPES.map((b) => (
-              <DropdownMenuItem
-                key={b.id}
-                onSelect={() => onTypeChange?.(sessionId, itemId, b.id)}
+    <article className="relative group">
+      {!minimal ? (
+        <header className="flex items-center justify-between gap-3 mb-1.5">
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
+              <span
+                className="inline-block size-1.5 rounded-full"
+                style={{ background: blockType.color }}
+              />
+              <p
+                className="vox-eyebrow hover:opacity-70 transition-opacity"
+                style={{ color: blockType.color }}
               >
-                <span
-                  className="inline-block size-1.5 rounded-full mr-2"
-                  style={{ background: b.color }}
-                />
-                {b.label}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+                {blockType.label}
+              </p>
+              <span className="text-vox-muted text-xs">▾</span>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="max-h-72 overflow-y-auto">
+              {VOX_BLOCK_TYPES.map((b) => (
+                <DropdownMenuItem
+                  key={b.id}
+                  onSelect={() => onTypeChange?.(sessionId, itemId, b.id)}
+                >
+                  <span
+                    className="inline-block size-1.5 rounded-full mr-2"
+                    style={{ background: b.color }}
+                  />
+                  {b.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-        <div className="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-          <span className="vox-mono text-xs text-vox-muted">{wordCount} palavras</span>
           {onRemove ? (
             <button
               type="button"
               onClick={() => onRemove(sessionId, itemId)}
-              className="text-xs text-vox-muted hover:text-vox-destructive"
+              className="text-xs text-vox-muted hover:text-vox-destructive opacity-0 group-hover:opacity-100 transition-opacity"
               aria-label="Remover item"
             >
               Remover
             </button>
           ) : null}
-        </div>
-      </header>
+        </header>
+      ) : null}
 
-      <textarea
-        value={localContent}
-        onChange={(e) => {
-          setLocalContent(e.target.value);
-          onContentChange?.(sessionId, itemId, e.target.value);
-        }}
-        placeholder={blockType.hint}
-        rows={2}
-        className="w-full bg-transparent border-0 outline-none resize-none focus-visible:ring-0 text-vox-ink placeholder:text-vox-muted"
-        style={{
-          fontFamily:
-            type === "texto_biblico" || type === "citacao"
-              ? "var(--vox-font-display)"
-              : "var(--vox-font-ui)",
-          fontStyle: type === "texto_biblico" ? "italic" : "normal",
-          fontSize: type === "texto_biblico" ? "var(--vox-text-md)" : "var(--vox-text-base)",
-          lineHeight: type === "texto_biblico" ? 1.65 : 1.55,
+      <RichTextItem
+        initialContent={localContent}
+        placeholder={minimal ? "Comece a escrever…" : blockType.hint}
+        variant={isScripture ? "scripture" : "default"}
+        bibleVersion={bibleVersion}
+        onChange={(html) => {
+          setLocalContent(html);
+          onContentChange?.(sessionId, itemId, html);
         }}
       />
 
-      {/* Refs bíblicas detectadas no texto — pílulas com preview + inserir */}
+      {/* Refs bíblicas detectadas no texto */}
       <InlineReferenceHints
         text={localContent}
         version={bibleVersion}
@@ -329,6 +334,17 @@ function SessionItemRow({
           onInsertVerseAfter?.(sessionId, itemId, canonical, fullText)
         }
       />
+
+      {minimal && onRemove ? (
+        <button
+          type="button"
+          onClick={() => onRemove(sessionId, itemId)}
+          className="absolute -right-2 top-0 text-xs text-vox-muted hover:text-vox-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+          aria-label="Remover parágrafo"
+        >
+          ✕
+        </button>
+      ) : null}
     </article>
   );
 }
@@ -341,10 +357,10 @@ function AddItemMenu({
   onAdd?: (sessionId: string, type: BlockTypeId) => void;
 }) {
   return (
-    <div className="mt-5">
+    <div className="mt-4">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="sm" className="text-xs text-vox-prose">
+          <Button variant="ghost" size="sm" className="text-xs text-vox-prose px-0 h-auto">
             + Item
           </Button>
         </DropdownMenuTrigger>

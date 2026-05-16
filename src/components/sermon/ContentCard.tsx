@@ -34,9 +34,11 @@ function formatRelative(iso: string): string {
 
 export function ContentCard({
   sermon,
+  archived = false,
   className,
 }: {
   sermon: MockSermon;
+  archived?: boolean;
   className?: string;
 }) {
   const accent = `var(--vox-fw-${sermon.framework})`;
@@ -46,6 +48,7 @@ export function ContentCard({
       className={cn(
         "group block relative rounded-xl p-6 bg-card transition-all",
         "border hover:shadow-[var(--vox-shadow-card-hover)]",
+        archived && "opacity-75",
         className
       )}
       style={{
@@ -65,9 +68,23 @@ export function ContentCard({
             {CONTENT_TYPE_LABEL[sermon.content_type]}
           </span>
         </div>
-        <Badge variant="secondary" className="text-xs font-normal">
-          {STATUS_LABEL[sermon.status]}
-        </Badge>
+        <div className="flex items-center gap-2">
+          {archived ? (
+            <Badge
+              variant="outline"
+              className="text-xs font-normal"
+              style={{
+                borderColor: "var(--vox-gold)",
+                color: "var(--vox-gold)",
+              }}
+            >
+              Arquivado
+            </Badge>
+          ) : null}
+          <Badge variant="secondary" className="text-xs font-normal">
+            {STATUS_LABEL[sermon.status]}
+          </Badge>
+        </div>
       </div>
 
       <h3 className="vox-h3 mt-3 text-lg group-hover:text-vox-forest transition-colors">

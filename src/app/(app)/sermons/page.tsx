@@ -20,11 +20,13 @@ interface PageProps {
     type?: SermonType;
     series?: string;
     sort?: "recent" | "oldest" | "title" | "preached";
-    view?: "flat" | "grouped";
+    view?: "flat" | "grouped" | "arquivo";
   }>;
 }
 
-async function loadSermons(filters: Awaited<PageProps["searchParams"]>): Promise<MockSermon[]> {
+async function loadSermons(
+  filters: Awaited<PageProps["searchParams"]>
+): Promise<MockSermon[]> {
   const useSupabase =
     Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) &&
     Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
@@ -38,6 +40,7 @@ async function loadSermons(filters: Awaited<PageProps["searchParams"]>): Promise
         type: filters.type,
         seriesId: filters.series,
         sort: filters.sort ?? "recent",
+        archived: filters.view === "arquivo" ? "archived" : "active",
         limit: 60,
       });
       return rows.map((s) => ({
@@ -76,11 +79,16 @@ async function loadSeries(): Promise<SeriesRow[]> {
   if (!useSupabase) return [];
   try {
     const supabase = await createClient();
+    // Embed agregado: PostgREST devolve sermons como array — contamos no app.
     const { data } = await supabase
       .from("series")
-      .select("id, title, sermon_count")
+      .select("id, title, sermons:sermons(id)")
       .order("created_at", { ascending: false });
-    return (data as SeriesRow[] | null) ?? [];
+    return (data ?? []).map((s) => ({
+      id: s.id as string,
+      title: s.title as string,
+      sermon_count: Array.isArray(s.sermons) ? s.sermons.length : 0,
+    }));
   } catch {
     return [];
   }
@@ -103,68 +111,104 @@ export default async function SermonsBankPage({ searchParams }: PageProps) {
     loadSeries(),
   ]);
 
+  const isArchive = filters.view === "arquivo";
+
   return (
     <div className="space-y-8">
       <header className="flex items-end justify-between gap-6 flex-wrap">
         <div>
-          <p className="vox-eyebrow">Arquivo</p>
-          <h1 className="vox-h1 mt-3">Esboços</h1>
+          <p className="vox-eyebrow">{isArchive ? "Arquivados" : "Arquivo"}</p>
+          <h1 className="vox-h1 mt-3">
+            {isArchive ? "Manuscritos arquivados" : "Esboços"}
+          </h1>
           <p className="vox-body mt-3 max-w-xl">
-            Todo o seu ministério em um lugar — sermões, palestras e aulas.
+            {isArchive
+              ? "Manuscritos fora do banco principal. Você pode tirar do arquivo ou apagar permanentemente."
+              : "Todo o seu ministério em um lugar — sermões, palestras e aulas."}
           </p>
         </div>
-        <Button asChild size="lg">
-          <Link href="/sermons/new">Novo manuscrito</Link>
-        </Button>
+        {!isArchive ? (
+          <Button asChild size="lg">
+            <Link href="/sermons/new">Novo manuscrito</Link>
+          </Button>
+        ) : (
+          <Button asChild variant="outline">
+            <Link href="/sermons">← Voltar ao banco</Link>
+          </Button>
+        )}
       </header>
 
       <section className="flex flex-col lg:flex-row gap-8">
-        <SermonFiltersAside filters={filters} series={seriesList} />
+        {!isArchive ? (
+          <SermonFiltersAside filters={filters} series={seriesList} />
+        ) : null}
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-5 gap-3 flex-wrap">
             <p className="vox-mono text-xs text-vox-muted">
               {sermons.length} manuscritos {filters.q ? `· busca "${filters.q}"` : ""}
             </p>
-            <div
-              className="inline-flex rounded-md border p-0.5"
-              style={{ borderColor: "var(--vox-whisper)" }}
-            >
-              <Link
-                href={buildUrl(filters, "view", undefined)}
-                className="vox-mono text-xs px-3 py-1 rounded-sm transition-colors"
-                style={{
-                  background:
-                    filters.view !== "grouped" ? "var(--vox-forest)" : "transparent",
-                  color: filters.view !== "grouped" ? "#fff" : "var(--vox-prose)",
-                }}
-              >
-                Recentes
-              </Link>
-              <Link
-                href={buildUrl(filters, "view", "grouped")}
-                className="vox-mono text-xs px-3 py-1 rounded-sm transition-colors"
-                style={{
-                  background:
-                    filters.view === "grouped" ? "var(--vox-forest)" : "transparent",
-                  color: filters.view === "grouped" ? "#fff" : "var(--vox-prose)",
-                }}
-              >
-                Por série
-              </Link>
-            </div>
+            {!isArchive ? (
+              <div className="flex items-center gap-3 flex-wrap">
+                <div
+                  className="inline-flex rounded-md border p-0.5"
+                  style={{ borderColor: "var(--vox-whisper)" }}
+                >
+                  <Link
+                    href={buildUrl(filters, "view", undefined)}
+                    className="vox-mono text-xs px-3 py-1 rounded-sm transition-colors"
+                    style={{
+                      background:
+                        filters.view !== "grouped"
+                          ? "var(--vox-forest)"
+                          : "transparent",
+                      color:
+                        filters.view !== "grouped" ? "#fff" : "var(--vox-prose)",
+                    }}
+                  >
+                    Recentes
+                  </Link>
+                  <Link
+                    href={buildUrl(filters, "view", "grouped")}
+                    className="vox-mono text-xs px-3 py-1 rounded-sm transition-colors"
+                    style={{
+                      background:
+                        filters.view === "grouped"
+                          ? "var(--vox-forest)"
+                          : "transparent",
+                      color:
+                        filters.view === "grouped" ? "#fff" : "var(--vox-prose)",
+                    }}
+                  >
+                    Por série
+                  </Link>
+                </div>
+                <Link
+                  href="/sermons?view=arquivo"
+                  className="vox-mono text-xs text-vox-muted hover:text-vox-ink"
+                >
+                  Arquivados →
+                </Link>
+              </div>
+            ) : null}
           </div>
 
           {sermons.length === 0 ? (
             <p className="vox-body text-center py-12 text-vox-muted">
-              Nenhum manuscrito encontrado com esses filtros.
+              {isArchive
+                ? "Nenhum manuscrito arquivado."
+                : "Nenhum manuscrito encontrado com esses filtros."}
             </p>
           ) : filters.view === "grouped" ? (
             <GroupedView sermons={sermons} />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {sermons.map((sermon) => (
-                <ContentCard key={sermon.id} sermon={sermon} />
+                <ContentCard
+                  key={sermon.id}
+                  sermon={sermon}
+                  archived={isArchive}
+                />
               ))}
             </div>
           )}

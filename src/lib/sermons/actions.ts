@@ -92,7 +92,90 @@ export async function createSermonAction(input: {
   return { ok: true, id: data.id };
 }
 
-export type SoftDeleteResult = { ok: true } | { ok: false; error: string };
+export type MutationResult = { ok: true } | { ok: false; error: string };
+
+function demoBlocked(verb: string): MutationResult {
+  return {
+    ok: false,
+    error: `Modo demo: configure Supabase em .env.local pra ${verb}.`,
+  };
+}
+
+async function getAuthedClient(): Promise<
+  | { ok: true; supabase: Awaited<ReturnType<typeof createClient>>; userId: string }
+  | { ok: false; error: string }
+> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return { ok: false, error: "Supabase não configurado" };
+  }
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Não autenticado" };
+  return { ok: true, supabase, userId: user.id };
+}
+
+export async function archiveSermonAction(id: string): Promise<MutationResult> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return demoBlocked("arquivar manuscritos");
+  const auth = await getAuthedClient();
+  if (!auth.ok) return { ok: false, error: auth.error };
+
+  const { error } = await auth.supabase
+    .from("sermons")
+    .update({ archived_at: new Date().toISOString() })
+    .eq("id", id)
+    .eq("user_id", auth.userId);
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath("/sermons");
+  revalidatePath("/dashboard");
+  revalidatePath(`/sermons/${id}`);
+  return { ok: true };
+}
+
+export async function unarchiveSermonAction(id: string): Promise<MutationResult> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return demoBlocked("desarquivar manuscritos");
+  const auth = await getAuthedClient();
+  if (!auth.ok) return { ok: false, error: auth.error };
+
+  const { error } = await auth.supabase
+    .from("sermons")
+    .update({ archived_at: null })
+    .eq("id", id)
+    .eq("user_id", auth.userId);
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath("/sermons");
+  revalidatePath("/dashboard");
+  revalidatePath(`/sermons/${id}`);
+  return { ok: true };
+}
+
+/**
+ * Apaga permanentemente. Só deveria ser oferecido a partir da lista de arquivados.
+ * Não há retorno: a row deixa de existir.
+ */
+export async function permanentDeleteSermonAction(
+  id: string
+): Promise<MutationResult> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return demoBlocked("apagar manuscritos");
+  const auth = await getAuthedClient();
+  if (!auth.ok) return { ok: false, error: auth.error };
+
+  const { error } = await auth.supabase
+    .from("sermons")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", auth.userId);
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath("/sermons");
+  revalidatePath("/dashboard");
+  return { ok: true };
+}
+
+export type SoftDeleteResult = MutationResult;
 
 export async function softDeleteSermonAction(
   id: string

@@ -70,9 +70,24 @@ export function SermonEditor({
       // SermonContent é um JSON serializável (sessions + items); cast pra
       // Json esperado pela coluna jsonb sem perder tipo no editor.
       const payload = JSON.parse(JSON.stringify(next));
+      const wordCount = next.sessions.reduce(
+        (sumS, s) =>
+          sumS +
+          s.title.split(/\s+/).filter(Boolean).length +
+          s.items.reduce(
+            (sumI, i) =>
+              sumI +
+              i.content
+                .replace(/<[^>]+>/g, " ")
+                .split(/\s+/)
+                .filter(Boolean).length,
+            0
+          ),
+        0
+      );
       const { error } = await supabase
         .from("sermons")
-        .update({ content: payload })
+        .update({ content: payload, word_count: wordCount })
         .eq("id", sermonId);
       if (error) throw error;
     },
@@ -213,8 +228,11 @@ export function SermonEditor({
         ? "var(--vox-prose)"
         : "var(--vox-muted)";
 
+  // Folha em branco: editor minimal sem badges, sem dropdowns, sem framework hints.
+  const isBlank = framework === "livre";
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {sermonId ? (
         <div className="flex items-center justify-end">
           <span
@@ -227,44 +245,75 @@ export function SermonEditor({
         </div>
       ) : null}
 
-      {content.sessions.map((session, idx) => {
-        const advice = adviseSession(session, framework);
-        return (
-          <SessionCard
-            key={session.id}
-            session={session}
-            index={idx}
-            bibleVersion={bibleVersion}
-            suggestions={advice}
-            onTitleChange={handleTitleChange}
-            onItemContentChange={handleItemContentChange}
-            onItemTypeChange={handleItemTypeChange}
-            onAddItem={handleAddItem}
-            onRemoveItem={handleRemoveItem}
-            onRemoveSession={
-              content.sessions.length > 1 ? handleRemoveSession : undefined
-            }
-            onInsertVerseAfter={handleInsertVerseAfter}
-          />
-        );
-      })}
+      {/* "Folha branca" — uma única superfície contínua. Tópicos ficam dentro,
+         separados apenas por espaço e uma barra de cor à esquerda. Não há
+         cards individuais. */}
+      <article
+        className="vox-paper rounded-xl bg-card px-6 py-8 sm:px-12 sm:py-12"
+        style={{
+          border: "1px solid var(--vox-whisper)",
+          boxShadow: "var(--vox-shadow-card)",
+        }}
+      >
+        <div className="space-y-2">
+          {content.sessions.map((session, idx) => {
+            const advice = adviseSession(session, framework);
+            return (
+              <SessionCard
+                key={session.id}
+                session={session}
+                index={idx}
+                isFirst={idx === 0}
+                bibleVersion={bibleVersion}
+                suggestions={isBlank ? undefined : advice}
+                minimal={isBlank}
+                onTitleChange={handleTitleChange}
+                onItemContentChange={handleItemContentChange}
+                onItemTypeChange={handleItemTypeChange}
+                onAddItem={handleAddItem}
+                onRemoveItem={handleRemoveItem}
+                onRemoveSession={
+                  content.sessions.length > 1 ? handleRemoveSession : undefined
+                }
+                onInsertVerseAfter={handleInsertVerseAfter}
+              />
+            );
+          })}
+        </div>
 
-      <footer className="flex items-center gap-2 pt-2">
-        <Button variant="outline" size="sm" onClick={() => handleAddSession("topico")}>
-          + Tópico
-        </Button>
-        <Button variant="ghost" size="sm" onClick={() => handleAddSession("introducao")}>
-          + Introdução
-        </Button>
-        <Button variant="ghost" size="sm" onClick={() => handleAddSession("conclusao")}>
-          + Conclusão
-        </Button>
-        <Button variant="ghost" size="sm" onClick={() => handleAddSession("livre")}>
-          + Sessão livre
-        </Button>
-      </footer>
+        <div
+          className="mt-8 pt-6"
+          style={{ borderTop: "1px dashed var(--vox-whisper)" }}
+        >
+          {isBlank ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleAddSession("topico")}
+              className="text-vox-prose"
+            >
+              + Inserir tópico
+            </Button>
+          ) : (
+            <div className="flex items-center gap-2 flex-wrap">
+              <Button variant="outline" size="sm" onClick={() => handleAddSession("topico")}>
+                + Tópico
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => handleAddSession("introducao")}>
+                + Introdução
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => handleAddSession("conclusao")}>
+                + Conclusão
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => handleAddSession("livre")}>
+                + Sessão livre
+              </Button>
+            </div>
+          )}
+        </div>
+      </article>
 
-      {/* item count utility uses getBlockType to keep tree-shaker happy in tests */}
+      {/* item count utility uses getBlockType to keep tree-shaker happy */}
       <span className="sr-only">{getBlockType("texto_biblico")?.label}</span>
     </div>
   );

@@ -14,7 +14,7 @@ import { EngagementsSection } from "@/components/sermon/EngagementsSection";
 import { SermonActionsMenu } from "@/components/sermon/SermonActionsMenu";
 import { getSermon } from "@/lib/sermons/queries";
 import { parseSermonContent } from "@/lib/sermons/sessions";
-import { getMockSlides } from "@/lib/mocks/slides";
+import { listSlidesForSermon } from "@/lib/sermons/slides";
 import { getMockVersions } from "@/lib/mocks/versions";
 import { getMockEngagements } from "@/lib/mocks/engagements";
 import { VOX_FRAMEWORKS, type FrameworkId } from "@/lib/mocks/frameworks";
@@ -59,11 +59,18 @@ export default async function SermonEditorPage({ params }: PageProps) {
     updated_at: row.updated_at as string,
     created_at: row.created_at as string,
   };
+  const isArchived = Boolean(row.archived_at);
 
   const framework = VOX_FRAMEWORKS.find((f) => f.id === sermon.framework);
   const content = parseSermonContent(row.content, sermon.framework);
   const versions = getMockVersions(sermon.id);
   const engagements = getMockEngagements(sermon.id);
+  const slides =
+    sermon.type === "apresentação"
+      ? await listSlidesForSermon(sermon.id, sermon.framework)
+      : [];
+
+  const isBlank = sermon.framework === "livre";
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 min-w-0">
@@ -77,24 +84,41 @@ export default async function SermonEditorPage({ params }: PageProps) {
               ← Esboços
             </Link>
             <Separator orientation="vertical" className="h-4" />
-            <span
-              className="inline-block size-2 rounded-full"
-              style={{ background: `var(--vox-fw-${sermon.framework})` }}
-            />
-            <span
-              className="vox-eyebrow"
-              style={{ color: `var(--vox-fw-${sermon.framework})` }}
-            >
-              {framework?.name}
-            </span>
+            {isBlank ? (
+              <span className="vox-eyebrow text-vox-muted">Folha em branco</span>
+            ) : (
+              <>
+                <span
+                  className="inline-block size-2 rounded-full"
+                  style={{ background: `var(--vox-fw-${sermon.framework})` }}
+                />
+                <span
+                  className="vox-eyebrow"
+                  style={{ color: `var(--vox-fw-${sermon.framework})` }}
+                >
+                  {framework?.name}
+                </span>
+              </>
+            )}
             <Badge variant="secondary" className="text-xs font-normal ml-1">
               {STATUS_LABEL[sermon.status]}
             </Badge>
+            {isArchived ? (
+              <Badge
+                variant="outline"
+                className="text-xs font-normal"
+                style={{ borderColor: "var(--vox-gold)", color: "var(--vox-gold)" }}
+              >
+                Arquivado
+              </Badge>
+            ) : null}
           </div>
-          <div className="flex items-center gap-2">
-            <span className="vox-mono text-xs text-vox-muted hidden sm:inline">
-              {content.sessions.length} sessões
-            </span>
+          <div className="flex items-center gap-2 flex-wrap">
+            {!isBlank ? (
+              <span className="vox-mono text-xs text-vox-muted hidden sm:inline">
+                {content.sessions.length} sessões
+              </span>
+            ) : null}
             <VersionsDialog
               sermonId={sermon.id}
               fallbackVersions={versions}
@@ -107,7 +131,7 @@ export default async function SermonEditorPage({ params }: PageProps) {
             <Button asChild variant="outline" size="sm">
               <Link href={`/sermons/${sermon.id}/present`}>Apresentar</Link>
             </Button>
-            <SermonActionsMenu sermon={sermon} />
+            <SermonActionsMenu sermon={sermon} isArchived={isArchived} />
           </div>
         </div>
 
@@ -145,14 +169,14 @@ export default async function SermonEditorPage({ params }: PageProps) {
 
       {sermon.type === "apresentação" ? (
         <SlidesPanel
-          slides={getMockSlides(sermon.id).map((s) => ({
+          slides={slides.map((s) => ({
             id: s.id,
             order: s.order,
             image_url: s.image_url,
             comment_items: s.comment_items,
           }))}
           framework={sermon.framework}
-          empty={getMockSlides(sermon.id).length === 0}
+          empty={slides.length === 0}
         />
       ) : (
         <SermonEditor

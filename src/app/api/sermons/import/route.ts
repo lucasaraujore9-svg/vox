@@ -1,10 +1,15 @@
 // Issue 034 — Importação de conteúdo (.docx ou texto).
 // Recebe FormData com `file` (opcional) ou `text` + metadados.
+// Gera SermonContent ({ sessions: [...] }) — mesma estrutura que o editor lê/escreve.
 
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { parseDocx, parsePlainText } from "@/lib/import/parser";
+import {
+  parseDocxToContent,
+  parseTextToContent,
+  countWords,
+} from "@/lib/import/parser";
 import type { Json } from "@/types/database";
 
 export const runtime = "nodejs";
@@ -23,6 +28,16 @@ const metaSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  if (
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ) {
+    return NextResponse.json(
+      { error: "Modo demo: configure Supabase em .env.local pra importar." },
+      { status: 503 }
+    );
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -46,17 +61,17 @@ export async function POST(request: NextRequest) {
   const file = formData.get("file");
   const text = formData.get("text");
 
-  let blocks;
+  let content;
   if (file instanceof File) {
     if (file.size > MAX_BYTES) {
       return NextResponse.json({ error: "Arquivo excede 10MB" }, { status: 413 });
     }
     const ab = await file.arrayBuffer();
     if (file.name.toLowerCase().endsWith(".docx")) {
-      blocks = await parseDocx(ab);
+      content = await parseDocxToContent(ab, meta.data.framework);
     } else if (file.type.startsWith("text/") || file.name.endsWith(".txt")) {
       const decoder = new TextDecoder();
-      blocks = parsePlainText(decoder.decode(ab));
+      content = parseTextToContent(decoder.decode(ab), meta.data.framework);
     } else {
       return NextResponse.json(
         { error: "Formato não suportado. Use .docx ou .txt." },
@@ -64,7 +79,7 @@ export async function POST(request: NextRequest) {
       );
     }
   } else if (typeof text === "string" && text.trim().length > 0) {
-    blocks = parsePlainText(text);
+    content = parseTextToContent(text, meta.data.framework);
   } else {
     return NextResponse.json(
       { error: "Envie um arquivo ou cole o texto" },
@@ -72,7 +87,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (blocks.length === 0) {
+  if (content.sessions.length === 0) {
     return NextResponse.json(
       { error: "Não foi possível extrair conteúdo" },
       { status: 422 }
@@ -87,11 +102,8 @@ export async function POST(request: NextRequest) {
       framework: meta.data.framework,
       content_type: meta.data.content_type,
       bible_ref: meta.data.bible_ref ?? null,
-      content: blocks as unknown as Json,
-      word_count: blocks.reduce(
-        (sum, b) => sum + (b.content?.split(/\s+/).filter(Boolean).length ?? 0),
-        0
-      ),
+      content: content as unknown as Json,
+      word_count: countWords(content),
     })
     .select("id")
     .single();
@@ -103,5 +115,10 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  return NextResponse.json({ ok: true, id: data.id, blocks: blocks.length });
+  return NextResponse.json({
+    ok: true,
+    id: data.id,
+    sessions: content.sessions.length,
+    items: content.sessions.reduce((sum, s) => sum + s.items.length, 0),
+  });
 }
