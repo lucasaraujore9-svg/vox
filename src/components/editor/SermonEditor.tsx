@@ -255,7 +255,7 @@ export function SermonEditor({
           boxShadow: "var(--vox-shadow-card)",
         }}
       >
-        <div className="space-y-2">
+        <div>
           {content.sessions.map((session, idx) => {
             const advice = adviseSession(session, framework);
             return (

@@ -83,16 +83,16 @@ export function SessionCard({
   const accent = ROLE_COLOR[session.role];
 
   return (
-    <section className={cn("relative", !isFirst && "pt-20")}>
-      {/* Barra vertical de cor à esquerda — marca o tópico/sessão.
-         A folha branca em volta é o container do SermonEditor. */}
+    <section className={cn("relative py-4", !isFirst && "mt-16")}>
+      {/* Barra vertical de cor à esquerda — abraça o conteúdo do section,
+         com 16px de respiro topo/baixo (py-4) e 16px de distância até o texto. */}
       <span
-        className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full"
+        className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full"
         style={{ background: accent }}
         aria-hidden
       />
 
-      <header className="flex items-start justify-between gap-3 mb-3 pl-4 sm:pl-7">
+      <header className="flex items-start justify-between gap-3 mb-3 pl-[19px]">
         <div className="flex-1 min-w-0">
           {!minimal ? (
             <div className="flex items-center gap-2 mb-1.5 flex-wrap">
@@ -144,7 +144,7 @@ export function SessionCard({
       </header>
 
       {!minimal && suggestions && suggestions.missing.length > 0 ? (
-        <p className="text-xs text-vox-prose mb-4 pl-4 sm:pl-7">
+        <p className="text-xs text-vox-prose mb-4 pl-[19px]">
           Sugestões do framework pra esta sessão:{" "}
           {suggestions.missing.map((id, idx) => {
             const block = getBlockType(id);
@@ -158,7 +158,7 @@ export function SessionCard({
         </p>
       ) : null}
 
-      <div className="space-y-4 pl-4 sm:pl-7">
+      <div className="space-y-4 pl-[19px]">
         {session.items.map((item) => {
           const type = getBlockType(item.type);
           if (!type) return null;
@@ -181,11 +181,11 @@ export function SessionCard({
       </div>
 
       {!minimal ? (
-        <div className="pl-4 sm:pl-7">
+        <div className="pl-[19px]">
           <AddItemMenu sessionId={session.id} onAdd={onAddItem} />
         </div>
       ) : (
-        <div className="pl-4 sm:pl-7 mt-3">
+        <div className="pl-[19px] mt-3">
           {onAddItem ? (
             <Button
               variant="ghost"
