@@ -13,6 +13,11 @@ export interface SessionItem {
   /** TipTap HTML ou texto simples */
   content: string;
   order: number;
+  /** Rótulo específico do framework (ex: "O Gancho", "Argumento", "Clímax").
+      Quando presente, substitui o label padrão do BlockType na UI do editor. */
+  label?: string;
+  /** Placeholder específico do framework, mostrado dentro do editor quando vazio. */
+  hint?: string;
 }
 
 export interface SessionNode {
@@ -29,12 +34,21 @@ export interface SermonContent {
 
 /**
  * Esqueleto inicial — o que cada framework cria quando o sermão nasce.
- * Cada entrada vira uma sessão com itens já presentes (em branco).
+ * Cada item carrega o tipo de bloco subjacente + rótulo idiomático do
+ * framework + hint que aparece como placeholder dentro do editor.
  */
+type SkeletonItem = {
+  type: BlockTypeId;
+  /** Rótulo do framework (ex: "O Gancho"). Substitui o label padrão do tipo. */
+  label?: string;
+  /** Placeholder dentro do editor pra esse passo específico. */
+  hint?: string;
+};
+
 type SkeletonSession = {
   title: string;
   role: SessionRole;
-  items: BlockTypeId[];
+  items: SkeletonItem[];
 };
 
 export const FRAMEWORK_SKELETONS: Record<FrameworkId, SkeletonSession[]> = {
@@ -42,135 +56,243 @@ export const FRAMEWORK_SKELETONS: Record<FrameworkId, SkeletonSession[]> = {
     {
       title: "Introdução",
       role: "introducao",
-      items: ["texto_biblico", "contexto", "introducao"],
+      items: [
+        {
+          type: "contexto",
+          label: "Contexto histórico",
+          hint: "Autor, audiência original, ocasião — o cenário em que o texto foi escrito.",
+        },
+        {
+          type: "texto_biblico",
+          label: "Texto base",
+          hint: "Cole ou digite a passagem completa que vai expor.",
+        },
+        {
+          type: "introducao",
+          label: "Big Idea",
+          hint: "Uma frase que captura a tese central do trecho.",
+        },
+      ],
     },
     {
       title: "Ponto 1",
       role: "topico",
-      items: ["ponto_principal", "subponto", "aplicacao"],
+      items: [
+        { type: "ponto_principal", label: "Argumento do texto", hint: "O que esses versículos afirmam?" },
+        { type: "subponto", label: "Explicação", hint: "Verso a verso — gramática, sintaxe, palavras-chave." },
+        { type: "aplicacao", label: "Aplicação", hint: "O que isso pede da congregação hoje?" },
+      ],
     },
     {
       title: "Ponto 2",
       role: "topico",
-      items: ["ponto_principal", "subponto", "aplicacao"],
+      items: [
+        { type: "ponto_principal", label: "Argumento do texto", hint: "O que esses versículos afirmam?" },
+        { type: "subponto", label: "Explicação", hint: "Verso a verso." },
+        { type: "aplicacao", label: "Aplicação", hint: "Aplicação concreta." },
+      ],
     },
     {
       title: "Ponto 3",
       role: "topico",
-      items: ["ponto_principal", "subponto", "aplicacao"],
+      items: [
+        { type: "ponto_principal", label: "Argumento do texto", hint: "O que esses versículos afirmam?" },
+        { type: "subponto", label: "Explicação", hint: "Verso a verso." },
+        { type: "aplicacao", label: "Aplicação", hint: "Aplicação concreta." },
+      ],
     },
     {
       title: "Conclusão",
       role: "conclusao",
-      items: ["conclusao", "oracao"],
+      items: [
+        { type: "conclusao", label: "Síntese", hint: "Recapitule a Big Idea com os 3 pontos." },
+        { type: "aplicacao", label: "Apelo final", hint: "Para onde o texto leva a congregação?" },
+        { type: "oracao", label: "Oração", hint: "Encerramento ou comissionamento." },
+      ],
     },
   ],
   textual: [
     {
       title: "Introdução",
       role: "introducao",
-      items: ["texto_biblico", "introducao"],
+      items: [
+        { type: "pergunta_retorica", label: "Pergunta de partida", hint: "Uma pergunta que prepara o ouvinte para o texto." },
+        { type: "texto_biblico", label: "Texto base", hint: "A sentença, parágrafo ou unidade curta que será pregada." },
+        { type: "proposicao", label: "Tese", hint: "Em uma frase: o que o autor está afirmando aqui?" },
+      ],
     },
     {
       title: "Ponto 1",
       role: "topico",
-      items: ["ponto_principal", "subponto"],
+      items: [
+        { type: "ponto_principal", label: "Argumento", hint: "Sai da estrutura sintática do texto (causa, contraste, lista)." },
+        { type: "subponto", label: "Suporte do texto", hint: "Que palavra ou verbo do trecho fundamenta este ponto?" },
+        { type: "aplicacao", label: "Aplicação", hint: "O verbo do texto pede o quê do ouvinte?" },
+      ],
     },
     {
       title: "Ponto 2",
       role: "topico",
-      items: ["ponto_principal", "subponto"],
-    },
-    {
-      title: "Aplicação",
-      role: "topico",
-      items: ["aplicacao"],
+      items: [
+        { type: "ponto_principal", label: "Argumento", hint: "Continuação da gramática do texto." },
+        { type: "subponto", label: "Suporte do texto", hint: "Palavra ou verbo de apoio." },
+        { type: "aplicacao", label: "Aplicação", hint: "Aplicação concreta." },
+      ],
     },
     {
       title: "Conclusão",
       role: "conclusao",
-      items: ["conclusao"],
+      items: [
+        { type: "conclusao", label: "Recapitulação", hint: "Volte à tese." },
+        { type: "aplicacao", label: "Apelo", hint: "Um chamado claro." },
+      ],
     },
   ],
   narrativo: [
     {
       title: "Cenário",
       role: "introducao",
-      items: ["texto_biblico", "contexto"],
+      items: [
+        { type: "texto_biblico", label: "Texto base", hint: "A narrativa bíblica que será contada." },
+        { type: "contexto", label: "Cenário", hint: "Personagens, lugar, época — situe o ouvinte na cena." },
+      ],
     },
     {
       title: "Tensão",
       role: "topico",
-      items: ["ponto_principal", "ilustracao"],
+      items: [
+        { type: "ponto_principal", label: "Tensão", hint: "O que está em jogo? Qual é o conflito da narrativa?" },
+        { type: "ilustracao", label: "Eco contemporâneo", hint: "Uma ressonância da tensão na vida do ouvinte." },
+      ],
     },
     {
       title: "Reviravolta",
       role: "topico",
-      items: ["ponto_principal", "ilustracao"],
+      items: [
+        { type: "ponto_principal", label: "Reviravolta", hint: "O movimento que muda tudo na história — o evangelho dentro do enredo." },
+        { type: "ilustracao", label: "Significado", hint: "Como esse movimento aponta para Cristo?" },
+      ],
     },
     {
       title: "Aplicação",
       role: "topico",
-      items: ["aplicacao"],
+      items: [
+        { type: "aplicacao", label: "Identificação", hint: "Com qual personagem o ouvinte se identifica? O que isso pede dele?" },
+      ],
     },
     {
       title: "Conclusão",
       role: "conclusao",
-      items: ["conclusao"],
+      items: [
+        { type: "conclusao", label: "Síntese", hint: "Volte à reviravolta — o coração da história." },
+        { type: "aplicacao", label: "Apelo", hint: "Convite à fé / à ação." },
+      ],
     },
   ],
   tematico: [
     {
       title: "Introdução",
       role: "introducao",
-      items: ["introducao", "pergunta_retorica"],
+      items: [
+        {
+          type: "ilustracao",
+          label: "O Gancho",
+          hint: "Uma frase, pergunta ou história para captar a atenção da audiência imediatamente.",
+        },
+        {
+          type: "proposicao",
+          label: "O Tema",
+          hint: "Apresentação clara do assunto que será abordado.",
+        },
+        {
+          type: "texto_biblico",
+          label: "O Texto Base",
+          hint: "Leitura do versículo principal que fundamenta o tema.",
+        },
+        {
+          type: "introducao",
+          label: "O Propósito",
+          hint: "Breve explicação de por que este assunto é importante para a vida prática dos ouvintes.",
+        },
+      ],
     },
     {
-      title: "Voz 1",
+      title: "Tópico 1",
       role: "topico",
-      items: ["texto_biblico", "ponto_principal"],
+      items: [
+        { type: "ponto_principal", label: "Argumento", hint: "A declaração ou ideia central deste tópico." },
+        { type: "texto_biblico", label: "Fundamentação", hint: "Citação de um ou mais textos bíblicos que apoiam a declaração." },
+        { type: "ilustracao", label: "Ilustração", hint: "Exemplo, história ou analogia que torne a verdade fácil de visualizar." },
+        { type: "aplicacao", label: "Aplicação", hint: "Como este ponto se conecta com a realidade diária do público." },
+      ],
     },
     {
-      title: "Voz 2",
+      title: "Tópico 2",
       role: "topico",
-      items: ["texto_biblico", "ponto_principal"],
+      items: [
+        { type: "ponto_principal", label: "Argumento", hint: "A declaração ou ideia central deste tópico." },
+        { type: "texto_biblico", label: "Fundamentação", hint: "Textos bíblicos de apoio." },
+        { type: "ilustracao", label: "Ilustração", hint: "Exemplo, história ou analogia." },
+        { type: "aplicacao", label: "Aplicação", hint: "Como este ponto se conecta com a vida diária." },
+      ],
     },
     {
-      title: "Aplicação",
+      title: "Tópico 3",
       role: "topico",
-      items: ["aplicacao", "pergunta_retorica"],
+      items: [
+        { type: "ponto_principal", label: "Argumento", hint: "A declaração ou ideia central deste tópico." },
+        { type: "texto_biblico", label: "Fundamentação", hint: "Textos bíblicos de apoio." },
+        { type: "ilustracao", label: "Ilustração", hint: "Exemplo, história ou analogia." },
+        { type: "aplicacao", label: "Aplicação", hint: "Como este ponto se conecta com a vida diária." },
+      ],
     },
     {
       title: "Conclusão",
       role: "conclusao",
-      items: ["conclusao"],
+      items: [
+        { type: "conclusao", label: "Resumo", hint: "Breve recapitulação dos tópicos abordados." },
+        { type: "conclusao", label: "Clímax", hint: "A ideia central amarrada em um pensamento final forte e impactante." },
+        { type: "aplicacao", label: "Apelo / Desafio", hint: "Convite claro para que o ouvinte tome uma decisão ou aja de acordo com a mensagem." },
+      ],
     },
   ],
   topico: [
     {
       title: "Introdução",
       role: "introducao",
-      items: ["introducao", "pergunta_retorica"],
+      items: [
+        { type: "introducao", label: "O Problema", hint: "Qual é a questão real da congregação que o tópico aborda?" },
+        { type: "pergunta_retorica", label: "Diagnóstico", hint: "Uma pergunta que faz o ouvinte sentir o problema." },
+        { type: "proposicao", label: "Tese", hint: "O que a Escritura responde a esse problema?" },
+      ],
     },
     {
       title: "Ponto 1",
       role: "topico",
-      items: ["texto_biblico", "ponto_principal", "ilustracao"],
+      items: [
+        { type: "texto_biblico", label: "Resposta bíblica", hint: "Passagem que ilumina o tópico." },
+        { type: "ponto_principal", label: "Princípio", hint: "O que a Escritura ensina aqui?" },
+        { type: "ilustracao", label: "Ilustração", hint: "Caso, história ou analogia." },
+        { type: "aplicacao", label: "Aplicação", hint: "O que isso pede hoje?" },
+      ],
     },
     {
       title: "Ponto 2",
       role: "topico",
-      items: ["texto_biblico", "ponto_principal", "ilustracao"],
-    },
-    {
-      title: "Aplicação",
-      role: "topico",
-      items: ["aplicacao"],
+      items: [
+        { type: "texto_biblico", label: "Resposta bíblica", hint: "Passagem complementar." },
+        { type: "ponto_principal", label: "Princípio", hint: "O que a Escritura ensina aqui?" },
+        { type: "ilustracao", label: "Ilustração", hint: "Caso, história ou analogia." },
+        { type: "aplicacao", label: "Aplicação", hint: "O que isso pede hoje?" },
+      ],
     },
     {
       title: "Conclusão",
       role: "conclusao",
-      items: ["conclusao"],
+      items: [
+        { type: "conclusao", label: "Síntese", hint: "Volte ao problema e mostre a resposta." },
+        { type: "aplicacao", label: "Apelo", hint: "O que a congregação deve fazer esta semana?" },
+      ],
     },
   ],
   livre: [
@@ -178,7 +300,7 @@ export const FRAMEWORK_SKELETONS: Record<FrameworkId, SkeletonSession[]> = {
       // Folha em branco: sem título inicial, item único de texto livre.
       title: "",
       role: "livre",
-      items: ["notas_pessoais"],
+      items: [{ type: "notas_pessoais" }],
     },
   ],
 };
@@ -236,11 +358,13 @@ export function emptyContentFor(framework: FrameworkId): SermonContent {
       title: s.title,
       role: s.role,
       order: sIdx + 1,
-      items: s.items.map((type, iIdx) => ({
+      items: s.items.map((item, iIdx) => ({
         id: cryptoRandomId(),
-        type,
+        type: item.type,
         content: "",
         order: iIdx + 1,
+        ...(item.label ? { label: item.label } : {}),
+        ...(item.hint ? { hint: item.hint } : {}),
       })),
     })),
   };

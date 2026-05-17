@@ -51,12 +51,20 @@ interface SessionCardProps {
   minimal?: boolean;
   /** Primeira sessão da página? Usado para esconder o separador superior. */
   isFirst?: boolean;
+  /** Última sessão? Usado para desabilitar o botão "mover pra baixo". */
+  isLast?: boolean;
   onTitleChange?: (id: string, title: string) => void;
   onItemContentChange?: (sessionId: string, itemId: string, content: string) => void;
   onItemTypeChange?: (sessionId: string, itemId: string, type: BlockTypeId) => void;
   onAddItem?: (sessionId: string, type: BlockTypeId) => void;
   onRemoveItem?: (sessionId: string, itemId: string) => void;
   onRemoveSession?: (sessionId: string) => void;
+  onMoveSession?: (sessionId: string, direction: "up" | "down") => void;
+  onMoveItem?: (
+    sessionId: string,
+    itemId: string,
+    direction: "up" | "down"
+  ) => void;
   onInsertVerseAfter?: (
     sessionId: string,
     afterItemId: string,
@@ -72,12 +80,15 @@ export function SessionCard({
   suggestions,
   minimal = false,
   isFirst = false,
+  isLast = false,
   onTitleChange,
   onItemContentChange,
   onItemTypeChange,
   onAddItem,
   onRemoveItem,
   onRemoveSession,
+  onMoveSession,
+  onMoveItem,
   onInsertVerseAfter,
 }: SessionCardProps) {
   const accent = ROLE_COLOR[session.role];
@@ -130,17 +141,43 @@ export function SessionCard({
             />
           ) : null}
         </div>
-        {onRemoveSession ? (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onRemoveSession(session.id)}
-            className="text-vox-muted hover:text-vox-destructive opacity-0 group-hover:opacity-100 hover:!opacity-100 transition-opacity -mr-2"
-            aria-label="Remover sessão"
-          >
-            Remover
-          </Button>
-        ) : null}
+        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 hover:!opacity-100 transition-opacity -mr-2">
+          {onMoveSession ? (
+            <>
+              <button
+                type="button"
+                onClick={() => onMoveSession(session.id, "up")}
+                disabled={isFirst}
+                className="size-7 inline-flex items-center justify-center text-vox-muted hover:text-vox-ink disabled:opacity-30 disabled:cursor-not-allowed rounded hover:bg-vox-whisper/40"
+                aria-label="Mover sessão para cima"
+                title="Mover sessão para cima"
+              >
+                ↑
+              </button>
+              <button
+                type="button"
+                onClick={() => onMoveSession(session.id, "down")}
+                disabled={isLast}
+                className="size-7 inline-flex items-center justify-center text-vox-muted hover:text-vox-ink disabled:opacity-30 disabled:cursor-not-allowed rounded hover:bg-vox-whisper/40"
+                aria-label="Mover sessão para baixo"
+                title="Mover sessão para baixo"
+              >
+                ↓
+              </button>
+            </>
+          ) : null}
+          {onRemoveSession ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onRemoveSession(session.id)}
+              className="text-vox-muted hover:text-vox-destructive"
+              aria-label="Remover sessão"
+            >
+              Remover
+            </Button>
+          ) : null}
+        </div>
       </header>
 
       {!minimal && suggestions && suggestions.missing.length > 0 ? (
@@ -159,7 +196,7 @@ export function SessionCard({
       ) : null}
 
       <div className="space-y-4 pl-[19px]">
-        {session.items.map((item) => {
+        {session.items.map((item, itemIdx) => {
           const type = getBlockType(item.type);
           if (!type) return null;
           return (
@@ -169,11 +206,16 @@ export function SessionCard({
               itemId={item.id}
               type={type.id}
               content={item.content}
+              label={item.label}
+              hint={item.hint}
               bibleVersion={bibleVersion}
               minimal={minimal}
+              isFirstItem={itemIdx === 0}
+              isLastItem={itemIdx === session.items.length - 1}
               onContentChange={onItemContentChange}
               onTypeChange={onItemTypeChange}
               onRemove={onRemoveItem}
+              onMove={onMoveItem}
               onInsertVerseAfter={onInsertVerseAfter}
             />
           );
@@ -236,12 +278,20 @@ interface SessionItemRowProps {
   itemId: string;
   type: BlockTypeId;
   content: string;
+  /** Rótulo idiomático do framework (ex: "O Gancho"). Substitui o label do tipo. */
+  label?: string;
+  /** Placeholder específico do framework. Substitui o hint do tipo. */
+  hint?: string;
   bibleVersion?: BibleVersionId;
   /** Modo folha em branco — sem header de tipo */
   minimal?: boolean;
+  /** Posição do item na sessão — usado para desabilitar mover quando nas pontas. */
+  isFirstItem?: boolean;
+  isLastItem?: boolean;
   onContentChange?: (sessionId: string, itemId: string, content: string) => void;
   onTypeChange?: (sessionId: string, itemId: string, type: BlockTypeId) => void;
   onRemove?: (sessionId: string, itemId: string) => void;
+  onMove?: (sessionId: string, itemId: string, direction: "up" | "down") => void;
   onInsertVerseAfter?: (
     sessionId: string,
     afterItemId: string,
@@ -255,11 +305,16 @@ function SessionItemRow({
   itemId,
   type,
   content,
+  label,
+  hint,
   bibleVersion = "acf",
   minimal = false,
+  isFirstItem = false,
+  isLastItem = false,
   onContentChange,
   onTypeChange,
   onRemove,
+  onMove,
   onInsertVerseAfter,
 }: SessionItemRowProps) {
   const [localContent, setLocalContent] = useState(content);
@@ -267,6 +322,8 @@ function SessionItemRow({
   if (!blockType) return null;
 
   const isScripture = type === "texto_biblico" || type === "citacao";
+  const displayLabel = label ?? blockType.label;
+  const placeholderText = minimal ? "Comece a escrever…" : (hint ?? blockType.hint);
 
   return (
     <article className="relative group">
@@ -282,8 +339,16 @@ function SessionItemRow({
                 className="vox-eyebrow hover:opacity-70 transition-opacity"
                 style={{ color: blockType.color }}
               >
-                {blockType.label}
+                {displayLabel}
               </p>
+              {label && label !== blockType.label ? (
+                <span
+                  className="vox-mono text-[10px] text-vox-muted"
+                  title={`Tipo: ${blockType.label}`}
+                >
+                  · {blockType.label}
+                </span>
+              ) : null}
               <span className="text-vox-muted text-xs">▾</span>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="max-h-72 overflow-y-auto">
@@ -302,22 +367,48 @@ function SessionItemRow({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {onRemove ? (
-            <button
-              type="button"
-              onClick={() => onRemove(sessionId, itemId)}
-              className="text-xs text-vox-muted hover:text-vox-destructive opacity-0 group-hover:opacity-100 transition-opacity"
-              aria-label="Remover item"
-            >
-              Remover
-            </button>
-          ) : null}
+          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            {onMove ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => onMove(sessionId, itemId, "up")}
+                  disabled={isFirstItem}
+                  className="size-6 inline-flex items-center justify-center text-xs text-vox-muted hover:text-vox-ink disabled:opacity-30 disabled:cursor-not-allowed rounded hover:bg-vox-whisper/40"
+                  aria-label="Mover item para cima"
+                  title="Mover para cima"
+                >
+                  ↑
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onMove(sessionId, itemId, "down")}
+                  disabled={isLastItem}
+                  className="size-6 inline-flex items-center justify-center text-xs text-vox-muted hover:text-vox-ink disabled:opacity-30 disabled:cursor-not-allowed rounded hover:bg-vox-whisper/40"
+                  aria-label="Mover item para baixo"
+                  title="Mover para baixo"
+                >
+                  ↓
+                </button>
+              </>
+            ) : null}
+            {onRemove ? (
+              <button
+                type="button"
+                onClick={() => onRemove(sessionId, itemId)}
+                className="text-xs text-vox-muted hover:text-vox-destructive px-1"
+                aria-label="Remover item"
+              >
+                Remover
+              </button>
+            ) : null}
+          </div>
         </header>
       ) : null}
 
       <RichTextItem
         initialContent={localContent}
-        placeholder={minimal ? "Comece a escrever…" : blockType.hint}
+        placeholder={placeholderText}
         variant={isScripture ? "scripture" : "default"}
         bibleVersion={bibleVersion}
         onChange={(html) => {
@@ -335,15 +426,41 @@ function SessionItemRow({
         }
       />
 
-      {minimal && onRemove ? (
-        <button
-          type="button"
-          onClick={() => onRemove(sessionId, itemId)}
-          className="absolute -right-2 top-0 text-xs text-vox-muted hover:text-vox-destructive opacity-0 group-hover:opacity-100 transition-opacity"
-          aria-label="Remover parágrafo"
-        >
-          ✕
-        </button>
+      {minimal && (onRemove || onMove) ? (
+        <div className="absolute -right-2 top-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          {onMove ? (
+            <>
+              <button
+                type="button"
+                onClick={() => onMove(sessionId, itemId, "up")}
+                disabled={isFirstItem}
+                className="size-5 inline-flex items-center justify-center text-xs text-vox-muted hover:text-vox-ink disabled:opacity-30 disabled:cursor-not-allowed rounded"
+                aria-label="Mover parágrafo para cima"
+              >
+                ↑
+              </button>
+              <button
+                type="button"
+                onClick={() => onMove(sessionId, itemId, "down")}
+                disabled={isLastItem}
+                className="size-5 inline-flex items-center justify-center text-xs text-vox-muted hover:text-vox-ink disabled:opacity-30 disabled:cursor-not-allowed rounded"
+                aria-label="Mover parágrafo para baixo"
+              >
+                ↓
+              </button>
+            </>
+          ) : null}
+          {onRemove ? (
+            <button
+              type="button"
+              onClick={() => onRemove(sessionId, itemId)}
+              className="text-xs text-vox-muted hover:text-vox-destructive"
+              aria-label="Remover parágrafo"
+            >
+              ✕
+            </button>
+          ) : null}
+        </div>
       ) : null}
     </article>
   );

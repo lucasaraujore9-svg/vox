@@ -78,6 +78,24 @@ export function PresentSessions({
   // Em telas estreitas, default `md`; em desk, `lg`.
   const [fontSize, setFontSize] = useState<FontSize>("lg");
   const [stageDark, setStageDark] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Sincroniza estado com mudanças de fullscreen (Esc, F11, etc.)
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const sync = () => setIsFullscreen(Boolean(document.fullscreenElement));
+    document.addEventListener("fullscreenchange", sync);
+    return () => document.removeEventListener("fullscreenchange", sync);
+  }, []);
+
+  const toggleFullscreen = useCallback(() => {
+    if (typeof document === "undefined") return;
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    } else {
+      document.documentElement.requestFullscreen().catch(() => {});
+    }
+  }, []);
 
   // Ajusta default de fonte uma vez quando descobre que está em viewport compacto
   useEffect(() => {
@@ -103,6 +121,9 @@ export function PresentSessions({
         prev();
       } else if (e.key === "Escape") {
         if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+      } else if (e.key === "f" || e.key === "F") {
+        e.preventDefault();
+        toggleFullscreen();
       } else if (e.key === "+") {
         setFontSize((f) => {
           const i = FONT_ORDER.indexOf(f);
@@ -117,7 +138,7 @@ export function PresentSessions({
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [next, prev]);
+  }, [next, prev, toggleFullscreen]);
 
   // Swipe horizontal (touch) — desabilita se o gesto começou em texto rolável
   useEffect(() => {
@@ -195,7 +216,16 @@ export function PresentSessions({
             : "flex-1 px-12 lg:px-24 py-6 overflow-y-auto"
         }
       >
-        <article className="max-w-5xl mx-auto w-full">
+        {/* Reserva espaço no fim do conteúdo para o peek flutuante "Próximo"
+            não ficar por cima do texto da sessão atual ao rolar até o fim.
+            Só aplica no layout landscape (peek absoluto); em compact/portrait o
+            peek é uma barra no fluxo. */}
+        <article
+          className="max-w-5xl mx-auto w-full"
+          style={
+            peek && !(isCompact || isPortrait) ? { paddingBottom: "12rem" } : undefined
+          }
+        >
           {current?.title ? (
             <p
               className={`vox-eyebrow opacity-60 ${isCompact ? "mb-3" : "mb-6"}`}
@@ -278,11 +308,16 @@ export function PresentSessions({
           <div
             className="absolute right-10 bottom-20 max-w-sm rounded-lg p-4"
             style={{
-              background: stageDark ? "rgba(255,255,255,0.04)" : "var(--vox-surface)",
+              // Fundo OPACO — usa a cor do palco para mascarar o texto da sessão
+              // atual quando ela rola até o rodapé. Sem isso, o conteúdo cruzava
+              // com o card "Próximo".
+              background: stageDark ? "var(--vox-stage-bg)" : "var(--vox-bg)",
               border: stageDark
-                ? "1px solid rgba(255,255,255,0.08)"
+                ? "1px solid rgba(255,255,255,0.18)"
                 : "1px solid var(--vox-whisper)",
-              opacity: 0.85,
+              boxShadow: stageDark
+                ? "0 8px 24px rgba(0,0,0,0.45)"
+                : "0 8px 24px rgba(0,0,0,0.08)",
             }}
           >
             <p className="vox-eyebrow opacity-60 text-xs">Próximo</p>
@@ -357,6 +392,16 @@ export function PresentSessions({
             aria-label={stageDark ? "Modo claro" : "Modo noturno"}
           >
             {stageDark ? "☀" : "☾"}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleFullscreen}
+            className="text-current opacity-80 hover:opacity-100 px-2"
+            aria-label={isFullscreen ? "Sair de tela cheia (F)" : "Tela cheia (F)"}
+            title={isFullscreen ? "Sair de tela cheia (F)" : "Tela cheia (F)"}
+          >
+            {isFullscreen ? "⤡" : "⛶"}
           </Button>
           {!isCompact ? (
             <span className="opacity-60 px-2">

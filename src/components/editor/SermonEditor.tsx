@@ -4,7 +4,7 @@
 // + reordering simples (up/down). Faz auto-save offline-first: salva no Supabase
 // e, se a rede falhar, persiste no IndexedDB pra sync quando voltar online.
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SessionCard } from "@/components/editor/SessionCard";
 import {
@@ -18,6 +18,7 @@ import type { FrameworkId } from "@/lib/mocks/frameworks";
 import type { BibleVersionId } from "@/lib/bible/versions";
 import { useAutoSave, type AutoSaveStatus } from "@/hooks/useAutoSave";
 import { createClient } from "@/lib/supabase/client";
+import { getPending } from "@/lib/offline/db";
 
 interface SermonEditorProps {
   /** ID do sermão no Supabase — necessário pra auto-save. Quando omitido, o editor opera só no estado local. */
@@ -52,6 +53,40 @@ export function SermonEditor({
   onChange,
 }: SermonEditorProps) {
   const [content, setContent] = useState<SermonContent>(initialContent);
+  const [recoveredFromOffline, setRecoveredFromOffline] = useState(false);
+
+  // Recupera conteúdo pendente do IndexedDB no mount. Se houver, ele é mais
+  // novo que o vindo do servidor (sync ainda não rodou) — preferi-lo evita
+  // que um reload em transição offline→online apague o que foi escrito.
+  useEffect(() => {
+    if (!sermonId) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const pending = await getPending(sermonId);
+        if (cancelled || !pending) return;
+        const payload = pending.payload as Partial<SermonContent>;
+        if (!payload || !Array.isArray(payload.sessions)) return;
+        // Só sobrescreve se o payload diferir do que veio do servidor —
+        // evita um set redundante que poderia limpar foco do editor.
+        const restored: SermonContent = { sessions: payload.sessions };
+        const same =
+          JSON.stringify(restored) === JSON.stringify(initialContent);
+        if (same) return;
+        setContent(restored);
+        setRecoveredFromOffline(true);
+        onChange?.(restored);
+      } catch {
+        // IDB indisponível — segue com o initialContent normal.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // initialContent é capturado uma vez no mount via state inicial; não
+    // queremos re-rodar este efeito a cada re-render do pai.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sermonId]);
 
   const supabase = useMemo(() => {
     if (typeof window === "undefined") return null;
@@ -201,6 +236,48 @@ export function SermonEditor({
     );
   }
 
+  function moveInArray<T>(arr: T[], from: number, to: number): T[] {
+    if (to < 0 || to >= arr.length) return arr;
+    if (from < 0 || from >= arr.length) return arr;
+    const next = arr.slice();
+    const removed = next[from] as T;
+    next.splice(from, 1);
+    next.splice(to, 0, removed);
+    return next;
+  }
+
+  function handleMoveSession(sessionId: string, direction: "up" | "down") {
+    updateSessions((sessions) => {
+      const idx = sessions.findIndex((s) => s.id === sessionId);
+      if (idx === -1) return sessions;
+      const target = direction === "up" ? idx - 1 : idx + 1;
+      return moveInArray(sessions, idx, target).map((s, i) => ({
+        ...s,
+        order: i + 1,
+      }));
+    });
+  }
+
+  function handleMoveItem(
+    sessionId: string,
+    itemId: string,
+    direction: "up" | "down"
+  ) {
+    updateSessions((sessions) =>
+      sessions.map((s) => {
+        if (s.id !== sessionId) return s;
+        const idx = s.items.findIndex((i) => i.id === itemId);
+        if (idx === -1) return s;
+        const target = direction === "up" ? idx - 1 : idx + 1;
+        const reordered = moveInArray(s.items, idx, target).map((i, k) => ({
+          ...i,
+          order: k + 1,
+        }));
+        return { ...s, items: reordered };
+      })
+    );
+  }
+
   function handleAddSession(role: SessionRole) {
     const label =
       role === "introducao" ? "Introdução" :
@@ -234,7 +311,20 @@ export function SermonEditor({
   return (
     <div className="space-y-3">
       {sermonId ? (
-        <div className="flex items-center justify-end">
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          {recoveredFromOffline ? (
+            <span
+              className="vox-mono text-[11px] px-2 py-1 rounded-full"
+              style={{
+                background: "var(--vox-gold-soft, rgba(180,83,9,0.10))",
+                color: "var(--vox-gold)",
+              }}
+            >
+              Recuperado do rascunho offline
+            </span>
+          ) : (
+            <span />
+          )}
           <span
             className="vox-mono text-[11px]"
             style={{ color: statusColor }}
@@ -264,6 +354,7 @@ export function SermonEditor({
                 session={session}
                 index={idx}
                 isFirst={idx === 0}
+                isLast={idx === content.sessions.length - 1}
                 bibleVersion={bibleVersion}
                 suggestions={isBlank ? undefined : advice}
                 minimal={isBlank}
@@ -275,6 +366,10 @@ export function SermonEditor({
                 onRemoveSession={
                   content.sessions.length > 1 ? handleRemoveSession : undefined
                 }
+                onMoveSession={
+                  content.sessions.length > 1 ? handleMoveSession : undefined
+                }
+                onMoveItem={handleMoveItem}
                 onInsertVerseAfter={handleInsertVerseAfter}
               />
             );

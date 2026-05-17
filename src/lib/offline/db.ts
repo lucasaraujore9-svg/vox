@@ -70,6 +70,17 @@ export async function listPending(): Promise<PendingSermonRecord[]> {
   return all.filter((record) => !record.synced);
 }
 
+/** Recupera o conteúdo pendente (não sincronizado) de um sermão pelo id. */
+export async function getPending(
+  id: string
+): Promise<PendingSermonRecord | null> {
+  if (typeof window === "undefined") return null;
+  const db = await getDb();
+  const record = await db.get("pending_sermons", id);
+  if (!record || record.synced) return null;
+  return record;
+}
+
 export async function markSynced(id: string): Promise<void> {
   const db = await getDb();
   const record = await db.get("pending_sermons", id);
