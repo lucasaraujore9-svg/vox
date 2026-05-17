@@ -7,6 +7,7 @@ export type BlockTypeId =
   | "contexto"
   | "ponto_principal"
   | "subponto"
+  | "desenvolvimento"
   | "ilustracao"
   | "aplicacao"
   | "citacao"
@@ -68,6 +69,13 @@ export const VOX_BLOCK_TYPES: readonly BlockType[] = [
     label: "Subponto",
     hint: "Desdobramento do ponto principal",
     color: "var(--vox-forest-mid)",
+    visibleInPresentation: true,
+  },
+  {
+    id: "desenvolvimento",
+    label: "Desenvolvimento",
+    hint: "Exposição e elaboração do tópico — corpo do argumento",
+    color: "#475569",
     visibleInPresentation: true,
   },
   {
