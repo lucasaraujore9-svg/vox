@@ -6,6 +6,12 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { SessionCard } from "@/components/editor/SessionCard";
 import {
   adviseSession,
@@ -390,19 +396,29 @@ export function SermonEditor({
               + Inserir tópico
             </Button>
           ) : (
+            // Ação primária à esquerda; opções secundárias em dropdown discreto.
             <div className="flex items-center gap-2 flex-wrap">
               <Button variant="outline" size="sm" onClick={() => handleAddSession("topico")}>
                 + Tópico
               </Button>
-              <Button variant="ghost" size="sm" onClick={() => handleAddSession("introducao")}>
-                + Introdução
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => handleAddSession("conclusao")}>
-                + Conclusão
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => handleAddSession("livre")}>
-                + Sessão livre
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="text-vox-muted hover:text-vox-prose">
+                    Outra sessão ▾
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem onSelect={() => handleAddSession("introducao")}>
+                    Introdução
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => handleAddSession("conclusao")}>
+                    Conclusão
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => handleAddSession("livre")}>
+                    Sessão livre
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           )}
         </div>

@@ -110,14 +110,17 @@ export function SessionCard({
               <span className="vox-mono text-xs text-vox-muted">
                 {String(index + 1).padStart(2, "0")}
               </span>
+              {/* Badge de papel só aparece no hover — a barra colorida à esquerda
+                 já comunica o papel da sessão durante a leitura. */}
               <Badge
                 variant="outline"
-                className="text-xs font-normal"
+                className="text-[10px] font-normal opacity-0 group-hover:opacity-60 transition-opacity"
                 style={{ borderColor: accent, color: accent }}
               >
                 {ROLE_LABEL[session.role]}
               </Badge>
-              {suggestions ? (
+              {/* Pill de sugestão só quando o framework realmente tem algo a sugerir. */}
+              {suggestions && suggestions.missing.length > 0 ? (
                 <SuggestionPill
                   missingCount={suggestions.missing.length}
                   extraCount={suggestions.extra.length}
@@ -141,7 +144,7 @@ export function SessionCard({
             />
           ) : null}
         </div>
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 hover:!opacity-100 transition-opacity -mr-2">
+        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 hover:!opacity-100 transition-opacity">
           {onMoveSession ? (
             <>
               <button
@@ -167,22 +170,22 @@ export function SessionCard({
             </>
           ) : null}
           {onRemoveSession ? (
-            <Button
-              variant="ghost"
-              size="sm"
+            <button
+              type="button"
               onClick={() => onRemoveSession(session.id)}
-              className="text-vox-muted hover:text-vox-destructive"
+              className="size-7 inline-flex items-center justify-center text-vox-muted hover:text-vox-destructive rounded hover:bg-vox-whisper/40"
               aria-label="Remover sessão"
+              title="Remover sessão"
             >
-              Remover
-            </Button>
+              ✕
+            </button>
           ) : null}
         </div>
       </header>
 
       {!minimal && suggestions && suggestions.missing.length > 0 ? (
-        <p className="text-xs text-vox-prose mb-4 pl-[19px]">
-          Sugestões do framework pra esta sessão:{" "}
+        <p className="text-[11px] text-vox-muted mb-4 pl-[19px] opacity-0 group-hover:opacity-100 transition-opacity">
+          Sugestões:{" "}
           {suggestions.missing.map((id, idx) => {
             const block = getBlockType(id);
             return (
@@ -251,20 +254,12 @@ function SuggestionPill({
   missingCount: number;
   extraCount: number;
 }) {
-  if (missingCount === 0 && extraCount === 0) {
-    return (
-      <span
-        className="vox-mono text-xs px-2 py-0.5 rounded-full"
-        style={{ background: "var(--vox-forest-soft)", color: "var(--vox-forest)" }}
-      >
-        ✓ Esqueleto completo
-      </span>
-    );
-  }
+  // Esqueleto completo: silêncio é virtude. Sem badge "✓ completo".
+  if (missingCount === 0 && extraCount === 0) return null;
   return (
     <span
-      className="vox-mono text-xs px-2 py-0.5 rounded-full"
-      style={{ background: "var(--vox-gold-soft)", color: "var(--vox-gold)" }}
+      className="vox-mono text-[10px] opacity-0 group-hover:opacity-70 transition-opacity"
+      style={{ color: "var(--vox-gold)" }}
     >
       {missingCount > 0 ? `${missingCount} sugestão${missingCount > 1 ? "s" : ""}` : null}
       {missingCount > 0 && extraCount > 0 ? " · " : ""}
@@ -330,7 +325,14 @@ function SessionItemRow({
       {!minimal ? (
         <header className="flex items-center justify-between gap-3 mb-1.5">
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
+            <DropdownMenuTrigger
+              className="flex items-center gap-2 outline-none"
+              title={
+                label && label !== blockType.label
+                  ? `${displayLabel} · ${blockType.label}`
+                  : displayLabel
+              }
+            >
               <span
                 className="inline-block size-1.5 rounded-full"
                 style={{ background: blockType.color }}
@@ -341,15 +343,10 @@ function SessionItemRow({
               >
                 {displayLabel}
               </p>
-              {label && label !== blockType.label ? (
-                <span
-                  className="vox-mono text-[10px] text-vox-muted"
-                  title={`Tipo: ${blockType.label}`}
-                >
-                  · {blockType.label}
-                </span>
-              ) : null}
-              <span className="text-vox-muted text-xs">▾</span>
+              {/* Chevron — só aparece no hover do item; reduz ruído visual. */}
+              <span className="text-vox-muted text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                ▾
+              </span>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="max-h-72 overflow-y-auto">
               {VOX_BLOCK_TYPES.map((b) => (
@@ -367,7 +364,7 @@ function SessionItemRow({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
             {onMove ? (
               <>
                 <button
@@ -396,10 +393,11 @@ function SessionItemRow({
               <button
                 type="button"
                 onClick={() => onRemove(sessionId, itemId)}
-                className="text-xs text-vox-muted hover:text-vox-destructive px-1"
+                className="size-6 inline-flex items-center justify-center text-xs text-vox-muted hover:text-vox-destructive rounded hover:bg-vox-whisper/40"
                 aria-label="Remover item"
+                title="Remover item"
               >
-                Remover
+                ✕
               </button>
             ) : null}
           </div>
@@ -474,11 +472,15 @@ function AddItemMenu({
   onAdd?: (sessionId: string, type: BlockTypeId) => void;
 }) {
   return (
-    <div className="mt-4">
+    <div className="mt-4 opacity-40 group-hover:opacity-100 transition-opacity">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="sm" className="text-xs text-vox-prose px-0 h-auto">
-            + Item
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-xs text-vox-muted hover:text-vox-prose px-0 h-auto"
+          >
+            + item
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="max-h-72 overflow-y-auto">

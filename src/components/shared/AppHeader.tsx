@@ -65,7 +65,7 @@ export async function AppHeader() {
           className="inline-flex items-center px-1.5 py-0.5 rounded border text-[10px] tracking-wide"
           style={{ borderColor: "var(--vox-whisper)", color: "var(--vox-prose)" }}
         >
-          ⌘ B
+          ⌘ ⇧ B
         </kbd>
       </span>
       <OfflineBadge />

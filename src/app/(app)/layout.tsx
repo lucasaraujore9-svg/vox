@@ -1,4 +1,4 @@
-// Layout da área protegida. Sidebar colapsável + AppHeader (logout + offline) + palette ⌘B.
+// Layout da área protegida. Sidebar colapsável + AppHeader (logout + offline) + palette ⌘⇧B.
 
 import { AppHeader } from "@/components/shared/AppHeader";
 import { AppSidebar } from "@/components/shared/AppSidebar";

@@ -89,8 +89,8 @@ const SECTIONS: Section[] = [
             <p>
               Digite a referência diretamente no texto (ex:{" "}
               <span className="vox-mono text-xs">Romanos 5:1-11</span>) ou
-              pressione <Kbd>⌘ B</Kbd> em qualquer lugar
-              do app pra abrir a busca rápida.
+              pressione <Kbd>⌘ ⇧ B</Kbd> em qualquer
+              lugar do app pra abrir a busca rápida.
             </p>
             <p className="mt-2">
               O editor sugere o texto da passagem em tempo real — escolha a
@@ -388,7 +388,7 @@ const SECTIONS: Section[] = [
           <div className="space-y-2 text-sm">
             <div className="flex items-center justify-between gap-4">
               <span>Buscar passagem bíblica</span>
-              <Kbd>⌘ B</Kbd>
+              <Kbd>⌘ ⇧ B</Kbd>
             </div>
             <div className="flex items-center justify-between gap-4">
               <span>Próximo slide (apresentação)</span>

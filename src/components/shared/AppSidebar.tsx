@@ -193,7 +193,7 @@ export function AppSidebar() {
               className="inline-flex items-center px-1.5 py-0.5 rounded border text-[10px] mr-1.5"
               style={{ borderColor: "var(--vox-whisper)" }}
             >
-              ⌘B
+              ⌘⇧B
             </kbd>
             buscar Bíblia
           </footer>

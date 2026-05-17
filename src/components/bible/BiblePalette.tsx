@@ -1,6 +1,7 @@
 "use client";
 
-// Cmd+B (Ctrl+B no Windows/Linux) abre uma palette de busca bíblica global.
+// Cmd+Shift+B (Ctrl+Shift+B no Windows/Linux) abre uma palette de busca bíblica
+// global. Cmd+B continua sendo "negrito" no editor TipTap.
 // Detecta automaticamente se você digitou uma REFERÊNCIA (vai pra fetch direto)
 // ou uma PALAVRA (vai pro endpoint de busca textual).
 
@@ -44,10 +45,15 @@ export function BiblePalette() {
   const router = useRouter();
   const lastSearchRef = useRef<string>("");
 
-  // Atalho Cmd+B / Ctrl+B
+  // Atalho Cmd+Shift+B / Ctrl+Shift+B — Shift evita conflito com o "negrito"
+  // do TipTap (⌘B) dentro do editor de sermão.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key.toLowerCase() === "b" && (e.metaKey || e.ctrlKey)) {
+      if (
+        e.key.toLowerCase() === "b" &&
+        e.shiftKey &&
+        (e.metaKey || e.ctrlKey)
+      ) {
         e.preventDefault();
         setOpen((v) => !v);
       }
