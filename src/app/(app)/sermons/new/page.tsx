@@ -7,6 +7,8 @@
 //   5) Vínculo (série/curso opcional — apenas Esboço guiado / Apresentação)
 //
 // Folha em branco: salta 3 e 5 — vai direto pra escrever, sem fricção.
+// Vínculo de série criada na hora: se newSeriesTitle estiver preenchido,
+// upsertSeriesAction roda antes do createSermonAction.
 
 "use client";
 
