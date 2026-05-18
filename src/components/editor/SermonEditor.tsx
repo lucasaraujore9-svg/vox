@@ -51,6 +51,15 @@ function newId() {
   return Math.random().toString(36).slice(2, 12);
 }
 
+function escapeHtml(input: string): string {
+  return input
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export function SermonEditor({
   sermonId,
   framework,
@@ -211,17 +220,24 @@ export function SermonEditor({
     sessionId: string,
     afterItemId: string,
     canonical: string,
-    fullText: string
+    fullText: string,
+    chosenVersion: BibleVersionId
   ) {
     updateSessions((sessions) =>
       sessions.map((s) => {
         if (s.id !== sessionId) return s;
         const idx = s.items.findIndex((i) => i.id === afterItemId);
         if (idx === -1) return s;
+        // Conteúdo como HTML legítimo: cada versículo num <p>, com a referência
+        // separada. \n não é respeitado em TipTap, então uso markup explícito.
+        const versionLabel = chosenVersion.toUpperCase();
+        const html =
+          `<p><em>${escapeHtml(fullText)}</em></p>` +
+          `<p><strong>${escapeHtml(canonical)}</strong> <span class="vox-mono">· ${escapeHtml(versionLabel)}</span></p>`;
         const newItem = {
           id: newId(),
           type: "texto_biblico" as BlockTypeId,
-          content: `${fullText}\n\n— ${canonical}`,
+          content: html,
           order: idx + 2,
         };
         const before = s.items.slice(0, idx + 1);

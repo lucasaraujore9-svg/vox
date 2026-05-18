@@ -9,15 +9,21 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useBibleReference } from "@/hooks/useBibleReference";
-import type { BibleVersionId } from "@/lib/bible/versions";
+import { BIBLE_VERSIONS, type BibleVersionId } from "@/lib/bible/versions";
 import { cn } from "@/lib/utils";
 
 interface ReferenceHintProps {
   canonical: string;
   version: BibleVersionId;
-  /** Callback ao clicar "+ Inserir bloco" — recebe a referência canônica e o texto completo */
-  onInsert?: (canonical: string, fullText: string) => void;
+  /** Callback ao clicar "+ Inserir bloco" — recebe a referência canônica, o texto e a versão escolhida */
+  onInsert?: (canonical: string, fullText: string, version: BibleVersionId) => void;
   /** Permite remover/dispensar essa hint */
   onDismiss?: () => void;
   className?: string;
@@ -30,12 +36,16 @@ export function ReferenceHint({
   onDismiss,
   className,
 }: ReferenceHintProps) {
-  const { data, loading, error } = useBibleReference(canonical, version);
+  // Versão pode ser sobrescrita inline antes de inserir
+  const [chosenVersion, setChosenVersion] = useState<BibleVersionId>(version);
+  const { data, loading, error } = useBibleReference(canonical, chosenVersion);
   const [popoverOpen, setPopoverOpen] = useState(false);
 
   const fullText =
     data?.verses?.map((v) => `${v.number}. ${v.text}`).join(" ") ?? "";
   const previewText = data?.verses?.[0]?.text ?? "";
+  const chosenAbbrev =
+    BIBLE_VERSIONS.find((v) => v.id === chosenVersion)?.abbreviation ?? chosenVersion.toUpperCase();
 
   return (
     <div
@@ -94,10 +104,35 @@ export function ReferenceHint({
         </Popover>
       ) : null}
 
+      {/* Seletor de versão inline — permite trocar antes de inserir */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            className="vox-mono text-[10px] px-1.5 py-0.5 rounded-full border border-current opacity-70 hover:opacity-100"
+            aria-label="Trocar versão"
+            title={`Versão: ${chosenAbbrev}`}
+          >
+            {chosenAbbrev} ▾
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start">
+          {BIBLE_VERSIONS.map((v) => (
+            <DropdownMenuItem
+              key={v.id}
+              onSelect={() => setChosenVersion(v.id)}
+            >
+              <span className="vox-mono mr-2">{v.abbreviation}</span>
+              <span className="text-xs text-vox-muted">{v.name}</span>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+
       {data && onInsert ? (
         <button
           type="button"
-          onClick={() => onInsert(canonical, fullText)}
+          onClick={() => onInsert(canonical, fullText, chosenVersion)}
           className="hover:underline underline-offset-2 font-medium ml-1"
           aria-label="Inserir como bloco de texto bíblico"
         >

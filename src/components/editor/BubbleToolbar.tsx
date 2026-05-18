@@ -55,20 +55,31 @@ export function BubbleToolbar({
       try {
         const start = view.coordsAtPos(from);
         const end = view.coordsAtPos(to);
-        const top = Math.min(start.top, end.top);
+        const selTop = Math.min(start.top, end.top);
+        const selBottom = Math.max(start.bottom, end.bottom);
         const left = (start.left + end.left) / 2;
-        setPos({ top: top + window.scrollY - 48, left: left + window.scrollX });
+        // Se há espaço acima da seleção, posiciona acima. Senão, abaixo.
+        // Evita a toolbar sair da viewport em blocos no topo da página.
+        const TOOLBAR_HEIGHT = 40;
+        const aboveTop = selTop - TOOLBAR_HEIGHT - 8;
+        const top =
+          aboveTop > 8 ? aboveTop : selBottom + 8;
+        setPos({ top: top + window.scrollY, left: left + window.scrollX });
         setSelectedText(state.doc.textBetween(from, to, " "));
       } catch {
         setPos(null);
       }
     };
 
+    const onBlur = () => setPos(null);
+
     editor.on("selectionUpdate", update);
-    editor.on("blur", () => setPos(null));
+    editor.on("blur", onBlur);
     editor.on("focus", update);
     return () => {
       editor.off("selectionUpdate", update);
+      editor.off("blur", onBlur);
+      editor.off("focus", update);
     };
   }, [editor]);
 

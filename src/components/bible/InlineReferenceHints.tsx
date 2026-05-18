@@ -14,7 +14,7 @@ const DEBOUNCE_MS = 350;
 interface InlineReferenceHintsProps {
   text: string;
   version: BibleVersionId;
-  onInsert?: (canonical: string, fullText: string) => void;
+  onInsert?: (canonical: string, fullText: string, version: BibleVersionId) => void;
   className?: string;
 }
 
@@ -51,7 +51,11 @@ export function InlineReferenceHints({
           key={canonical}
           canonical={canonical}
           version={version}
-          onInsert={onInsert}
+          onInsert={(c, fullText, chosenVersion) => {
+            onInsert?.(c, fullText, chosenVersion);
+            // Após inserir, dispensa pra evitar a pílula ficar pedindo de novo
+            setDismissed((prev) => new Set(prev).add(canonical));
+          }}
           onDismiss={() => setDismissed((prev) => new Set(prev).add(canonical))}
         />
       ))}

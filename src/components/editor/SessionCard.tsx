@@ -69,7 +69,8 @@ interface SessionCardProps {
     sessionId: string,
     afterItemId: string,
     canonical: string,
-    fullText: string
+    fullText: string,
+    version: BibleVersionId
   ) => void;
 }
 
@@ -144,14 +145,15 @@ export function SessionCard({
             />
           ) : null}
         </div>
-        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 hover:!opacity-100 transition-opacity">
+        {/* Em mobile (sem hover), as ações ficam sempre visíveis. Em md+ aparecem só no hover. */}
+        <div className="flex items-center gap-0.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:hover:!opacity-100 transition-opacity">
           {onMoveSession ? (
             <>
               <button
                 type="button"
                 onClick={() => onMoveSession(session.id, "up")}
                 disabled={isFirst}
-                className="size-7 inline-flex items-center justify-center text-vox-muted hover:text-vox-ink disabled:opacity-30 disabled:cursor-not-allowed rounded hover:bg-vox-whisper/40"
+                className="size-8 md:size-7 inline-flex items-center justify-center text-vox-muted hover:text-vox-ink disabled:opacity-30 disabled:cursor-not-allowed rounded hover:bg-vox-whisper/40"
                 aria-label="Mover sessão para cima"
                 title="Mover sessão para cima"
               >
@@ -161,7 +163,7 @@ export function SessionCard({
                 type="button"
                 onClick={() => onMoveSession(session.id, "down")}
                 disabled={isLast}
-                className="size-7 inline-flex items-center justify-center text-vox-muted hover:text-vox-ink disabled:opacity-30 disabled:cursor-not-allowed rounded hover:bg-vox-whisper/40"
+                className="size-8 md:size-7 inline-flex items-center justify-center text-vox-muted hover:text-vox-ink disabled:opacity-30 disabled:cursor-not-allowed rounded hover:bg-vox-whisper/40"
                 aria-label="Mover sessão para baixo"
                 title="Mover sessão para baixo"
               >
@@ -173,7 +175,7 @@ export function SessionCard({
             <button
               type="button"
               onClick={() => onRemoveSession(session.id)}
-              className="size-7 inline-flex items-center justify-center text-vox-muted hover:text-vox-destructive rounded hover:bg-vox-whisper/40"
+              className="size-8 md:size-7 inline-flex items-center justify-center text-vox-muted hover:text-vox-destructive rounded hover:bg-vox-whisper/40"
               aria-label="Remover sessão"
               title="Remover sessão"
             >
@@ -291,7 +293,8 @@ interface SessionItemRowProps {
     sessionId: string,
     afterItemId: string,
     canonical: string,
-    fullText: string
+    fullText: string,
+    version: BibleVersionId
   ) => void;
 }
 
@@ -364,14 +367,14 @@ function SessionItemRow({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex items-center gap-0.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
             {onMove ? (
               <>
                 <button
                   type="button"
                   onClick={() => onMove(sessionId, itemId, "up")}
                   disabled={isFirstItem}
-                  className="size-6 inline-flex items-center justify-center text-xs text-vox-muted hover:text-vox-ink disabled:opacity-30 disabled:cursor-not-allowed rounded hover:bg-vox-whisper/40"
+                  className="size-7 md:size-6 inline-flex items-center justify-center text-xs text-vox-muted hover:text-vox-ink disabled:opacity-30 disabled:cursor-not-allowed rounded hover:bg-vox-whisper/40"
                   aria-label="Mover item para cima"
                   title="Mover para cima"
                 >
@@ -381,7 +384,7 @@ function SessionItemRow({
                   type="button"
                   onClick={() => onMove(sessionId, itemId, "down")}
                   disabled={isLastItem}
-                  className="size-6 inline-flex items-center justify-center text-xs text-vox-muted hover:text-vox-ink disabled:opacity-30 disabled:cursor-not-allowed rounded hover:bg-vox-whisper/40"
+                  className="size-7 md:size-6 inline-flex items-center justify-center text-xs text-vox-muted hover:text-vox-ink disabled:opacity-30 disabled:cursor-not-allowed rounded hover:bg-vox-whisper/40"
                   aria-label="Mover item para baixo"
                   title="Mover para baixo"
                 >
@@ -393,7 +396,7 @@ function SessionItemRow({
               <button
                 type="button"
                 onClick={() => onRemove(sessionId, itemId)}
-                className="size-6 inline-flex items-center justify-center text-xs text-vox-muted hover:text-vox-destructive rounded hover:bg-vox-whisper/40"
+                className="size-7 md:size-6 inline-flex items-center justify-center text-xs text-vox-muted hover:text-vox-destructive rounded hover:bg-vox-whisper/40"
                 aria-label="Remover item"
                 title="Remover item"
               >
@@ -419,20 +422,20 @@ function SessionItemRow({
       <InlineReferenceHints
         text={localContent}
         version={bibleVersion}
-        onInsert={(canonical, fullText) =>
-          onInsertVerseAfter?.(sessionId, itemId, canonical, fullText)
+        onInsert={(canonical, fullText, chosenVersion) =>
+          onInsertVerseAfter?.(sessionId, itemId, canonical, fullText, chosenVersion)
         }
       />
 
       {minimal && (onRemove || onMove) ? (
-        <div className="absolute -right-2 top-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute -right-2 top-0 flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
           {onMove ? (
             <>
               <button
                 type="button"
                 onClick={() => onMove(sessionId, itemId, "up")}
                 disabled={isFirstItem}
-                className="size-5 inline-flex items-center justify-center text-xs text-vox-muted hover:text-vox-ink disabled:opacity-30 disabled:cursor-not-allowed rounded"
+                className="size-7 md:size-5 inline-flex items-center justify-center text-xs text-vox-muted hover:text-vox-ink disabled:opacity-30 disabled:cursor-not-allowed rounded"
                 aria-label="Mover parágrafo para cima"
               >
                 ↑
@@ -441,7 +444,7 @@ function SessionItemRow({
                 type="button"
                 onClick={() => onMove(sessionId, itemId, "down")}
                 disabled={isLastItem}
-                className="size-5 inline-flex items-center justify-center text-xs text-vox-muted hover:text-vox-ink disabled:opacity-30 disabled:cursor-not-allowed rounded"
+                className="size-7 md:size-5 inline-flex items-center justify-center text-xs text-vox-muted hover:text-vox-ink disabled:opacity-30 disabled:cursor-not-allowed rounded"
                 aria-label="Mover parágrafo para baixo"
               >
                 ↓
@@ -452,7 +455,7 @@ function SessionItemRow({
             <button
               type="button"
               onClick={() => onRemove(sessionId, itemId)}
-              className="text-xs text-vox-muted hover:text-vox-destructive"
+              className="size-7 md:size-auto inline-flex items-center justify-center text-xs text-vox-muted hover:text-vox-destructive"
               aria-label="Remover parágrafo"
             >
               ✕
