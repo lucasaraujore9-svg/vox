@@ -464,6 +464,7 @@ export type Database = {
           message: string | null
           name: string | null
           notes: string | null
+          phone: string | null
           source_ip: string | null
           source_ua: string | null
           status: string
@@ -477,6 +478,7 @@ export type Database = {
           message?: string | null
           name?: string | null
           notes?: string | null
+          phone?: string | null
           source_ip?: string | null
           source_ua?: string | null
           status?: string
@@ -490,6 +492,7 @@ export type Database = {
           message?: string | null
           name?: string | null
           notes?: string | null
+          phone?: string | null
           source_ip?: string | null
           source_ua?: string | null
           status?: string

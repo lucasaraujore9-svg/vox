@@ -17,6 +17,7 @@ export interface AdminInterest {
   id: string;
   email: string;
   name: string | null;
+  phone: string | null;
   denomination: string | null;
   message: string | null;
   status: string;
@@ -106,7 +107,7 @@ export async function listInterests(
   let query = supabase
     .from("signup_interests")
     .select(
-      "id, email, name, denomination, message, status, created_at, invited_at, notes"
+      "id, email, name, phone, denomination, message, status, created_at, invited_at, notes"
     )
     .order("created_at", { ascending: false });
 

@@ -59,8 +59,8 @@ export function RegisterForm({ className }: { className?: string }) {
           </p>
           <h3 className="vox-h3 text-lg">Seu interesse foi registrado.</h3>
           <p className="vox-body text-sm mt-3">
-            Vamos avaliar e entrar em contato pelo email que você deixou
-            quando uma vaga estiver disponível. O VOX hoje é por convite.
+            Vamos avaliar e entrar em contato pelo email ou WhatsApp que você
+            deixou quando uma vaga estiver disponível. O VOX hoje é por convite.
           </p>
         </div>
         <button
@@ -121,6 +121,26 @@ export function RegisterForm({ className }: { className?: string }) {
           aria-invalid={Boolean(state.fieldErrors?.email)}
         />
         <FieldError message={state.fieldErrors?.email} />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="phone">
+          WhatsApp{" "}
+          <span className="text-vox-muted text-xs font-normal">
+            (pra avisar quando sua vaga abrir)
+          </span>
+        </Label>
+        <Input
+          id="phone"
+          name="phone"
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel"
+          required
+          placeholder="(11) 91234-5678"
+          aria-invalid={Boolean(state.fieldErrors?.phone)}
+        />
+        <FieldError message={state.fieldErrors?.phone} />
       </div>
 
       <div className="space-y-2">

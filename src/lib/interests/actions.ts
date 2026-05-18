@@ -12,6 +12,14 @@ import { createServiceClient } from "@/lib/supabase/server";
 const schema = z.object({
   email: z.string().trim().toLowerCase().email("Email inválido"),
   name: z.string().trim().min(2, "Nome muito curto").max(160).optional(),
+  phone: z
+    .string()
+    .trim()
+    .min(10, "Telefone muito curto")
+    .max(30, "Telefone muito longo")
+    .refine((v) => (v.match(/\d/g) ?? []).length >= 10, {
+      message: "Inclua DDD e número completo",
+    }),
   denomination: z.string().trim().max(160).optional(),
   message: z.string().trim().max(2000).optional(),
 });
@@ -48,6 +56,7 @@ export async function submitInterestAction(
   const parsed = schema.safeParse({
     email: formData.get("email"),
     name: formData.get("name") || undefined,
+    phone: formData.get("phone"),
     denomination: formData.get("denomination") || undefined,
     message: formData.get("message") || undefined,
   });
@@ -86,6 +95,7 @@ export async function submitInterestAction(
     const { error } = await supabase.from("signup_interests").insert({
       email: parsed.data.email,
       name: parsed.data.name ?? null,
+      phone: parsed.data.phone,
       denomination: parsed.data.denomination ?? null,
       message: parsed.data.message ?? null,
       source_ip: sourceIp,

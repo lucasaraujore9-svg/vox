@@ -41,6 +41,14 @@ function formatRelative(iso: string): string {
   return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
 }
 
+// Sanitiza o telefone pro link wa.me: só dígitos, com 55 (Brasil)
+// quando o usuário deixou só DDD + número (10–11 dígitos).
+function whatsappLink(phone: string): string {
+  const digits = phone.replace(/\D/g, "");
+  const normalized = digits.length <= 11 ? `55${digits}` : digits;
+  return `https://wa.me/${normalized}`;
+}
+
 export function AdminInterestsList({
   interests,
 }: {
@@ -101,6 +109,33 @@ export function AdminInterestsList({
                   </span>
                 </div>
                 <p className="vox-mono text-xs text-vox-prose">{it.email}</p>
+                {it.phone ? (
+                  <p className="vox-mono text-xs mt-1">
+                    <a
+                      href={whatsappLink(it.phone)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 hover:underline underline-offset-4"
+                      style={{ color: "var(--vox-forest)" }}
+                      title="Abrir conversa no WhatsApp"
+                    >
+                      <svg
+                        aria-hidden
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                      </svg>
+                      {it.phone}
+                    </a>
+                  </p>
+                ) : null}
                 {it.denomination ? (
                   <p className="text-xs text-vox-muted mt-1">{it.denomination}</p>
                 ) : null}
