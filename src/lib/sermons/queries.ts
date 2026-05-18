@@ -75,9 +75,11 @@ export async function listSermons(filters: SermonFilters = {}) {
 
 export async function getSermon(id: string) {
   const supabase = await createClient();
+  // Embed da série junto: PostgREST traz `series` como objeto via FK.
+  // Usado pelo header do editor pra mostrar o nome da série vinculada.
   const { data, error } = await supabase
     .from("sermons")
-    .select("*")
+    .select("*, series:series(id, title)")
     .eq("id", id)
     .is("deleted_at", null)
     .maybeSingle();

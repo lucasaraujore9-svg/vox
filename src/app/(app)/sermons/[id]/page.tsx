@@ -53,9 +53,18 @@ export default async function SermonEditorPage({ params }: PageProps) {
     tags: (row.tags as string[] | null) ?? [],
     word_count: (row.word_count as number | null) ?? 0,
     preview: "",
-    series: row.series_id
-      ? { id: row.series_id as string, title: "" }
-      : undefined,
+    series: (() => {
+      // Embed do PostgREST: `series` vem como objeto (ou null) via FK.
+      // Fallback para o id "cru" pra não quebrar caso o embed falhe.
+      const embed = (row as { series?: { id: string; title: string } | null })
+        .series;
+      if (embed && typeof embed === "object" && embed.id) {
+        return { id: embed.id, title: embed.title };
+      }
+      return row.series_id
+        ? { id: row.series_id as string, title: "" }
+        : undefined;
+    })(),
     preached_at: row.preached_at as string | null,
     updated_at: row.updated_at as string,
     created_at: row.created_at as string,
