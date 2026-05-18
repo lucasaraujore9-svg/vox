@@ -25,8 +25,8 @@ export async function GET() {
     const [seriesRes, coursesRes, lessonsRes] = await Promise.all([
       supabase
         .from("series")
-        .select("id, title, sermons:sermons(id)")
-        .order("created_at", { ascending: false }),
+        .select("id, title, parent_id, sermons:sermons(id)")
+        .order("title", { ascending: true }),
       supabase
         .from("courses")
         .select("id, title")
@@ -43,14 +43,15 @@ export async function GET() {
 
     return NextResponse.json({
       series: (seriesRes.data ?? []).map((s) => ({
-        id: s.id as string,
-        title: s.title as string,
+        id: s.id,
+        title: s.title,
+        parent_id: s.parent_id ?? null,
         sermon_count: Array.isArray(s.sermons) ? s.sermons.length : 0,
       })),
       courses: (coursesRes.data ?? []).map((c) => ({
-        id: c.id as string,
-        title: c.title as string,
-        lessons: lessonsByCourse.get(c.id as string) ?? 0,
+        id: c.id,
+        title: c.title,
+        lessons: lessonsByCourse.get(c.id) ?? 0,
       })),
     });
   } catch {

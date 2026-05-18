@@ -24,6 +24,7 @@ import { Label } from "@/components/ui/label";
 import type { ContentType, SermonType } from "@/types/database";
 import type { FrameworkId } from "@/lib/mocks/frameworks";
 import { createSermonAction } from "@/lib/sermons/actions";
+import { upsertSeriesAction } from "@/lib/series/actions";
 
 type Step = 1 | 2 | 3 | 4 | 5;
 
@@ -109,13 +110,26 @@ export default function NewSermonWizardPage() {
 
   function submit() {
     startTransition(async () => {
+      // Se o usuário escolheu "Criar série nova", cria a série antes
+      // e usa o id retornado.
+      let seriesId: string | undefined = link.seriesId ?? undefined;
+      const newTitle = link.newSeriesTitle?.trim();
+      if (!seriesId && newTitle) {
+        const seriesRes = await upsertSeriesAction({ title: newTitle });
+        if (!seriesRes.ok) {
+          setError(`Falha ao criar série: ${seriesRes.error}`);
+          return;
+        }
+        seriesId = seriesRes.id;
+      }
+
       const result = await createSermonAction({
         title: title.trim() || (isBlank ? "Sem título" : "Novo manuscrito"),
         type: resolvedType(),
         content_type: contentType,
         framework: resolvedFramework(),
         bible_ref: bibleRef.trim() || undefined,
-        series_id: link.seriesId ?? undefined,
+        series_id: seriesId,
       });
       if (!result.ok) {
         setError(result.error);

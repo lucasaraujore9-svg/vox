@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   Circle,
   FileDown,
+  FolderTree,
   Info,
   Lightbulb,
   MoreHorizontal,
@@ -31,6 +32,7 @@ import { MetadataDialog } from "@/components/sermon/MetadataDialog";
 import { DeleteSermonDialog } from "@/components/sermon/DeleteSermonDialog";
 import { ArchiveSermonDialog } from "@/components/sermon/ArchiveSermonDialog";
 import { PermanentDeleteDialog } from "@/components/sermon/PermanentDeleteDialog";
+import { LinkSeriesDialog } from "@/components/sermon/LinkSeriesDialog";
 import { updateSermonMetaAction } from "@/lib/sermons/actions";
 import type { MockSermon } from "@/lib/mocks/sermons";
 
@@ -49,6 +51,7 @@ export function SermonActionsMenu({
   const [archiveOpen, setArchiveOpen] = useState(false);
   const [trashOpen, setTrashOpen] = useState(false);
   const [permDeleteOpen, setPermDeleteOpen] = useState(false);
+  const [linkSeriesOpen, setLinkSeriesOpen] = useState(false);
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [statusBusy, setStatusBusy] = useState(false);
   const router = useRouter();
@@ -131,6 +134,15 @@ export function SermonActionsMenu({
                 Voltar para rascunho
               </>
             )}
+          </DropdownMenuItem>
+
+          <DropdownMenuSeparator />
+          <DropdownMenuLabel className="vox-eyebrow text-[10px]">
+            Organização
+          </DropdownMenuLabel>
+          <DropdownMenuItem onSelect={() => setLinkSeriesOpen(true)}>
+            <FolderTree className="size-4 mr-2" />
+            {sermon.series ? "Mudar de série…" : "Vincular a série…"}
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
@@ -225,6 +237,12 @@ export function SermonActionsMenu({
         open={permDeleteOpen}
         onOpenChange={setPermDeleteOpen}
         redirectTo="/sermons?view=arquivo"
+      />
+      <LinkSeriesDialog
+        sermonId={sermon.id}
+        currentSeriesId={sermon.series?.id ?? null}
+        open={linkSeriesOpen}
+        onOpenChange={setLinkSeriesOpen}
       />
     </>
   );

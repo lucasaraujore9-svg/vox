@@ -1,13 +1,15 @@
-// Issue 003 (proto) + 032 (behavior) — Banco de Conteúdo com busca + filtros via URL state.
+// Issue 003 (proto) + 032 (behavior), Banco de Conteúdo com busca + filtros via URL state.
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ContentCard } from "@/components/sermon/ContentCard";
 import { SermonFiltersAside } from "@/components/sermon/SermonFiltersAside";
+import { SeriesTreeView } from "@/components/sermon/SeriesTreeView";
 import { listSermons } from "@/lib/sermons/queries";
 import type { MockSermon } from "@/lib/mocks/sermons";
 import type { FrameworkId } from "@/lib/mocks/frameworks";
 import { createClient } from "@/lib/supabase/server";
+import type { SeriesFlat } from "@/lib/series/tree";
 import type { ContentType, SermonStatus, SermonType } from "@/types/database";
 
 export const metadata = { title: "Banco" };
@@ -25,7 +27,8 @@ interface PageProps {
 }
 
 async function loadSermons(
-  filters: Awaited<PageProps["searchParams"]>
+  filters: Awaited<PageProps["searchParams"]>,
+  seriesIndex: Map<string, { id: string; title: string }>
 ): Promise<MockSermon[]> {
   const useSupabase =
     Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) &&
@@ -43,22 +46,27 @@ async function loadSermons(
         archived: filters.view === "arquivo" ? "archived" : "active",
         limit: 60,
       });
-      return rows.map((s) => ({
-        id: s.id,
-        title: s.title,
-        framework: s.framework as FrameworkId,
-        type: s.type as SermonType,
-        content_type: s.content_type as ContentType,
-        bible_ref: s.bible_ref ?? "",
-        bible_book: s.bible_book ?? "",
-        status: s.status as SermonStatus,
-        tags: s.tags ?? [],
-        word_count: s.word_count ?? 0,
-        preview: "",
-        preached_at: s.preached_at,
-        updated_at: s.updated_at,
-        created_at: s.created_at,
-      }));
+      return rows.map((s) => {
+        const sid = (s as { series_id?: string | null }).series_id ?? null;
+        const series = sid ? seriesIndex.get(sid) : undefined;
+        return {
+          id: s.id,
+          title: s.title,
+          framework: s.framework as FrameworkId,
+          type: s.type as SermonType,
+          content_type: s.content_type as ContentType,
+          bible_ref: s.bible_ref ?? "",
+          bible_book: s.bible_book ?? "",
+          status: s.status as SermonStatus,
+          tags: s.tags ?? [],
+          word_count: s.word_count ?? 0,
+          preview: "",
+          preached_at: s.preached_at,
+          updated_at: s.updated_at,
+          created_at: s.created_at,
+          series,
+        };
+      });
     } catch {
       // Supabase indisponível — retorna vazio
     }
@@ -66,13 +74,7 @@ async function loadSermons(
   return [];
 }
 
-interface SeriesRow {
-  id: string;
-  title: string;
-  sermon_count: number;
-}
-
-async function loadSeries(): Promise<SeriesRow[]> {
+async function loadSeries(): Promise<SeriesFlat[]> {
   const useSupabase =
     Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) &&
     Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
@@ -82,11 +84,12 @@ async function loadSeries(): Promise<SeriesRow[]> {
     // Embed agregado: PostgREST devolve sermons como array — contamos no app.
     const { data } = await supabase
       .from("series")
-      .select("id, title, sermons:sermons(id)")
-      .order("created_at", { ascending: false });
+      .select("id, title, parent_id, sermons:sermons(id)")
+      .order("title", { ascending: true });
     return (data ?? []).map((s) => ({
-      id: s.id as string,
-      title: s.title as string,
+      id: s.id,
+      title: s.title,
+      parent_id: s.parent_id ?? null,
       sermon_count: Array.isArray(s.sermons) ? s.sermons.length : 0,
     }));
   } catch {
@@ -106,10 +109,11 @@ function buildUrl(base: Record<string, string | undefined>, key: string, value: 
 
 export default async function SermonsBankPage({ searchParams }: PageProps) {
   const filters = await searchParams;
-  const [sermons, seriesList] = await Promise.all([
-    loadSermons(filters),
-    loadSeries(),
-  ]);
+  const seriesList = await loadSeries();
+  const seriesIndex = new Map(
+    seriesList.map((s) => [s.id, { id: s.id, title: s.title }] as const)
+  );
+  const sermons = await loadSermons(filters, seriesIndex);
 
   const isArchive = filters.view === "arquivo";
 
@@ -124,7 +128,7 @@ export default async function SermonsBankPage({ searchParams }: PageProps) {
           <p className="vox-body mt-3 max-w-xl">
             {isArchive
               ? "Manuscritos fora do banco principal. Você pode tirar do arquivo ou apagar permanentemente."
-              : "Todo o seu ministério em um lugar — sermões, palestras e aulas."}
+              : "Todo o seu ministério em um lugar, sermões, palestras e aulas."}
           </p>
         </div>
         {!isArchive ? (
@@ -193,14 +197,14 @@ export default async function SermonsBankPage({ searchParams }: PageProps) {
             ) : null}
           </div>
 
-          {sermons.length === 0 ? (
+          {filters.view === "grouped" && !isArchive ? (
+            <SeriesTreeView series={seriesList} sermons={sermons} />
+          ) : sermons.length === 0 ? (
             <p className="vox-body text-center py-12 text-vox-muted">
               {isArchive
                 ? "Nenhum manuscrito arquivado."
                 : "Nenhum manuscrito encontrado com esses filtros."}
             </p>
-          ) : filters.view === "grouped" ? (
-            <GroupedView sermons={sermons} />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {sermons.map((sermon) => (
@@ -218,65 +222,3 @@ export default async function SermonsBankPage({ searchParams }: PageProps) {
   );
 }
 
-/** Agrupa sermons por série, com seção "Sem série" no fim. */
-function GroupedView({ sermons }: { sermons: MockSermon[] }) {
-  const groups = new Map<string, { title: string; description?: string; items: MockSermon[] }>();
-  const orphans: MockSermon[] = [];
-
-  for (const sermon of sermons) {
-    if (!sermon.series) {
-      orphans.push(sermon);
-      continue;
-    }
-    const existing = groups.get(sermon.series.id);
-    if (existing) {
-      existing.items.push(sermon);
-    } else {
-      groups.set(sermon.series.id, {
-        title: sermon.series.title,
-        items: [sermon],
-      });
-    }
-  }
-
-  return (
-    <div className="space-y-10">
-      {Array.from(groups.entries()).map(([id, group]) => (
-        <section key={id}>
-          <header className="flex items-end justify-between mb-4">
-            <div>
-              <p className="vox-eyebrow text-xs">Série</p>
-              <h3 className="vox-h3 mt-1.5 text-lg">{group.title}</h3>
-            </div>
-            <span className="vox-mono text-xs text-vox-muted">
-              {group.items.length} manuscritos
-            </span>
-          </header>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {group.items.map((sermon) => (
-              <ContentCard key={sermon.id} sermon={sermon} />
-            ))}
-          </div>
-        </section>
-      ))}
-      {orphans.length > 0 ? (
-        <section>
-          <header className="flex items-end justify-between mb-4">
-            <div>
-              <p className="vox-eyebrow text-xs text-vox-muted">Avulsos</p>
-              <h3 className="vox-h3 mt-1.5 text-lg">Sem série</h3>
-            </div>
-            <span className="vox-mono text-xs text-vox-muted">
-              {orphans.length} manuscritos
-            </span>
-          </header>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {orphans.map((sermon) => (
-              <ContentCard key={sermon.id} sermon={sermon} />
-            ))}
-          </div>
-        </section>
-      ) : null}
-    </div>
-  );
-}
