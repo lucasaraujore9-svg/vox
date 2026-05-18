@@ -17,7 +17,7 @@ import { getSermon } from "@/lib/sermons/queries";
 import { parseSermonContent } from "@/lib/sermons/sessions";
 import { listSlidesForSermon } from "@/lib/sermons/slides";
 import { listEngagements } from "@/lib/sermons/engagements";
-import { getMockVersions } from "@/lib/mocks/versions";
+import { listSermonVersions } from "@/lib/sermons/versions";
 import { VOX_FRAMEWORKS, type FrameworkId } from "@/lib/mocks/frameworks";
 import type { ContentType, SermonStatus, SermonType } from "@/types/database";
 
@@ -64,7 +64,14 @@ export default async function SermonEditorPage({ params }: PageProps) {
 
   const framework = VOX_FRAMEWORKS.find((f) => f.id === sermon.framework);
   const content = parseSermonContent(row.content, sermon.framework);
-  const versions = getMockVersions(sermon.id);
+  const versionsRows = await listSermonVersions(sermon.id);
+  const versions = versionsRows.map((v) => ({
+    id: v.id,
+    title: v.title,
+    word_count: v.word_count ?? 0,
+    note: v.note,
+    created_at: v.created_at,
+  }));
   const engagements = await listEngagements(sermon.id);
   const slides =
     sermon.type === "apresentação"

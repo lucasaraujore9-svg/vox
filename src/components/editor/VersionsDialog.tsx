@@ -17,7 +17,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { saveSermonVersion, restoreSermonVersion } from "@/lib/sermons/versions";
+import {
+  saveSermonVersion,
+  restoreSermonVersion,
+  listSermonVersions,
+} from "@/lib/sermons/versions";
 import type { MockVersion } from "@/lib/mocks/versions";
 
 interface VersionsDialogProps {
@@ -35,17 +39,40 @@ export function VersionsDialog({
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<"list" | "save">("list");
   const [versions, setVersions] = useState<MockVersion[]>(fallbackVersions);
+  const [loadingList, setLoadingList] = useState(false);
   const [note, setNote] = useState("");
   const [pending, startTransition] = useTransition();
   const [feedback, setFeedback] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
 
+  async function refreshVersions() {
+    setLoadingList(true);
+    try {
+      const rows = await listSermonVersions(sermonId);
+      setVersions(
+        rows.map((r) => ({
+          id: r.id,
+          title: r.title,
+          word_count: r.word_count,
+          note: r.note,
+          created_at: r.created_at,
+        }))
+      );
+    } catch {
+      // Mantém o que estiver na tela; mostra erro suave abaixo.
+      setError("Falha ao carregar histórico.");
+    } finally {
+      setLoadingList(false);
+    }
+  }
+
   useEffect(() => {
     if (!open) return;
-    // Em produção: load real. Por ora, usa fallback.
-    setVersions(fallbackVersions);
-  }, [open, fallbackVersions]);
+    void refreshVersions();
+    // refreshVersions é estável dentro deste componente (não passa em deps).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, sermonId]);
 
   function handleSave() {
     setError(null);
@@ -57,6 +84,9 @@ export function VersionsDialog({
       } else {
         setFeedback("Versão salva.");
         setNote("");
+        // Já recarrega o histórico e troca pra aba de lista pra mostrar.
+        await refreshVersions();
+        setTab("list");
       }
     });
   }
@@ -86,7 +116,7 @@ export function VersionsDialog({
             <DialogTitle>Versões do manuscrito</DialogTitle>
             <DialogDescription>
               Cada vez que você salva uma versão, geramos um snapshot. Você pode
-              restaurar qualquer versão anterior a qualquer momento — o estado atual
+              restaurar qualquer versão anterior a qualquer momento, o estado atual
               vira uma versão automática antes da restauração.
             </DialogDescription>
           </DialogHeader>
@@ -123,7 +153,11 @@ export function VersionsDialog({
 
           {tab === "list" ? (
             <ul className="space-y-3 max-h-96 overflow-y-auto pr-1">
-              {versions.length === 0 ? (
+              {loadingList ? (
+                <li className="text-sm text-vox-muted italic py-6 text-center">
+                  Carregando…
+                </li>
+              ) : versions.length === 0 ? (
                 <li className="text-sm text-vox-muted italic py-6 text-center">
                   Nenhuma versão salva ainda. Clique em &ldquo;+ Salvar versão&rdquo;
                   para criar a primeira.
@@ -204,7 +238,7 @@ export function VersionsDialog({
               </div>
               <p className="text-xs text-vox-muted">
                 A versão captura o estado atual do título, framework, referência bíblica e
-                conteúdo. Auto-saves silenciosos não criam versão — só este botão.
+                conteúdo. Auto-saves silenciosos não criam versão, só este botão.
               </p>
             </div>
           )}
