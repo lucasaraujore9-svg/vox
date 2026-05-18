@@ -1,8 +1,16 @@
 // Issue 034, Conversor de .docx ou texto livre em estrutura SermonContent.
-// Heurística: títulos viram cabeçalhos de blocos; quebra natural em sessões
-// (Introdução / Tópicos / Conclusão) baseada em pistas do cabeçalho.
+// Suporta dois formatos:
+//   1) ESTRUTURADO via tags VOX (preferido — mais fiel):
+//        ## Introdução
+//        @texto_biblico
+//        Romanos 5:1-11
+//        @introducao
+//        Conteúdo...
+//      Detectado quando o texto contém qualquer "## sessão" ou "@bloco".
+//   2) LIVRE: heurística que detecta cabeçalhos comuns (introdução, ponto,
+//      aplicação…) e agrupa em sessões. Fallback para arquivos antigos.
 
-import type { BlockTypeId } from "@/lib/mocks/blocks";
+import { VOX_BLOCK_TYPES, type BlockTypeId } from "@/lib/mocks/blocks";
 import type {
   SermonContent,
   SessionNode,
@@ -10,6 +18,16 @@ import type {
   SessionItem,
 } from "@/lib/sermons/sessions";
 import type { FrameworkId } from "@/lib/mocks/frameworks";
+
+/** Conjunto fechado de tipos válidos pra validação de tags `@tipo`. */
+const VALID_BLOCK_TYPES = new Set<BlockTypeId>(
+  VOX_BLOCK_TYPES.map((b) => b.id)
+);
+
+const SESSION_TAG_RE = /^##\s+(.+?)\s*$/;
+const BLOCK_TAG_RE = /^@([a-z_]+)\b\s*(.*)$/i;
+// Comentário: `// algo` ou linha começando com um único `#` (mas não `##`).
+const COMMENT_RE = /^\s*(?:\/\/.*|#(?!#).*)$/;
 
 export interface ImportedBlock {
   type: BlockTypeId;
@@ -90,16 +108,123 @@ export function parsePlainText(raw: string): ImportedBlock[] {
   return blocks;
 }
 
+/** Retorna true se o texto tem ao menos uma tag VOX (`## sessão` ou `@bloco`). */
+export function hasStructuredTags(raw: string): boolean {
+  const lines = raw.replace(/\r\n/g, "\n").split("\n");
+  for (const line of lines) {
+    if (COMMENT_RE.test(line)) continue;
+    if (SESSION_TAG_RE.test(line)) return true;
+    if (BLOCK_TAG_RE.test(line)) return true;
+  }
+  return false;
+}
+
+/** Limpa prefixos redundantes do título da sessão ("Introdução: …", "Tópico: …"). */
+function cleanSessionTitle(raw: string): string {
+  const stripped = raw
+    .replace(/^(t[oó]pico|introdu[çc][aã]o|conclus[aã]o)\s*[:\-—]\s*/i, "")
+    .trim();
+  return stripped || raw.trim();
+}
+
+/**
+ * Converte texto com tags VOX em SermonContent. Linhas reconhecidas:
+ *   - `## Título`           → abre nova sessão (role inferido pelo título)
+ *   - `@tipo_de_bloco`      → abre novo bloco até a próxima tag
+ *   - `@tipo conteúdo`      → bloco em uma linha (conteúdo logo após a tag)
+ *   - `// …` ou `# …`       → comentário (ignorado)
+ *   - qualquer outra coisa  → conteúdo do bloco corrente
+ *
+ * Tags `@xxx` com tipo desconhecido viram `notas_pessoais`.
+ */
+export function parseTaggedTextToContent(raw: string): SermonContent {
+  const lines = raw.replace(/\r\n/g, "\n").split("\n");
+
+  const sessions: SessionNode[] = [];
+  let currentSession: SessionNode | null = null;
+  let currentBlockType: BlockTypeId | null = null;
+  let currentBlockLines: string[] = [];
+
+  const flushBlock = () => {
+    if (!currentBlockType || !currentSession) {
+      currentBlockType = null;
+      currentBlockLines = [];
+      return;
+    }
+    const content = currentBlockLines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+    if (content) {
+      const item: SessionItem = {
+        id: newId(),
+        type: currentBlockType,
+        content,
+        order: currentSession.items.length + 1,
+      };
+      currentSession.items.push(item);
+    }
+    currentBlockType = null;
+    currentBlockLines = [];
+  };
+
+  const openSession = (title: string): SessionNode => {
+    flushBlock();
+    const role = classifyRole(title);
+    const cleanTitle = cleanSessionTitle(title) || `Sessão ${sessions.length + 1}`;
+    const node: SessionNode = {
+      id: newId(),
+      title: cleanTitle,
+      role,
+      order: sessions.length + 1,
+      items: [],
+    };
+    sessions.push(node);
+    currentSession = node;
+    return node;
+  };
+
+  for (const line of lines) {
+    if (COMMENT_RE.test(line)) continue;
+
+    const sessionMatch = SESSION_TAG_RE.exec(line);
+    if (sessionMatch) {
+      openSession(sessionMatch[1] ?? "");
+      continue;
+    }
+
+    const blockMatch = BLOCK_TAG_RE.exec(line);
+    if (blockMatch) {
+      flushBlock();
+      const tag = (blockMatch[1] ?? "").toLowerCase() as BlockTypeId;
+      const type: BlockTypeId = VALID_BLOCK_TYPES.has(tag) ? tag : "notas_pessoais";
+      if (!currentSession) openSession("Introdução");
+      currentBlockType = type;
+      const inline = (blockMatch[2] ?? "").trim();
+      if (inline) currentBlockLines.push(inline);
+      continue;
+    }
+
+    // Conteúdo solto antes do primeiro `@` — só vira item se houver sessão e
+    // bloco corrente; do contrário ignora pra não criar lixo.
+    if (currentBlockType) {
+      currentBlockLines.push(line);
+    }
+  }
+  flushBlock();
+
+  return { sessions };
+}
+
 /**
  * Converte texto puro em SermonContent (estrutura usada pelo editor).
- * Agrupa blocos em sessões: tudo antes do primeiro tópico vira "Introdução";
- * tópicos sequenciais (ponto_principal etc.) iniciam novas sessões; o último
- * bloco com cara de fechamento vira "Conclusão".
+ * Se detectar tags VOX, usa o parser estruturado; caso contrário, cai na
+ * heurística antiga (cabeçalhos comuns + agrupamento por tópicos).
  */
 export function parseTextToContent(
   raw: string,
   _framework: FrameworkId
 ): SermonContent {
+  if (hasStructuredTags(raw)) {
+    return parseTaggedTextToContent(raw);
+  }
   const blocks = parsePlainText(raw);
   if (blocks.length === 0) {
     return { sessions: [] };
