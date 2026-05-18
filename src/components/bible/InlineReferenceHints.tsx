@@ -14,6 +14,13 @@ const DEBOUNCE_MS = 350;
 interface InlineReferenceHintsProps {
   text: string;
   version: BibleVersionId;
+  /** Referências canônicas já dispensadas/inseridas pelo usuário —
+      persistidas no item.dismissedRefs. */
+  dismissed?: string[];
+  /** Notifica o pai para persistir o dismiss (na decisão do usuário ou
+      após inserir). Também usado pra "ressuscitar" hints quando uma ref
+      sai do texto e volta. */
+  onDismissedChange?: (next: string[]) => void;
   onInsert?: (canonical: string, fullText: string, version: BibleVersionId) => void;
   className?: string;
 }
@@ -21,6 +28,8 @@ interface InlineReferenceHintsProps {
 export function InlineReferenceHints({
   text,
   version,
+  dismissed = [],
+  onDismissedChange,
   onInsert,
   className,
 }: InlineReferenceHintsProps) {
@@ -38,11 +47,30 @@ export function InlineReferenceHints({
     return Array.from(new Set(refs.map((r) => r.canonical)));
   }, [debounced]);
 
-  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
+  // Limpa do dismissed as refs que SUMIRAM do texto — assim, se o usuário
+  // apagar e digitar de novo, o hint reaparece (regra explícita do produto).
+  useEffect(() => {
+    if (!onDismissedChange) return;
+    if (dismissed.length === 0) return;
+    const presentSet = new Set(canonicals);
+    const filtered = dismissed.filter((d) => presentSet.has(d));
+    if (filtered.length !== dismissed.length) {
+      onDismissedChange(filtered);
+    }
+    // canonicals e dismissed são as fontes; onDismissedChange é estável.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canonicals.join("|"), dismissed.join("|")]);
 
-  const visible = canonicals.filter((c) => !dismissed.has(c));
+  const dismissedSet = new Set(dismissed);
+  const visible = canonicals.filter((c) => !dismissedSet.has(c));
 
   if (visible.length === 0) return null;
+
+  function markDismissed(canonical: string) {
+    if (!onDismissedChange) return;
+    if (dismissedSet.has(canonical)) return;
+    onDismissedChange([...dismissed, canonical]);
+  }
 
   return (
     <div className={cn("flex flex-wrap gap-2 mt-2", className)}>
@@ -53,10 +81,9 @@ export function InlineReferenceHints({
           version={version}
           onInsert={(c, fullText, chosenVersion) => {
             onInsert?.(c, fullText, chosenVersion);
-            // Após inserir, dispensa pra evitar a pílula ficar pedindo de novo
-            setDismissed((prev) => new Set(prev).add(canonical));
+            markDismissed(canonical);
           }}
-          onDismiss={() => setDismissed((prev) => new Set(prev).add(canonical))}
+          onDismiss={() => markDismissed(canonical)}
         />
       ))}
     </div>

@@ -77,6 +77,11 @@ interface SessionCardProps {
     fullText: string,
     version: BibleVersionId
   ) => void;
+  onItemDismissedRefsChange?: (
+    sessionId: string,
+    itemId: string,
+    next: string[]
+  ) => void;
 }
 
 export function SessionCard({
@@ -96,6 +101,7 @@ export function SessionCard({
   onMoveSession,
   onMoveItem,
   onInsertVerseAfter,
+  onItemDismissedRefsChange,
 }: SessionCardProps) {
   const accent = ROLE_COLOR[session.role];
 
@@ -219,6 +225,7 @@ export function SessionCard({
               label={item.label}
               hint={item.hint}
               tip={item.tip}
+              dismissedRefs={item.dismissedRefs}
               bibleVersion={bibleVersion}
               minimal={minimal}
               isFirstItem={itemIdx === 0}
@@ -228,6 +235,7 @@ export function SessionCard({
               onRemove={onRemoveItem}
               onMove={onMoveItem}
               onInsertVerseAfter={onInsertVerseAfter}
+              onDismissedRefsChange={onItemDismissedRefsChange}
             />
           );
         })}
@@ -304,6 +312,13 @@ interface SessionItemRowProps {
     fullText: string,
     version: BibleVersionId
   ) => void;
+  /** Refs canônicas já dispensadas (persistido no item). */
+  dismissedRefs?: string[];
+  onDismissedRefsChange?: (
+    sessionId: string,
+    itemId: string,
+    next: string[]
+  ) => void;
 }
 
 function SessionItemRow({
@@ -314,6 +329,7 @@ function SessionItemRow({
   label,
   hint,
   tip,
+  dismissedRefs,
   bibleVersion = "acf",
   minimal = false,
   isFirstItem = false,
@@ -323,6 +339,7 @@ function SessionItemRow({
   onRemove,
   onMove,
   onInsertVerseAfter,
+  onDismissedRefsChange,
 }: SessionItemRowProps) {
   const [localContent, setLocalContent] = useState(content);
   const blockType = getBlockType(type);
@@ -466,6 +483,10 @@ function SessionItemRow({
       <InlineReferenceHints
         text={localContent}
         version={bibleVersion}
+        dismissed={dismissedRefs}
+        onDismissedChange={(next) =>
+          onDismissedRefsChange?.(sessionId, itemId, next)
+        }
         onInsert={(canonical, fullText, chosenVersion) =>
           onInsertVerseAfter?.(sessionId, itemId, canonical, fullText, chosenVersion)
         }

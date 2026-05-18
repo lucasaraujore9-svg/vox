@@ -21,6 +21,10 @@ export interface SessionItem {
   hint?: string;
   /** Dica pedagógica expandida (mostrada em popover de ajuda). Para iniciantes. */
   tip?: string;
+  /** Referências bíblicas (canônico) cujo hint foi dispensado ou inserido pelo
+      usuário. Persistido junto com o item — não reaparece após reload. Só
+      "renasce" quando a ref some do texto e volta a ser digitada. */
+  dismissedRefs?: string[];
 }
 
 export interface SessionNode {

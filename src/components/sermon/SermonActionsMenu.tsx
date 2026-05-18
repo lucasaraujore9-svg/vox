@@ -7,12 +7,15 @@ import { useEffect, useState } from "react";
 import {
   Archive,
   ArchiveRestore,
+  CheckCircle2,
+  Circle,
   FileDown,
   Info,
   Lightbulb,
   MoreHorizontal,
   Trash2,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,6 +31,7 @@ import { MetadataDialog } from "@/components/sermon/MetadataDialog";
 import { DeleteSermonDialog } from "@/components/sermon/DeleteSermonDialog";
 import { ArchiveSermonDialog } from "@/components/sermon/ArchiveSermonDialog";
 import { PermanentDeleteDialog } from "@/components/sermon/PermanentDeleteDialog";
+import { updateSermonMetaAction } from "@/lib/sermons/actions";
 import type { MockSermon } from "@/lib/mocks/sermons";
 
 interface SermonActionsMenuProps {
@@ -46,6 +50,9 @@ export function SermonActionsMenu({
   const [trashOpen, setTrashOpen] = useState(false);
   const [permDeleteOpen, setPermDeleteOpen] = useState(false);
   const [isDemoMode, setIsDemoMode] = useState(false);
+  const [statusBusy, setStatusBusy] = useState(false);
+  const router = useRouter();
+  const isDraft = sermon.status === "rascunho";
 
   useEffect(() => {
     setIsDemoMode(!process.env.NEXT_PUBLIC_SUPABASE_URL);
@@ -62,6 +69,30 @@ export function SermonActionsMenu({
     window.location.href = `/api/sermons/export?sermonId=${sermon.id}&format=${format}`;
   }
 
+  async function handleStatusToggle() {
+    if (isDemoMode) {
+      toast.error("Modo demo", {
+        description: "Configure Supabase em .env.local pra alterar o status.",
+      });
+      return;
+    }
+    if (statusBusy) return;
+    setStatusBusy(true);
+    const nextStatus = isDraft ? "pronto" : "rascunho";
+    const res = await updateSermonMetaAction({ id: sermon.id, status: nextStatus });
+    setStatusBusy(false);
+    if (!res.ok) {
+      toast.error("Falha ao atualizar status", { description: res.error });
+      return;
+    }
+    toast.success(
+      nextStatus === "pronto"
+        ? "Marcado como pregado"
+        : "Voltou para rascunho"
+    );
+    router.refresh();
+  }
+
   return (
     <>
       <DropdownMenu>
@@ -76,6 +107,33 @@ export function SermonActionsMenu({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuLabel className="vox-eyebrow text-[10px]">
+            Status
+          </DropdownMenuLabel>
+          <DropdownMenuItem
+            onSelect={(e) => {
+              e.preventDefault();
+              void handleStatusToggle();
+            }}
+            disabled={statusBusy}
+          >
+            {isDraft ? (
+              <>
+                <CheckCircle2
+                  className="size-4 mr-2"
+                  style={{ color: "var(--vox-forest)" }}
+                />
+                Marcar como pregado
+              </>
+            ) : (
+              <>
+                <Circle className="size-4 mr-2 text-vox-muted" />
+                Voltar para rascunho
+              </>
+            )}
+          </DropdownMenuItem>
+
+          <DropdownMenuSeparator />
           <DropdownMenuLabel className="vox-eyebrow text-[10px]">
             Sobre este manuscrito
           </DropdownMenuLabel>

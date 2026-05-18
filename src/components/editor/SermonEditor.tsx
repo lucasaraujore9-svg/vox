@@ -240,13 +240,53 @@ export function SermonEditor({
           content: html,
           order: idx + 2,
         };
-        const before = s.items.slice(0, idx + 1);
+        const before = s.items.slice(0, idx).concat(
+          // Marca a ref como dismissed no item DE ORIGEM — assim, ao reabrir
+          // o sermão, a pílula não pede pra inserir de novo aquela ref.
+          (() => {
+            const origin = s.items[idx];
+            if (!origin) return [];
+            const prev = origin.dismissedRefs ?? [];
+            const next = prev.includes(canonical) ? prev : [...prev, canonical];
+            return [{ ...origin, dismissedRefs: next }];
+          })()
+        );
         const after = s.items.slice(idx + 1).map((i, k) => ({
           ...i,
           order: idx + 3 + k,
         }));
         return { ...s, items: [...before, newItem, ...after] };
       })
+    );
+  }
+
+  /** Atualiza o dismissedRefs de um item — o auto-save normal cuida da
+      persistência no Supabase via content jsonb. */
+  function handleItemDismissedRefsChange(
+    sessionId: string,
+    itemId: string,
+    next: string[]
+  ) {
+    updateSessions((sessions) =>
+      sessions.map((s) =>
+        s.id !== sessionId
+          ? s
+          : {
+              ...s,
+              items: s.items.map((i) =>
+                i.id === itemId
+                  ? next.length > 0
+                    ? { ...i, dismissedRefs: next }
+                    : (() => {
+                        // Limpa o campo quando vazio pra não inflar o jsonb.
+                        const { dismissedRefs: _drop, ...rest } = i;
+                        void _drop;
+                        return rest;
+                      })()
+                  : i
+              ),
+            }
+      )
     );
   }
 
@@ -393,6 +433,7 @@ export function SermonEditor({
                 }
                 onMoveItem={handleMoveItem}
                 onInsertVerseAfter={handleInsertVerseAfter}
+                onItemDismissedRefsChange={handleItemDismissedRefsChange}
               />
             );
           })}
