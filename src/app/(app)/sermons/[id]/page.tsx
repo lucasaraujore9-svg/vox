@@ -16,8 +16,8 @@ import { BibleSidePanel } from "@/components/bible/BibleSidePanel";
 import { getSermon } from "@/lib/sermons/queries";
 import { parseSermonContent } from "@/lib/sermons/sessions";
 import { listSlidesForSermon } from "@/lib/sermons/slides";
+import { listEngagements } from "@/lib/sermons/engagements";
 import { getMockVersions } from "@/lib/mocks/versions";
-import { getMockEngagements } from "@/lib/mocks/engagements";
 import { VOX_FRAMEWORKS, type FrameworkId } from "@/lib/mocks/frameworks";
 import type { ContentType, SermonStatus, SermonType } from "@/types/database";
 
@@ -65,7 +65,7 @@ export default async function SermonEditorPage({ params }: PageProps) {
   const framework = VOX_FRAMEWORKS.find((f) => f.id === sermon.framework);
   const content = parseSermonContent(row.content, sermon.framework);
   const versions = getMockVersions(sermon.id);
-  const engagements = getMockEngagements(sermon.id);
+  const engagements = await listEngagements(sermon.id);
   const slides =
     sermon.type === "apresentação"
       ? await listSlidesForSermon(sermon.id, sermon.framework)
