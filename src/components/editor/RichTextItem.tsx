@@ -1,10 +1,12 @@
 "use client";
 
-// Editor rico baseado em TipTap para um item de sessão. Substitui o textarea.
+// Editor rico baseado em TipTap para um item de sessão.
 // - Auto-grow nativo (sem rows, pretende ocupar o necessário).
-// - BubbleToolbar flutuante quando há texto selecionado.
-// - Conteúdo é HTML (compatível com o exportador, que faz htmlToPlainText).
-// - Recebe `placeholder`, `scripture` (variante itálica/citação), `onChange`.
+// - BubbleToolbar via @tiptap/extension-bubble-menu (oficial, mais robusto
+//   que portal manual — funciona em todos os blocos, posiciona certo, não
+//   compete entre instâncias).
+// - SlashCommandMenu (manual) ao digitar "/".
+// - Suporte a cor do texto e highlight translúcido.
 
 import { useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
@@ -12,6 +14,9 @@ import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { Color } from "@tiptap/extension-color";
+import { Highlight } from "@tiptap/extension-highlight";
 import { cn } from "@/lib/utils";
 import { BubbleToolbar } from "./BubbleToolbar";
 import { SlashCommandMenu } from "./SlashCommandMenu";
@@ -49,6 +54,10 @@ export function RichTextItem({
         autolink: true,
         HTMLAttributes: { rel: "noopener noreferrer", target: "_blank" },
       }),
+      // TextStyle precisa vir antes de Color — Color depende dele.
+      TextStyle,
+      Color,
+      Highlight.configure({ multicolor: true }),
       Placeholder.configure({
         placeholder: placeholder ?? "Comece a escrever…",
       }),

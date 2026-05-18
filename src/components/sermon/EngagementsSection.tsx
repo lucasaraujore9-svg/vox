@@ -4,6 +4,8 @@
 // Cada engagement tem data, local, audiência, rating (1–5 estrelas), feedback.
 
 import { useState, useTransition } from "react";
+import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -17,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { upsertEngagement } from "@/lib/sermons/engagements";
+import { deleteEngagement, upsertEngagement } from "@/lib/sermons/engagements";
 import type { MockEngagement } from "@/lib/mocks/engagements";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +36,8 @@ export function EngagementsSection({
   const [engagements, setEngagements] = useState<MockEngagement[]>(initialEngagements);
   const [editing, setEditing] = useState<MockEngagement | null>(null);
   const [open, setOpen] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
 
   function openCreate() {
     setEditing(null);
@@ -54,6 +58,23 @@ export function EngagementsSection({
       return copy;
     });
   }
+
+  async function handleConfirmDelete() {
+    if (!deletingId || deleteBusy) return;
+    setDeleteBusy(true);
+    const res = await deleteEngagement(deletingId, sermonId);
+    setDeleteBusy(false);
+    if (!res.ok) {
+      toast.error("Falha ao apagar", { description: res.error });
+      return;
+    }
+    setEngagements((prev) => prev.filter((p) => p.id !== deletingId));
+    toast.success("Registro apagado");
+    setDeletingId(null);
+  }
+
+  const deletingEngagement =
+    engagements.find((e) => e.id === deletingId) ?? null;
 
   return (
     <section className="mt-10 pt-10 border-t border-border">
@@ -86,6 +107,7 @@ export function EngagementsSection({
               key={e.id}
               engagement={e}
               onEdit={() => openEdit(e)}
+              onDelete={() => setDeletingId(e.id)}
             />
           ))}
         </ul>
@@ -98,6 +120,41 @@ export function EngagementsSection({
         editing={editing}
         onSaved={handleSaved}
       />
+
+      <Dialog
+        open={deletingId !== null}
+        onOpenChange={(o) => !o && !deleteBusy && setDeletingId(null)}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Apagar este registro?</DialogTitle>
+            <DialogDescription>
+              {deletingEngagement?.location
+                ? `Pregação em ${deletingEngagement.location} (${new Date(
+                    deletingEngagement.preached_at + "T12:00:00"
+                  ).toLocaleDateString("pt-BR")}).`
+                : "Esse registro será removido permanentemente."}{" "}
+              Essa ação não pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              onClick={() => setDeletingId(null)}
+              disabled={deleteBusy}
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={() => void handleConfirmDelete()}
+              disabled={deleteBusy}
+              style={{ background: "var(--vox-destructive, #B91C1C)", color: "#fff" }}
+            >
+              {deleteBusy ? "Apagando…" : "Apagar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
@@ -105,9 +162,11 @@ export function EngagementsSection({
 function EngagementCard({
   engagement,
   onEdit,
+  onDelete,
 }: {
   engagement: MockEngagement;
   onEdit: () => void;
+  onDelete: () => void;
 }) {
   return (
     <li
@@ -143,6 +202,16 @@ function EngagementCard({
           ) : null}
           <Button variant="ghost" size="sm" onClick={onEdit} className="text-xs">
             Editar
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onDelete}
+            className="text-xs text-vox-muted hover:text-vox-destructive"
+            aria-label="Apagar registro"
+            title="Apagar registro"
+          >
+            <Trash2 className="size-3.5" />
           </Button>
         </div>
       </header>

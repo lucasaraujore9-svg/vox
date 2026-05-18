@@ -1,11 +1,14 @@
 "use client";
 
-// Toolbar flutuante que aparece quando há texto selecionado dentro de um
-// editor TipTap. Estilo Word/Notion: sai do topo da seleção, segue scroll.
-// Renderiza via Portal pra não ser cortado por containers com overflow.
+// Toolbar flutuante via BubbleMenu oficial do TipTap. Aparece sobre QUALQUER
+// editor TipTap focado com seleção não-vazia — não há mais conflito entre
+// múltiplos editores (cada instância gerencia seu próprio menu via Tippy.js).
+//
+// Inclui: bold/italic/underline/strike, H2, blockquote, link, inserir versículo,
+// cor do texto, marca-texto (highlight).
 
-import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
+import { useState } from "react";
+import { BubbleMenu } from "@tiptap/react/menus";
 import type { Editor } from "@tiptap/react";
 import { toast } from "sonner";
 import {
@@ -17,10 +20,17 @@ import {
   Quote,
   Link2,
   BookMarked,
+  Highlighter,
+  Palette,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { findFirstReference } from "@/lib/bible/parser";
 import type { BibleVersionId } from "@/lib/bible/versions";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface BubbleToolbarProps {
   editor: Editor | null;
@@ -28,62 +38,35 @@ interface BubbleToolbarProps {
   bibleVersion?: BibleVersionId;
 }
 
+// Paleta enxuta — alinhada ao design-system. Editorial, sem neon.
+const TEXT_COLORS: Array<{ name: string; value: string }> = [
+  { name: "Padrão", value: "" }, // limpa cor
+  { name: "Ink", value: "#18181B" },
+  { name: "Forest", value: "#166534" },
+  { name: "Gold", value: "#B45309" },
+  { name: "Burgundy", value: "#9F1239" },
+  { name: "Violeta", value: "#7C3AED" },
+  { name: "Azure", value: "#1D4ED8" },
+  { name: "Slate", value: "#475569" },
+];
+
+const HIGHLIGHT_COLORS: Array<{ name: string; value: string }> = [
+  { name: "Remover", value: "" },
+  { name: "Amarelo", value: "rgba(252, 211, 77, 0.45)" },
+  { name: "Verde", value: "rgba(134, 239, 172, 0.45)" },
+  { name: "Azul", value: "rgba(147, 197, 253, 0.45)" },
+  { name: "Rosa", value: "rgba(249, 168, 212, 0.45)" },
+  { name: "Lavanda", value: "rgba(196, 181, 253, 0.45)" },
+  { name: "Pêssego", value: "rgba(253, 186, 116, 0.45)" },
+];
+
 export function BubbleToolbar({
   editor,
   bibleVersion = "acf",
 }: BubbleToolbarProps) {
-  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
-  const [mounted, setMounted] = useState(false);
-  const [selectedText, setSelectedText] = useState("");
   const [busy, setBusy] = useState(false);
 
-  useEffect(() => setMounted(true), []);
-
-  useEffect(() => {
-    if (!editor) return;
-
-    const update = () => {
-      const { state, view } = editor;
-      const { from, to, empty } = state.selection;
-
-      if (empty || !view.hasFocus()) {
-        setPos(null);
-        setSelectedText("");
-        return;
-      }
-
-      try {
-        const start = view.coordsAtPos(from);
-        const end = view.coordsAtPos(to);
-        const selTop = Math.min(start.top, end.top);
-        const selBottom = Math.max(start.bottom, end.bottom);
-        const left = (start.left + end.left) / 2;
-        // Se há espaço acima da seleção, posiciona acima. Senão, abaixo.
-        // Evita a toolbar sair da viewport em blocos no topo da página.
-        const TOOLBAR_HEIGHT = 40;
-        const aboveTop = selTop - TOOLBAR_HEIGHT - 8;
-        const top =
-          aboveTop > 8 ? aboveTop : selBottom + 8;
-        setPos({ top: top + window.scrollY, left: left + window.scrollX });
-        setSelectedText(state.doc.textBetween(from, to, " "));
-      } catch {
-        setPos(null);
-      }
-    };
-
-    const onBlur = () => setPos(null);
-
-    editor.on("selectionUpdate", update);
-    editor.on("blur", onBlur);
-    editor.on("focus", update);
-    return () => {
-      editor.off("selectionUpdate", update);
-      editor.off("blur", onBlur);
-      editor.off("focus", update);
-    };
-  }, [editor]);
-
-  if (!editor || !mounted || !pos) return null;
+  if (!editor) return null;
 
   function fire(cmd: () => void) {
     return (e: React.MouseEvent) => {
@@ -94,20 +77,22 @@ export function BubbleToolbar({
   }
 
   function promptLink() {
-    const previous = editor!.getAttributes("link").href as string | undefined;
+    if (!editor) return;
+    const previous = editor.getAttributes("link").href as string | undefined;
     const url = window.prompt("URL do link", previous ?? "https://");
     if (url === null) return;
     if (url === "") {
-      editor!.chain().focus().extendMarkRange("link").unsetLink().run();
+      editor.chain().focus().extendMarkRange("link").unsetLink().run();
       return;
     }
-    editor!.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
   }
 
-  /** Detecta ref no texto selecionado, busca o versículo, substitui pela passagem
-   *  formatada como blockquote estilo escritura + referência canônica. */
+  /** Detecta ref no texto selecionado, busca versículo, insere blockquote. */
   async function insertBibleVerse() {
     if (!editor || busy) return;
+    const { from, to } = editor.state.selection;
+    const selectedText = editor.state.doc.textBetween(from, to, " ");
     const ref = findFirstReference(selectedText);
     if (!ref) {
       toast.error("Referência bíblica não reconhecida", {
@@ -137,7 +122,6 @@ export function BubbleToolbar({
       const html = `<blockquote data-bible-verse="true" class="vox-scripture"><p><em>${escapeHtml(
         text
       )}</em></p><p><strong>${escapeHtml(data.canonical)}</strong></p></blockquote><p></p>`;
-      // Substitui a seleção atual pelo blockquote
       editor.chain().focus().deleteSelection().insertContent(html).run();
       toast.success(data.canonical + " inserido");
     } catch (err) {
@@ -149,86 +133,128 @@ export function BubbleToolbar({
     }
   }
 
-  const node = (
-    <div
-      className="vox-bubble-toolbar fixed z-[60] -translate-x-1/2 flex items-center gap-0.5 rounded-md px-1 py-1 shadow-lg"
-      style={{
-        top: pos.top,
-        left: pos.left,
-        background: "var(--vox-ink)",
-        color: "#F1EDE7",
-        border: "1px solid rgba(255,255,255,0.06)",
+  return (
+    <BubbleMenu
+      editor={editor}
+      options={{ placement: "top", offset: 8 }}
+      shouldShow={({ editor: ed, from, to }) => {
+        if (from === to) return false;
+        if (!ed.isEditable) return false;
+        return true;
       }}
-      // Importante: previne o blur do editor ao clicar nos botões
-      onMouseDown={(e) => e.preventDefault()}
     >
-      <ToolbarButton
-        active={editor.isActive("bold")}
-        onClick={fire(() => editor.chain().focus().toggleBold().run())}
-        label="Negrito (⌘B)"
+      <div
+        className="vox-bubble-toolbar flex items-center gap-0.5 rounded-md px-1 py-1 shadow-lg"
+        style={{
+          background: "var(--vox-ink)",
+          color: "#F1EDE7",
+          border: "1px solid rgba(255,255,255,0.06)",
+        }}
+        onMouseDown={(e) => e.preventDefault()}
       >
-        <Bold className="size-3.5" />
-      </ToolbarButton>
-      <ToolbarButton
-        active={editor.isActive("italic")}
-        onClick={fire(() => editor.chain().focus().toggleItalic().run())}
-        label="Itálico (⌘I)"
-      >
-        <Italic className="size-3.5" />
-      </ToolbarButton>
-      <ToolbarButton
-        active={editor.isActive("underline")}
-        onClick={fire(() => editor.chain().focus().toggleUnderline().run())}
-        label="Sublinhado (⌘U)"
-      >
-        <Underline className="size-3.5" />
-      </ToolbarButton>
-      <ToolbarButton
-        active={editor.isActive("strike")}
-        onClick={fire(() => editor.chain().focus().toggleStrike().run())}
-        label="Tachado"
-      >
-        <Strikethrough className="size-3.5" />
-      </ToolbarButton>
-      <Divider />
-      <ToolbarButton
-        active={editor.isActive("heading", { level: 2 })}
-        onClick={fire(() =>
-          editor.chain().focus().toggleHeading({ level: 2 }).run()
-        )}
-        label="Subtítulo"
-      >
-        <Heading2 className="size-3.5" />
-      </ToolbarButton>
-      <ToolbarButton
-        active={editor.isActive("blockquote")}
-        onClick={fire(() => editor.chain().focus().toggleBlockquote().run())}
-        label="Citação"
-      >
-        <Quote className="size-3.5" />
-      </ToolbarButton>
-      <ToolbarButton
-        active={editor.isActive("link")}
-        onClick={fire(promptLink)}
-        label="Link"
-      >
-        <Link2 className="size-3.5" />
-      </ToolbarButton>
-      <Divider />
-      <ToolbarButton
-        onClick={fire(() => void insertBibleVerse())}
-        label={
-          busy
-            ? "Buscando…"
-            : "Inserir versículo bíblico (selecione uma referência)"
-        }
-      >
-        <BookMarked className="size-3.5" />
-      </ToolbarButton>
-    </div>
-  );
+        <ToolbarButton
+          active={editor.isActive("bold")}
+          onClick={fire(() => editor.chain().focus().toggleBold().run())}
+          label="Negrito (⌘B)"
+        >
+          <Bold className="size-3.5" />
+        </ToolbarButton>
+        <ToolbarButton
+          active={editor.isActive("italic")}
+          onClick={fire(() => editor.chain().focus().toggleItalic().run())}
+          label="Itálico (⌘I)"
+        >
+          <Italic className="size-3.5" />
+        </ToolbarButton>
+        <ToolbarButton
+          active={editor.isActive("underline")}
+          onClick={fire(() => editor.chain().focus().toggleUnderline().run())}
+          label="Sublinhado (⌘U)"
+        >
+          <Underline className="size-3.5" />
+        </ToolbarButton>
+        <ToolbarButton
+          active={editor.isActive("strike")}
+          onClick={fire(() => editor.chain().focus().toggleStrike().run())}
+          label="Tachado"
+        >
+          <Strikethrough className="size-3.5" />
+        </ToolbarButton>
 
-  return createPortal(node, document.body);
+        <Divider />
+
+        <ColorPicker
+          label="Cor do texto"
+          icon={<Palette className="size-3.5" />}
+          swatches={TEXT_COLORS}
+          activeValue={
+            (editor.getAttributes("textStyle").color as string | undefined) ?? ""
+          }
+          onSelect={(value) => {
+            if (!value) {
+              editor.chain().focus().unsetColor().run();
+            } else {
+              editor.chain().focus().setColor(value).run();
+            }
+          }}
+        />
+        <ColorPicker
+          label="Marca-texto"
+          icon={<Highlighter className="size-3.5" />}
+          swatches={HIGHLIGHT_COLORS}
+          activeValue={
+            (editor.getAttributes("highlight").color as string | undefined) ?? ""
+          }
+          onSelect={(value) => {
+            if (!value) {
+              editor.chain().focus().unsetHighlight().run();
+            } else {
+              editor.chain().focus().toggleHighlight({ color: value }).run();
+            }
+          }}
+        />
+
+        <Divider />
+
+        <ToolbarButton
+          active={editor.isActive("heading", { level: 2 })}
+          onClick={fire(() =>
+            editor.chain().focus().toggleHeading({ level: 2 }).run()
+          )}
+          label="Subtítulo"
+        >
+          <Heading2 className="size-3.5" />
+        </ToolbarButton>
+        <ToolbarButton
+          active={editor.isActive("blockquote")}
+          onClick={fire(() => editor.chain().focus().toggleBlockquote().run())}
+          label="Citação"
+        >
+          <Quote className="size-3.5" />
+        </ToolbarButton>
+        <ToolbarButton
+          active={editor.isActive("link")}
+          onClick={fire(promptLink)}
+          label="Link"
+        >
+          <Link2 className="size-3.5" />
+        </ToolbarButton>
+
+        <Divider />
+
+        <ToolbarButton
+          onClick={fire(() => void insertBibleVerse())}
+          label={
+            busy
+              ? "Buscando…"
+              : "Inserir versículo bíblico (selecione uma referência)"
+          }
+        >
+          <BookMarked className="size-3.5" />
+        </ToolbarButton>
+      </div>
+    </BubbleMenu>
+  );
 }
 
 function escapeHtml(input: string): string {
@@ -275,5 +301,89 @@ function ToolbarButton({
     >
       {children}
     </button>
+  );
+}
+
+interface ColorPickerProps {
+  label: string;
+  icon: React.ReactNode;
+  swatches: Array<{ name: string; value: string }>;
+  activeValue: string;
+  onSelect: (value: string) => void;
+}
+
+function ColorPicker({
+  label,
+  icon,
+  swatches,
+  activeValue,
+  onSelect,
+}: ColorPickerProps) {
+  const [open, setOpen] = useState(false);
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          title={label}
+          aria-label={label}
+          onMouseDown={(e) => e.preventDefault()}
+          className={cn(
+            "inline-flex items-center justify-center size-7 rounded transition-colors",
+            activeValue
+              ? "bg-[rgba(255,255,255,0.12)]"
+              : "hover:bg-[rgba(255,255,255,0.08)]"
+          )}
+        >
+          {icon}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent
+        align="center"
+        sideOffset={6}
+        className="w-auto p-2"
+        style={{
+          background: "var(--vox-surface-elev, var(--vox-surface))",
+          border: "1px solid var(--vox-whisper)",
+        }}
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center gap-1.5 flex-wrap max-w-[224px]">
+          {swatches.map((s) => {
+            const isClear = s.value === "";
+            const isActive = activeValue === s.value;
+            return (
+              <button
+                key={s.name}
+                type="button"
+                title={s.name}
+                aria-label={s.name}
+                onClick={() => {
+                  onSelect(s.value);
+                  setOpen(false);
+                }}
+                className={cn(
+                  "inline-flex items-center justify-center size-7 rounded-md transition-transform hover:scale-110",
+                  isActive ? "ring-2 ring-vox-ink ring-offset-1" : ""
+                )}
+                style={{
+                  background: isClear ? "transparent" : s.value,
+                  border: isClear
+                    ? "1px dashed var(--vox-muted)"
+                    : "1px solid var(--vox-whisper)",
+                }}
+              >
+                {isClear ? (
+                  <span
+                    className="block w-full h-px rotate-45"
+                    style={{ background: "var(--vox-muted)" }}
+                  />
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }
