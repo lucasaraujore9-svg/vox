@@ -8,6 +8,7 @@ import { z } from "zod";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { emptyContentFor } from "@/lib/sermons/sessions";
 import type {
   ContentType,
   FrameworkId,
@@ -68,6 +69,12 @@ export async function createSermonAction(input: {
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Não autenticado" };
 
+  // Já popula o conteúdo com o esqueleto do framework — sessões e itens
+  // pré-criados com label/hint idiomáticos. Sem isso, o default '[]'::jsonb
+  // do banco faz parseSermonContent cair no fallback "Notas importadas".
+  const framework = parsed.data.framework ?? "livre";
+  const initialContent = emptyContentFor(framework);
+
   const { data, error } = await supabase
     .from("sermons")
     .insert({
@@ -75,10 +82,11 @@ export async function createSermonAction(input: {
       title: parsed.data.title,
       type: parsed.data.type,
       content_type: parsed.data.content_type,
-      framework: parsed.data.framework ?? "livre",
+      framework,
       bible_ref: parsed.data.bible_ref ?? null,
       bible_book: parsed.data.bible_book ?? null,
       series_id: parsed.data.series_id ?? null,
+      content: JSON.parse(JSON.stringify(initialContent)),
     })
     .select("id")
     .single();

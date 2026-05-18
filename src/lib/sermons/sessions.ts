@@ -381,8 +381,11 @@ export function parseSermonContent(
       return { sessions: sessions as SessionNode[] };
     }
   }
-  // Conteúdo legado (array plano) → embrulha em uma única sessão "livre"
+  // Conteúdo legado (array plano) → embrulha em uma única sessão "livre".
+  // Array vazio (default '[]'::jsonb do banco para sermões recém-criados)
+  // não conta como legado: devolve o esqueleto do framework.
   if (Array.isArray(raw)) {
+    if (raw.length === 0) return emptyContentFor(framework);
     return {
       sessions: [
         {
