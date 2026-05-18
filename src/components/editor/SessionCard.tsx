@@ -16,6 +16,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { VOX_BLOCK_TYPES, type BlockTypeId, getBlockType } from "@/lib/mocks/blocks";
 import type { SessionNode, SessionRole } from "@/lib/sermons/sessions";
@@ -213,6 +218,7 @@ export function SessionCard({
               content={item.content}
               label={item.label}
               hint={item.hint}
+              tip={item.tip}
               bibleVersion={bibleVersion}
               minimal={minimal}
               isFirstItem={itemIdx === 0}
@@ -279,6 +285,8 @@ interface SessionItemRowProps {
   label?: string;
   /** Placeholder específico do framework. Substitui o hint do tipo. */
   hint?: string;
+  /** Dica pedagógica expandida (popover de ajuda). */
+  tip?: string;
   bibleVersion?: BibleVersionId;
   /** Modo folha em branco — sem header de tipo */
   minimal?: boolean;
@@ -305,6 +313,7 @@ function SessionItemRow({
   content,
   label,
   hint,
+  tip,
   bibleVersion = "acf",
   minimal = false,
   isFirstItem = false,
@@ -327,45 +336,80 @@ function SessionItemRow({
     <article className="relative group">
       {!minimal ? (
         <header className="flex items-center justify-between gap-3 mb-1.5">
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              className="flex items-center gap-2 outline-none"
-              title={
-                label && label !== blockType.label
-                  ? `${displayLabel} · ${blockType.label}`
-                  : displayLabel
-              }
-            >
-              <span
-                className="inline-block size-1.5 rounded-full"
-                style={{ background: blockType.color }}
-              />
-              <p
-                className="vox-eyebrow hover:opacity-70 transition-opacity"
-                style={{ color: blockType.color }}
+          <div className="flex items-center gap-2 min-w-0">
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                className="flex items-center gap-2 outline-none"
+                title={
+                  label && label !== blockType.label
+                    ? `${displayLabel} · ${blockType.label}`
+                    : displayLabel
+                }
               >
-                {displayLabel}
-              </p>
-              {/* Chevron — só aparece no hover do item; reduz ruído visual. */}
-              <span className="text-vox-muted text-xs opacity-0 group-hover:opacity-100 transition-opacity">
-                ▾
-              </span>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="max-h-72 overflow-y-auto">
-              {VOX_BLOCK_TYPES.map((b) => (
-                <DropdownMenuItem
-                  key={b.id}
-                  onSelect={() => onTypeChange?.(sessionId, itemId, b.id)}
+                <span
+                  className="inline-block size-1.5 rounded-full"
+                  style={{ background: blockType.color }}
+                />
+                <p
+                  className="vox-eyebrow hover:opacity-70 transition-opacity"
+                  style={{ color: blockType.color }}
                 >
-                  <span
-                    className="inline-block size-1.5 rounded-full mr-2"
-                    style={{ background: b.color }}
-                  />
-                  {b.label}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                  {displayLabel}
+                </p>
+                {/* Chevron — só aparece no hover do item; reduz ruído visual. */}
+                <span className="text-vox-muted text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                  ▾
+                </span>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="max-h-72 overflow-y-auto">
+                {VOX_BLOCK_TYPES.map((b) => (
+                  <DropdownMenuItem
+                    key={b.id}
+                    onSelect={() => onTypeChange?.(sessionId, itemId, b.id)}
+                  >
+                    <span
+                      className="inline-block size-1.5 rounded-full mr-2"
+                      style={{ background: b.color }}
+                    />
+                    {b.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Botão de ajuda — só aparece quando há tip pedagógico (esqueletos
+               de framework). Iniciante clica e vê a explicação completa. */}
+            {tip ? (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    aria-label="Dica de pregação"
+                    title="Dica de pregação"
+                    className="size-5 inline-flex items-center justify-center rounded-full text-[10px] vox-mono text-vox-muted hover:text-vox-forest border border-vox-whisper hover:border-vox-forest transition-colors"
+                  >
+                    ?
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent
+                  align="start"
+                  className="w-80 text-sm leading-relaxed"
+                  style={{
+                    background: "var(--vox-surface-elev, var(--vox-surface))",
+                    border: "1px solid var(--vox-whisper)",
+                  }}
+                >
+                  <p
+                    className="vox-eyebrow mb-2"
+                    style={{ color: blockType.color }}
+                  >
+                    {displayLabel}
+                  </p>
+                  <p style={{ color: "var(--vox-prose)" }}>{tip}</p>
+                </PopoverContent>
+              </Popover>
+            ) : null}
+          </div>
 
           <div className="flex items-center gap-0.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
             {onMove ? (
