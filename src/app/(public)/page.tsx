@@ -20,8 +20,10 @@ export default function LandingPage() {
       <SiteHeader />
       <Hero />
       <Demo />
+      <PorQueModelos />
       <Apresentador />
       <SuaSemana />
+      <Faq />
       <Preco />
       <SiteFooter />
     </main>
@@ -42,6 +44,18 @@ function SiteHeader() {
           <VoxWordmark height={26} priority />
         </Link>
         <nav className="flex items-center gap-1 text-sm">
+          <Link
+            href="#porque"
+            className="hidden md:inline px-3 py-1.5 text-vox-prose hover:text-vox-ink transition-colors"
+          >
+            Modelos
+          </Link>
+          <Link
+            href="#faq"
+            className="hidden md:inline px-3 py-1.5 text-vox-prose hover:text-vox-ink transition-colors"
+          >
+            Perguntas
+          </Link>
           <Link
             href="#preco"
             className="hidden sm:inline px-3 py-1.5 text-vox-prose hover:text-vox-ink transition-colors"
@@ -163,6 +177,111 @@ function Demo() {
 
         <p className="vox-mono mt-6 text-[10px] uppercase tracking-wider text-vox-muted">
           Demo navegável · troque o modelo, clique nos blocos
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function PorQueModelos() {
+  const modelos = [
+    {
+      id: "expositivo",
+      nome: "Expositivo",
+      tagline: "Fidelidade ao texto",
+      garante:
+        "O sermão segue o ritmo do próprio texto bíblico: contexto, ponto, subpontos, aplicação. Nada é forçado, nada inventado.",
+    },
+    {
+      id: "textual",
+      nome: "Textual",
+      tagline: "Profundidade em um trecho",
+      garante:
+        "Uma sentença ou parágrafo destrinchado em camadas. O modelo mantém o foco — você não escapa do texto pra dar voltas.",
+    },
+    {
+      id: "narrativo",
+      nome: "Narrativo",
+      tagline: "História entregue como história",
+      garante:
+        "Cenário, tensão e reviravolta carregam o ouvinte. O modelo preserva o arco da própria Escritura, sem virar resumo.",
+    },
+    {
+      id: "tematico",
+      nome: "Temático",
+      tagline: "Um tema, muitas vozes bíblicas",
+      garante:
+        "Graça, fé, perseverança — temas que atravessam a Bíblia. Cada texto puxado soma ao argumento em vez de competir com ele.",
+    },
+    {
+      id: "topico",
+      nome: "Tópico",
+      tagline: "Vida real diante da Palavra",
+      garante:
+        "Ansiedade, perdão, dinheiro, vocação. O modelo começa pelo tópico e ancora cada passo na Escritura, sem virar palestra motivacional.",
+    },
+    {
+      id: "livre",
+      nome: "Livre",
+      tagline: "Quando o caminho é seu",
+      garante:
+        "Para devocional curto, nota pessoal ou sermão improvisado. Sem estrutura imposta, com o mesmo editor de blocos e bíblia integrada.",
+    },
+  ] as const;
+
+  return (
+    <section id="porque" className="px-6 sm:px-8 py-24 scroll-mt-20">
+      <div className="max-w-5xl mx-auto">
+        <p className="vox-eyebrow">O ofício, não o atalho</p>
+        <h2
+          className="vox-h2 mt-3 max-w-2xl"
+          style={{ fontSize: "clamp(28px, 3.6vw, 36px)" }}
+        >
+          O sermão merece ter ossatura.
+        </h2>
+        <p className="vox-body mt-5 max-w-2xl text-base">
+          Cada um dos seis modelos é uma estrutura homilética preservada pela
+          igreja por séculos. Você escolhe o caminho, escreve seu conteúdo, o
+          caminho mantém o sermão firme — texto, ponto, aplicação, conclusão.
+          Sem rota, é mais fácil divagar, repetir uma mesma ideia ou esquecer
+          de aplicar.
+        </p>
+
+        <ul className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
+          {modelos.map((m) => (
+            <li key={m.id}>
+              <div className="flex items-center gap-2.5">
+                <span
+                  aria-hidden
+                  className="size-2 rounded-full shrink-0"
+                  style={{ background: `var(--vox-fw-${m.id})` }}
+                />
+                <p
+                  className="vox-mono text-[10px] uppercase tracking-wider"
+                  style={{ color: `var(--vox-fw-${m.id})` }}
+                >
+                  Modelo
+                </p>
+              </div>
+              <h3 className="vox-h3 mt-3 text-lg">{m.nome}</h3>
+              <p
+                className="vox-body mt-1 text-[13px]"
+                style={{ color: "var(--vox-muted)" }}
+              >
+                {m.tagline}
+              </p>
+              <p className="mt-4 text-[14px] text-vox-prose leading-relaxed">
+                {m.garante}
+              </p>
+            </li>
+          ))}
+        </ul>
+
+        <p
+          className="vox-mono mt-16 text-[11px] uppercase tracking-wider"
+          style={{ color: "var(--vox-muted)" }}
+        >
+          Você troca o modelo a qualquer momento · seus blocos migram
         </p>
       </div>
     </section>
@@ -330,6 +449,105 @@ function SuaSemana() {
   );
 }
 
+function Faq() {
+  const perguntas = [
+    {
+      q: "Preciso entender homilética pra usar o VOX?",
+      a: "Não. Os modelos carregam a estrutura. Você traz o texto, a oração e o povo; o modelo mantém o sermão coerente do começo ao fim. Quanto mais você prega, mais o modelo vira segunda natureza.",
+    },
+    {
+      q: "O VOX tem viés denominacional?",
+      a: "Não. Os seis modelos são homiléticos, não doutrinários. Reformados, pentecostais, batistas, metodistas e pregadores leigos usam os mesmos caminhos, com seus próprios conteúdos e convicções.",
+    },
+    {
+      q: "Funciona pra Palestra e Aula, ou só Sermão?",
+      a: "Os três. Você escolhe o tipo no início. O editor é o mesmo; o que muda são os campos de duração, tópicos e a organização em séries ou cursos. Aula vira módulo dentro de um curso; palestra ganha cronômetro de tempo.",
+    },
+    {
+      q: "Posso importar meus sermões antigos do Word?",
+      a: "Pode. O VOX lê .docx e .txt. Se você marcou seções com títulos no Word, elas viram blocos automaticamente. Se o texto está corrido, entra como bloco único e você divide em um clique.",
+    },
+    {
+      q: "A IA é obrigatória?",
+      a: "Não. Vem desligada por padrão. Você liga em configurações se quiser sugestão de ilustração, paráfrase ou revisão de clareza. Desligada, a IA some completamente da interface — nenhum botão, nenhuma sugestão.",
+    },
+    {
+      q: "Funciona sem internet?",
+      a: "Sim. Você prepara no celular, tablet ou notebook offline — metrô, avião, sala com Wi-Fi caindo. Quando reconecta, o app sincroniza sozinho. Seus sermões nunca ficam presos numa única máquina.",
+    },
+    {
+      q: "Onde meus sermões ficam guardados?",
+      a: "Na sua conta, criptografados. Só você vê. Você pode exportar em PDF ou DOCX a qualquer momento e baixar tudo se um dia decidir sair.",
+    },
+    {
+      q: "Quando minha vaga abre?",
+      a: "Os primeiros assinantes entram por convite, em lotes pequenos, pra que a gente acompanhe cada um. Cadastre seu email no topo da página e te avisamos assim que sua vaga estiver pronta.",
+    },
+  ];
+
+  return (
+    <section
+      id="faq"
+      className="px-6 sm:px-8 py-24 scroll-mt-20"
+      style={{
+        background: "var(--vox-surface-deep)",
+        borderTop: "1px solid var(--vox-whisper)",
+        borderBottom: "1px solid var(--vox-whisper)",
+      }}
+    >
+      <div className="max-w-3xl mx-auto">
+        <p className="vox-eyebrow">Antes de cadastrar</p>
+        <h2
+          className="vox-h2 mt-3"
+          style={{ fontSize: "clamp(28px, 3.6vw, 36px)" }}
+        >
+          O que pastor sério pergunta antes.
+        </h2>
+        <p className="vox-body mt-5 max-w-xl text-base">
+          Respostas diretas para as dúvidas que aparecem antes de você confiar
+          seus sermões a um app.
+        </p>
+
+        <ul className="mt-12 divide-y" style={{ borderColor: "var(--vox-whisper)" }}>
+          {perguntas.map((item) => (
+            <li
+              key={item.q}
+              style={{ borderTop: "1px solid var(--vox-whisper)" }}
+            >
+              <details className="group py-5">
+                <summary
+                  className="flex items-start justify-between gap-6 cursor-pointer list-none [&::-webkit-details-marker]:hidden"
+                >
+                  <span className="vox-h3 text-[17px] sm:text-lg leading-snug text-vox-ink">
+                    {item.q}
+                  </span>
+                  <span
+                    aria-hidden
+                    className="vox-mono text-xl shrink-0 transition-transform group-open:rotate-45"
+                    style={{ color: "var(--vox-forest)", lineHeight: 1 }}
+                  >
+                    +
+                  </span>
+                </summary>
+                <p className="mt-4 max-w-2xl text-[15px] text-vox-prose leading-relaxed">
+                  {item.a}
+                </p>
+              </details>
+            </li>
+          ))}
+        </ul>
+
+        <p
+          className="vox-mono mt-12 text-[10px] uppercase tracking-wider"
+          style={{ color: "var(--vox-muted)" }}
+        >
+          Ainda com dúvida? Cadastre o email e responda direto no nosso convite
+        </p>
+      </div>
+    </section>
+  );
+}
+
 function Preco() {
   return (
     <section id="preco" className="px-6 sm:px-8 py-24">
@@ -431,7 +649,13 @@ function SiteFooter() {
             Manuscritos cuidadosos
           </span>
         </div>
-        <nav className="flex items-center gap-5 text-sm text-vox-prose">
+        <nav className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-vox-prose">
+          <Link href="#porque" className="hover:text-vox-ink">
+            Modelos
+          </Link>
+          <Link href="#faq" className="hover:text-vox-ink">
+            Perguntas
+          </Link>
           <Link href="#preco" className="hover:text-vox-ink">
             Preço
           </Link>
