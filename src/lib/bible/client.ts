@@ -140,7 +140,7 @@ export async function fetchRange(
 
 /** Versículo aleatório de uma versão. */
 export async function fetchRandomVerse(version: string): Promise<BibleVerse> {
-  // sem cache — random pra cada request
+  // sem cache, random pra cada request
   return get<BibleVerse>(`/verses/${version}/random`, false);
 }
 

@@ -1,4 +1,4 @@
-# Issue 051 — OpenAI API Integration
+# Issue 051, OpenAI API Integration
 
 **Status:** [ ] PENDENTE
 **Tipo:** integration
@@ -15,10 +15,10 @@ módulo de IA opcional do VOX.
 
 ## Componentes Envolvidos
 
-- `src/lib/ai/client.ts` — OpenAI client singleton
-- `src/lib/ai/prompts.ts` — Prompts por framework homilético
-- `src/lib/ai/types.ts` — Tipos de input/output da IA
-- `src/app/api/ai/suggest/route.ts` — Route Handler (implementado na 035)
+- `src/lib/ai/client.ts`, OpenAI client singleton
+- `src/lib/ai/prompts.ts`, Prompts por framework homilético
+- `src/lib/ai/types.ts`, Tipos de input/output da IA
+- `src/app/api/ai/suggest/route.ts`, Route Handler (implementado na 035)
 
 ## Comportamentos
 

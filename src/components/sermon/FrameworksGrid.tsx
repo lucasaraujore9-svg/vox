@@ -1,6 +1,6 @@
 "use client";
 
-// Grid de frameworks reusável — usado em /settings (aba Frameworks) e em /templates.
+// Grid de frameworks reusável, usado em /settings (aba Frameworks) e em /templates.
 // Cada card abre a dica do framework no click.
 
 import { useState } from "react";

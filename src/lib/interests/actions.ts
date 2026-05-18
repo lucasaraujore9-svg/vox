@@ -66,7 +66,7 @@ export async function submitInterestAction(
   // Cooldown leve por IP+email (anti-spam básico)
   const cooldownKey = `${sourceIp ?? "no-ip"}|${parsed.data.email}`;
   if (!checkCooldown(cooldownKey)) {
-    // Resposta de sucesso pra não dar pistas a bots — mas não grava
+    // Resposta de sucesso pra não dar pistas a bots, mas não grava
     return { ok: true };
   }
 

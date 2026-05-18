@@ -1,4 +1,4 @@
-# Issue 048 — Biblioteca de Templates/Frameworks: Behavior
+# Issue 048, Biblioteca de Templates/Frameworks: Behavior
 
 **Status:** [ ] PENDENTE
 **Tipo:** behavior
@@ -11,19 +11,19 @@
 ## O Que Fazer
 
 Conectar a biblioteca de templates (proto 015) a dados reais e implementar
-o fluxo de "usar template" — selecionar um framework e ir direto para a
+o fluxo de "usar template", selecionar um framework e ir direto para a
 criação de conteúdo com aquele framework pré-selecionado.
 
 ## Componentes Envolvidos
 
-- `src/app/(public)/templates/page.tsx` — Server Component (dados estáticos)
-- `src/lib/frameworks/data.ts` — constantes de frameworks (sem DB — dados hardcoded)
-- `src/app/api/templates/route.ts` — (opcional) API para templates customizados futuros
+- `src/app/(public)/templates/page.tsx`, Server Component (dados estáticos)
+- `src/lib/frameworks/data.ts`, constantes de frameworks (sem DB, dados hardcoded)
+- `src/app/api/templates/route.ts`, (opcional) API para templates customizados futuros
 
 ## Comportamentos
 
 ### Dados dos frameworks
-Os frameworks são estáticos (hardcoded) — não vêm do banco no MVP.
+Os frameworks são estáticos (hardcoded), não vêm do banco no MVP.
 A fonte de verdade é `src/lib/frameworks/data.ts` (criada na issue 015).
 
 ### Fluxo "Usar este framework" (autenticado)
@@ -43,7 +43,7 @@ A fonte de verdade é `src/lib/frameworks/data.ts` (criada na issue 015).
 ### Contagem de uso (futuro)
 - Placeholder: a tabela `sermons` já tem campo `framework`
 - Pode-se calcular "frameworks mais usados" via query `GROUP BY framework`
-- Não implementar no MVP — apenas documentar para fase 2
+- Não implementar no MVP, apenas documentar para fase 2
 
 ### SEO (página pública)
 - Metadata estática por framework para indexação

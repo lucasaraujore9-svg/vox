@@ -1,4 +1,4 @@
-# Issue 013 — Séries de Sermões UI Proto
+# Issue 013, Séries de Sermões UI Proto
 
 **Status:** [ ] PENDENTE
 **Tipo:** proto
@@ -15,12 +15,12 @@ e associação de sermões a uma série. A tabela `series` já existe no schema.
 
 ## Componentes Envolvidos
 
-- `src/app/(app)/series/page.tsx` — listagem de séries
-- `src/components/series/SeriesCard.tsx` — card de série com sermões vinculados
-- `src/components/series/SeriesForm.tsx` — modal/sheet de criação/edição
-- `src/components/sermon/SeriesSelector.tsx` — select de série no editor de sermão
+- `src/app/(app)/series/page.tsx`, listagem de séries
+- `src/components/series/SeriesCard.tsx`, card de série com sermões vinculados
+- `src/components/series/SeriesForm.tsx`, modal/sheet de criação/edição
+- `src/components/sermon/SeriesSelector.tsx`, select de série no editor de sermão
 
-## Comportamentos (proto — dados mockados)
+## Comportamentos (proto, dados mockados)
 
 ### Página /series
 - Header: "Minhas Séries" Fraunces 600 + contador + botão "+ Nova Série"

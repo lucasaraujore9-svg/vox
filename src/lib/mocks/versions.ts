@@ -1,6 +1,6 @@
 // Tipos compartilhados de versão (histórico de manuscritos).
 // Os dados reais vêm do Supabase (tabela sermon_versions).
-// Antes do MVP existir, este arquivo trazia exemplos — já foi removido.
+// Antes do MVP existir, este arquivo trazia exemplos, já foi removido.
 
 export interface MockVersion {
   id: string;

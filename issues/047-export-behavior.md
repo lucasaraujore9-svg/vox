@@ -1,4 +1,4 @@
-# Issue 047 — Exportação de Conteúdo: Behavior (PDF / DOCX / TXT)
+# Issue 047, Exportação de Conteúdo: Behavior (PDF / DOCX / TXT)
 
 **Status:** [ ] PENDENTE
 **Tipo:** behavior
@@ -15,11 +15,11 @@ PDF (para imprimir e compartilhar), DOCX (para editar no Word) e TXT (simples).
 
 ## Componentes Envolvidos
 
-- `src/app/api/sermons/export/route.ts` — Route Handler de exportação
-- `src/components/sermon/ExportMenu.tsx` — dropdown de formatos no editor
-- `src/lib/export/pdf.ts` — gerador de PDF com blocos coloridos
-- `src/lib/export/docx.ts` — gerador de DOCX
-- `src/lib/export/txt.ts` — gerador de TXT plano
+- `src/app/api/sermons/export/route.ts`, Route Handler de exportação
+- `src/components/sermon/ExportMenu.tsx`, dropdown de formatos no editor
+- `src/lib/export/pdf.ts`, gerador de PDF com blocos coloridos
+- `src/lib/export/docx.ts`, gerador de DOCX
+- `src/lib/export/txt.ts`, gerador de TXT plano
 
 ## Comportamentos
 

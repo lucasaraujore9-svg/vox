@@ -92,10 +92,10 @@ const sessions = [
         "Eclesiastes 3:1",
         "Tudo tem o seu tempo determinado, e há tempo para todo o propósito debaixo do céu."
       ) +
-        scripture(
-          "Eclesiastes 3:11",
-          "Tudo fez formoso em seu tempo; também pôs o mundo no coração do homem, sem que este possa descobrir a obra que Deus fez desde o princípio até ao fim."
-        ),
+      scripture(
+        "Eclesiastes 3:11",
+        "Tudo fez formoso em seu tempo; também pôs o mundo no coração do homem, sem que este possa descobrir a obra que Deus fez desde o princípio até ao fim."
+      ),
       "Texto base"
     ),
     item(
@@ -117,9 +117,9 @@ const sessions = [
       p(
         "Uma nova estação exige realinhamento. Exige mudança de direção. Nem tudo o que foi bom antes permanece bom para o agora. Deus é o Senhor dos tempos, e o alinhamento com Ele é o que nos move do desgaste para o propósito, do esforço para a graça, da repetição para a renovação."
       ) +
-        p(
-          "Esta manhã, quero compartilhar três tempos de Deus para a nossa vida: o tempo de nos refazer, o tempo de receber e o tempo de Deus."
-        ),
+      p(
+        "Esta manhã, quero compartilhar três tempos de Deus para a nossa vida: o tempo de nos refazer, o tempo de receber e o tempo de Deus."
+      ),
       "Ideia central"
     ),
   ]),
@@ -128,7 +128,7 @@ const sessions = [
     item(
       "texto_biblico",
       scripture(
-        "Lucas 5:36—38",
+        "Lucas 5:36,38",
         "Ninguém tira um remendo de roupa nova e o costura em roupa velha; se o fizer, estragará a roupa nova, além do que o remendo da nova não se ajustará à velha. E ninguém põe vinho novo em vasilha de couro velha; se o fizer, o vinho novo rebentará a vasilha, se derramará, e a vasilha se estragará. Ao contrário, vinho novo deve ser posto em vasilha de couro nova."
       ),
       "Texto bíblico"
@@ -138,18 +138,18 @@ const sessions = [
       p(
         "Às vezes queremos viver o novo de Deus mantendo o velho de nós mesmos. Queremos colher o fruto da promessa, mas com o mesmo coração, a mesma mente, os mesmos hábitos, as mesmas companhias e a mesma forma de pensar do tempo anterior. Jesus, com uma ilustração simples, nos ensina que isto é impossível. O novo de Deus exige um odre novo."
       ) +
-        p(
-          "Tudo o que vivemos foi importante. O ruim nos ensinou, talvez até mais do que o bom. As marcas e as dores que carregamos serão, um dia, respostas para outras pessoas. Porém, é impossível viver o novo de Deus sem antes sermos transformados. A transformação que Deus opera em nós é a preparação para o novo. Ele nos tira da condição de odre velho — duro, ressecado, marcado pelo tempo — e nos restaura como vasilha nova, capaz de receber o vinho novo sem se romper."
-        ) +
-        p(
-          "O passado não pode ser mudado, mas pode ser entregue. Deus tem marcado o fim de um tempo de choro, de tristeza, de infelicidade. Talvez esse tempo tenha sido necessário — refinador, formador, lapidador — mas agora chegou um novo tempo. O tempo da tristeza passou. Um vinho novo te espera."
-        ),
+      p(
+        "Tudo o que vivemos foi importante. O ruim nos ensinou, talvez até mais do que o bom. As marcas e as dores que carregamos serão, um dia, respostas para outras pessoas. Porém, é impossível viver o novo de Deus sem antes sermos transformados. A transformação que Deus opera em nós é a preparação para o novo. Ele nos tira da condição de odre velho, duro, ressecado, marcado pelo tempo, e nos restaura como vasilha nova, capaz de receber o vinho novo sem se romper."
+      ) +
+      p(
+        "O passado não pode ser mudado, mas pode ser entregue. Deus tem marcado o fim de um tempo de choro, de tristeza, de infelicidade. Talvez esse tempo tenha sido necessário, refinador, formador, lapidador, mas agora chegou um novo tempo. O tempo da tristeza passou. Um vinho novo te espera."
+      ),
       "Desenvolvimento"
     ),
     item(
       "aplicacao",
       p(
-        "Entregue ao Senhor o seu passado. Libere perdão — inclusive a si mesmo. Renuncie aos vícios de pensamento, às identidades antigas, às narrativas de derrota que você ensaiou por anos. Deixe o Senhor derramar um vinho novo sobre a sua vida."
+        "Entregue ao Senhor o seu passado. Libere perdão, inclusive a si mesmo. Renuncie aos vícios de pensamento, às identidades antigas, às narrativas de derrota que você ensaiou por anos. Deixe o Senhor derramar um vinho novo sobre a sua vida."
       ),
       "Aplicação"
     ),
@@ -166,7 +166,7 @@ const sessions = [
     item(
       "desenvolvimento",
       p(
-        "Deus nos criou para viver em unidade e em comunidade. Todo grande derramar do Senhor acontece quando um grupo de pessoas está reunido em comunhão. No Pentecostes, foi assim — estavam todos juntos no mesmo lugar. Em Atos 2, foi assim — perseveravam unânimes no templo. Eclesiastes 3 lista tempos para tudo: para nascer e para morrer, para plantar e para colher, para chorar e para rir, para abraçar e para se afastar — mas em nenhum momento o sábio menciona “tempo de estar sozinho”, porque o isolamento nunca foi o plano de Deus para o ser humano."
+        "Deus nos criou para viver em unidade e em comunidade. Todo grande derramar do Senhor acontece quando um grupo de pessoas está reunido em comunhão. No Pentecostes, foi assim, estavam todos juntos no mesmo lugar. Em Atos 2, foi assim, perseveravam unânimes no templo. Eclesiastes 3 lista tempos para tudo: para nascer e para morrer, para plantar e para colher, para chorar e para rir, para abraçar e para se afastar, mas em nenhum momento o sábio menciona “tempo de estar sozinho”, porque o isolamento nunca foi o plano de Deus para o ser humano."
       ),
       "Desenvolvimento"
     ),
@@ -181,7 +181,7 @@ const sessions = [
     item(
       "ponto_principal",
       p(
-        "Atente para a palavra “ali”. O Senhor ordena a bênção ali — onde há comunhão. Onde a unidade está quebrada, a bênção fica retida. Onde os relacionamentos foram destruídos, a nova estação não consegue chegar. O óleo precioso desce, mas não encontra cabeça para ungir; o orvalho desce, mas não encontra solo unido para fertilizar. A bênção de Deus não é apenas pessoal; ela é também relacional."
+        "Atente para a palavra “ali”. O Senhor ordena a bênção ali, onde há comunhão. Onde a unidade está quebrada, a bênção fica retida. Onde os relacionamentos foram destruídos, a nova estação não consegue chegar. O óleo precioso desce, mas não encontra cabeça para ungir; o orvalho desce, mas não encontra solo unido para fertilizar. A bênção de Deus não é apenas pessoal; ela é também relacional."
       ),
       "Ponto principal"
     ),
@@ -190,9 +190,9 @@ const sessions = [
       p(
         "O que tem te prendido no passado? Falta de perdão? Traumas? Palavras malditas ditas sobre você ou ditas por você? Ofensas guardadas? Ausências que doeram?"
       ) +
-        p(
-          "O tempo de chorar já passou. O tempo de sofrer já se foi. Agora é hora de viver uma nova estação em comunhão — com a sua família, com os seus irmãos, com o povo de Deus."
-        ),
+      p(
+        "O tempo de chorar já passou. O tempo de sofrer já se foi. Agora é hora de viver uma nova estação em comunhão, com a sua família, com os seus irmãos, com o povo de Deus."
+      ),
       "Pergunta retórica"
     ),
     item(
@@ -223,11 +223,11 @@ const sessions = [
     item(
       "desenvolvimento",
       p(
-        "Viver o tempo de Deus não é ter o que queremos quando queremos. Não é uma vida sem problemas, sem deserto, sem dor. Viver o tempo de Deus é entregar a Ele a nossa vida — não pensando apenas em salvação, mas em controle. É render o leme. É confessar, com sinceridade, que Ele sabe mais do que eu, vê mais longe do que eu e ama mais do que eu sou capaz de amar a mim mesmo."
+        "Viver o tempo de Deus não é ter o que queremos quando queremos. Não é uma vida sem problemas, sem deserto, sem dor. Viver o tempo de Deus é entregar a Ele a nossa vida, não pensando apenas em salvação, mas em controle. É render o leme. É confessar, com sinceridade, que Ele sabe mais do que eu, vê mais longe do que eu e ama mais do que eu sou capaz de amar a mim mesmo."
       ) +
-        p(
-          "Viver o tempo de Deus depende de confiança. É entender que, ainda que eu não saiba o porquê de ter vivido o que vivi, ou o porquê de estar passando pelo que estou passando agora, eu sei que Deus está no controle e que foi Ele quem me conduziu até aqui. Isso fica explícito em Mateus 4."
-        ),
+      p(
+        "Viver o tempo de Deus depende de confiança. É entender que, ainda que eu não saiba o porquê de ter vivido o que vivi, ou o porquê de estar passando pelo que estou passando agora, eu sei que Deus está no controle e que foi Ele quem me conduziu até aqui. Isso fica explícito em Mateus 4."
+      ),
       "Desenvolvimento"
     ),
     item(
@@ -241,14 +241,14 @@ const sessions = [
     item(
       "ponto_principal",
       p(
-        "Observe a beleza e o paradoxo deste verso. Foi o próprio Espírito Santo quem conduziu Jesus ao deserto. O Filho amado, sobre quem o Pai acabara de declarar — no capítulo anterior — “este é o meu Filho amado, em quem me comprazo”, foi levado pelo Espírito não para um trono, mas para um deserto. Não para um banquete, mas para um jejum de quarenta dias. Não para o conforto, mas para o confronto com o diabo."
+        "Observe a beleza e o paradoxo deste verso. Foi o próprio Espírito Santo quem conduziu Jesus ao deserto. O Filho amado, sobre quem o Pai acabara de declarar, no capítulo anterior, “este é o meu Filho amado, em quem me comprazo”, foi levado pelo Espírito não para um trono, mas para um deserto. Não para um banquete, mas para um jejum de quarenta dias. Não para o conforto, mas para o confronto com o diabo."
       ) +
-        p(
-          "Por quê? Porque o tempo de Deus não é apenas o tempo dos momentos bons. O tempo de Deus é o tempo em que estamos com Ele — em todos os momentos. No deserto e na fartura. No silêncio e na resposta. No vale e no monte. O mesmo Espírito que te conduz ao deserto é o que te sustenta no deserto e o que te tira dele no tempo certo. O deserto, quando é deserto de Deus, não é castigo: é preparação."
-        ) +
-        p(
-          "Quem vive o tempo de Deus para de medir a sua vida pela ausência ou presença de problemas e passa a medi-la pela presença de Deus em meio a tudo. Esta é a maturidade espiritual: confiar mais no Condutor do que no caminho."
-        ),
+      p(
+        "Por quê? Porque o tempo de Deus não é apenas o tempo dos momentos bons. O tempo de Deus é o tempo em que estamos com Ele, em todos os momentos. No deserto e na fartura. No silêncio e na resposta. No vale e no monte. O mesmo Espírito que te conduz ao deserto é o que te sustenta no deserto e o que te tira dele no tempo certo. O deserto, quando é deserto de Deus, não é castigo: é preparação."
+      ) +
+      p(
+        "Quem vive o tempo de Deus para de medir a sua vida pela ausência ou presença de problemas e passa a medi-la pela presença de Deus em meio a tudo. Esta é a maturidade espiritual: confiar mais no Condutor do que no caminho."
+      ),
       "Ponto principal"
     ),
     item(
@@ -264,18 +264,18 @@ const sessions = [
     item(
       "conclusao",
       p("Igreja, Deus está nos chamando hoje para um realinhamento.") +
-        p(
-          "Há um tempo de nos refazer — de nos tornarmos odres novos para receber o vinho novo que o Senhor quer derramar."
-        ) +
-        p(
-          "Há um tempo de receber — de restaurar relacionamentos, de viver em comunhão e de nos posicionarmos no lugar onde o Senhor ordena a bênção."
-        ) +
-        p(
-          "E há o tempo de Deus — o tempo em que entregamos o controle, confiamos no Condutor e descobrimos que a Sua presença é mais preciosa do que a ausência de problemas."
-        ) +
-        p(
-          "Tudo tem o seu tempo determinado. Tudo Ele fez formoso em seu tempo. Inclusive o seu tempo. Inclusive a sua história. Inclusive o capítulo que você está vivendo agora."
-        ),
+      p(
+        "Há um tempo de nos refazer, de nos tornarmos odres novos para receber o vinho novo que o Senhor quer derramar."
+      ) +
+      p(
+        "Há um tempo de receber, de restaurar relacionamentos, de viver em comunhão e de nos posicionarmos no lugar onde o Senhor ordena a bênção."
+      ) +
+      p(
+        "E há o tempo de Deus, o tempo em que entregamos o controle, confiamos no Condutor e descobrimos que a Sua presença é mais preciosa do que a ausência de problemas."
+      ) +
+      p(
+        "Tudo tem o seu tempo determinado. Tudo Ele fez formoso em seu tempo. Inclusive o seu tempo. Inclusive a sua história. Inclusive o capítulo que você está vivendo agora."
+      ),
       "Recapitulação"
     ),
     item(
@@ -288,15 +288,15 @@ const sessions = [
     item(
       "aplicacao",
       p("Quero convidar a igreja, neste momento, a responder ao Senhor:") +
-        p(
-          "Se hoje você precisa entregar o seu passado a Deus e receber o vinho novo, levante a sua mão."
-        ) +
-        p(
-          "Se hoje você precisa restaurar um relacionamento, dar um passo de perdão, refazer um laço, levante a sua mão."
-        ) +
-        p(
-          "Se hoje você precisa entregar o controle da sua vida ao Senhor e dizer “eu confio em Ti mesmo quando não entendo”, levante a sua mão."
-        ),
+      p(
+        "Se hoje você precisa entregar o seu passado a Deus e receber o vinho novo, levante a sua mão."
+      ) +
+      p(
+        "Se hoje você precisa restaurar um relacionamento, dar um passo de perdão, refazer um laço, levante a sua mão."
+      ) +
+      p(
+        "Se hoje você precisa entregar o controle da sua vida ao Senhor e dizer “eu confio em Ti mesmo quando não entendo”, levante a sua mão."
+      ),
       "Chamada à decisão"
     ),
     item(
@@ -341,7 +341,7 @@ const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
 
 let sermonId = process.argv[2];
 if (!sermonId) {
-  // Busca por título — pega o mais recente caso haja duplicatas.
+  // Busca por título, pega o mais recente caso haja duplicatas.
   const { data, error } = await supabase
     .from("sermons")
     .select("id, title, user_id, updated_at")
@@ -384,4 +384,4 @@ if (updErr) {
   process.exit(1);
 }
 
-console.log(`OK — ${content.sessions.length} sessões, ${wordCount} palavras.`);
+console.log(`OK, ${content.sessions.length} sessões, ${wordCount} palavras.`);

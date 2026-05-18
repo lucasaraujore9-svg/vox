@@ -1,8 +1,8 @@
-# VOX — Design System & Brand Book
+# VOX, Design System & Brand Book
 
-VOX is a Progressive Web App for pastors and preachers. It is a premium tool for pastoral journaling and sermon preparation. The brand inhabits the intersection between a well-bound leather journal and modern editorial software: trustworthy, focused, and ministerial — without religious clichés.
+VOX is a Progressive Web App for pastors and preachers. It is a premium tool for pastoral journaling and sermon preparation. The brand inhabits the intersection between a well-bound leather journal and modern editorial software: trustworthy, focused, and ministerial, without religious clichés.
 
-> **Posture.** VOX is a quiet companion to the pulpit. It honors the craft of preaching by removing friction from the manuscript itself. Nothing about the brand should feel commercial, gamified, evangelical-marketing, or AI-flashy. Imagine the gravitas of a leather-bound journal printed with Garamond — but with the responsiveness of contemporary writing software.
+> **Posture.** VOX is a quiet companion to the pulpit. It honors the craft of preaching by removing friction from the manuscript itself. Nothing about the brand should feel commercial, gamified, evangelical-marketing, or AI-flashy. Imagine the gravitas of a leather-bound journal printed with Garamond, but with the responsiveness of contemporary writing software.
 
 ---
 
@@ -24,7 +24,7 @@ Sermon preparation in VOX is organized around six homiletical frameworks. Each f
 | Narrativo  | Violet Vesper  | Story that preaches                       |
 | Temático   | Scripture Gold | A biblical theme, many voices             |
 | Tópico     | Deep Rose      | Real life in light of the Word            |
-| Livre      | Slate Quiet    | Free form — vigils, devotionals, words    |
+| Livre      | Slate Quiet    | Free form, vigils, devotionals, words    |
 
 The framework colors are a closed set; do not introduce new framework hues.
 
@@ -54,9 +54,9 @@ The framework colors are a closed set; do not introduce new framework hues.
 
 - **Manuscrito** is preferred over "documento" or "arquivo" when referring to a sermon-in-progress.
 - **Bloco** is the unit of writing inside the editor. Each block has a **tipo** (Introdução, Aplicação, etc).
-- **Modo Apresentação** (capital M, capital A) — the dark on-stage view used live.
+- **Modo Apresentação** (capital M, capital A), the dark on-stage view used live.
 - **Framework** is used in Portuguese as a loanword; no italics.
-- **Pregar** / **pregado** — the verb of record. Past sermons are "pregados", not "publicados".
+- **Pregar** / **pregado**, the verb of record. Past sermons are "pregados", not "publicados".
 
 ### Banned words
 
@@ -68,7 +68,7 @@ The framework colors are a closed set; do not introduce new framework hues.
 
 ### Bible references
 
-- Use **typographic em-dashes** for verse ranges: `Romanos 5:1—11`, not `Romanos 5:1-11`.
+- Use **typographic em-dashes** for verse ranges: `Romanos 5:1,11`, not `Romanos 5:1-11`.
 - Versions are abbreviated: ACF (Almeida Corrigida Fiel), ARA, NVI, NAA.
 - Reference text is set in **Geist Mono** in Scripture Gold.
 
@@ -81,8 +81,8 @@ The framework colors are a closed set; do not introduce new framework hues.
 VOX uses a warm, paper-forward palette. No pure white, no pure black, no AI purple, no neon. The palette is anchored by:
 
 - **Parchment Canvas** as the page background (warm off-white).
-- **Forest Deep** as the primary accent — a quiet, pastoral green that connotes growth and life without shouting.
-- **Scripture Gold** as the secondary — used sparingly to mark authority (bible references, callouts).
+- **Forest Deep** as the primary accent, a quiet, pastoral green that connotes growth and life without shouting.
+- **Scripture Gold** as the secondary, used sparingly to mark authority (bible references, callouts).
 
 Framework colors live alongside the core palette and only appear as small chromatic anchors (badges, dots, left-rail stripes). Never use a framework color as a flood fill behind body content.
 
@@ -98,7 +98,7 @@ See `colors_and_type.css` for tokens.
 
 Fraunces is set with `font-feature-settings: "ss01", "ss02"` for the editorial alternates. Display sizes use slightly tightened tracking (`letter-spacing: -0.01em` to `-0.015em`). Body copy is set with `text-wrap: pretty` and titles with `text-wrap: balance`.
 
-**Eyebrow labels** — small, uppercase, tracked (`letter-spacing: 0.12em`) — are how VOX marks sectional context. They appear above stat cards, sidebar groups, and in the editor outline.
+**Eyebrow labels**, small, uppercase, tracked (`letter-spacing: 0.12em`), are how VOX marks sectional context. They appear above stat cards, sidebar groups, and in the editor outline.
 
 ### Spacing & rhythm
 
@@ -112,29 +112,29 @@ Fraunces is set with `font-feature-settings: "ss01", "ss02"` for the editorial a
 
 Surfaces stack subtly:
 
-1. **Parchment Canvas** (`#F9F7F4`) — the page itself.
-2. **Linen** (`#FEFCF9`) — elevated rails (sidebar, right panels).
-3. **Pure White** (`#FFFFFF`) — cards.
+1. **Parchment Canvas** (`#F9F7F4`), the page itself.
+2. **Linen** (`#FEFCF9`), elevated rails (sidebar, right panels).
+3. **Pure White** (`#FFFFFF`), cards.
 4. A faint paper grain at the body level (two radial gradients in warm tones, < 3% opacity).
 
 ### Shadows
 
-Shadows have a green undertone — they read as "paper resting on wood," not as floating glass.
+Shadows have a green undertone, they read as "paper resting on wood," not as floating glass.
 
-- **Card resting** — `0 1px 0 rgba(22,101,52,0.04), 0 4px 24px rgba(22,101,52,0.06)`
-- **Card hover** — `0 2px 0 rgba(22,101,52,0.05), 0 12px 32px rgba(22,101,52,0.10)`
-- **Overlay** — `0 24px 64px rgba(22,40,30,0.16), 0 2px 8px rgba(22,40,30,0.08)`
+- **Card resting**, `0 1px 0 rgba(22,101,52,0.04), 0 4px 24px rgba(22,101,52,0.06)`
+- **Card hover**, `0 2px 0 rgba(22,101,52,0.05), 0 12px 32px rgba(22,101,52,0.10)`
+- **Overlay**, `0 24px 64px rgba(22,40,30,0.16), 0 2px 8px rgba(22,40,30,0.08)`
 
 ### Corner radii
 
-- 12px — cards
-- 8px — inputs, buttons
-- 4px — badges, micro-pills
+- 12px, cards
+- 8px, inputs, buttons
+- 4px, badges, micro-pills
 - Never use fully rounded ("pill") corners except for filter chips and progress bars.
 
 ### Borders
 
-- Border weight on inputs and prominent buttons is **1.5px** (not 1px). This is deliberate — it gives form fields the quiet authority of letterpress lines.
+- Border weight on inputs and prominent buttons is **1.5px** (not 1px). This is deliberate, it gives form fields the quiet authority of letterpress lines.
 - Card borders use the translucent `--whisper` so the edge whispers instead of declaring.
 
 ### Hover & press
@@ -151,7 +151,7 @@ Animation is restrained.
 - Sidebar collapse/expand: 220ms.
 - Hover states: 100–160ms.
 - No bounces. No spring overshoot. No marquee. No skeumorphic page turns.
-- Presentation Mode timer pulse is a single 1.4s `voxPulse` opacity easing — the only motion in the dark mode.
+- Presentation Mode timer pulse is a single 1.4s `voxPulse` opacity easing, the only motion in the dark mode.
 
 ### Backgrounds & imagery
 
@@ -188,14 +188,14 @@ Used sparingly: only on hover overlays on cards and the Tweaks panel chrome. Bac
 ## Index
 
 ```
-README.md                  — this file
-colors_and_type.css        — design tokens (colors, type, radii, shadows)
-SKILL.md                   — agent skill manifest
-assets/                    — logo SVG, mark, brand assets
-preview/                   — design system cards (auto-rendered in DS tab)
-ui_kits/vox/               — full product UI kit (sermon prep PWA)
-VOX.html                   — live demo of the UI kit
-vox/                       — source for the demo (data, components, screens)
+README.md                 , this file
+colors_and_type.css       , design tokens (colors, type, radii, shadows)
+SKILL.md                  , agent skill manifest
+assets/                   , logo SVG, mark, brand assets
+preview/                  , design system cards (auto-rendered in DS tab)
+ui_kits/vox/              , full product UI kit (sermon prep PWA)
+VOX.html                  , live demo of the UI kit
+vox/                      , source for the demo (data, components, screens)
 ```
 
 ---

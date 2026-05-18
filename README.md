@@ -1,18 +1,18 @@
-# VOX — Palestras e Sermões
+# VOX, Palestras e Sermões
 
 PWA para pregadores, pastores e palestrantes. Ciclo completo: preparação → entrega → arquivo.
 Cobre Sermão, Palestra, Aula e Curso, com frameworks homiléticos como guias dentro do editor.
 
 ## Stack
 
-- **Next.js 16** — App Router + TypeScript estrito (`noUncheckedIndexedAccess`)
-- **Supabase** — PostgreSQL + Auth + Storage (RLS em todas as tabelas)
+- **Next.js 16**, App Router + TypeScript estrito (`noUncheckedIndexedAccess`)
+- **Supabase**, PostgreSQL + Auth + Storage (RLS em todas as tabelas)
 - **Tailwind CSS 4** + shadcn/ui mapeado para tokens VOX
-- **TipTap 2** — editor rico (extensão custom para versículos bíblicos)
-- **next-pwa** — offline-first com IndexedDB (`idb`) + sync ao reconectar
-- **OpenAI GPT-4o** — assistente opcional por usuário (`profile.ai_enabled`)
-- **API.Bible** — proxy server-side com cache permanente de 30d
-- **Vercel** — hospedagem alvo
+- **TipTap 2**, editor rico (extensão custom para versículos bíblicos)
+- **next-pwa**, offline-first com IndexedDB (`idb`) + sync ao reconectar
+- **OpenAI GPT-4o**, assistente opcional por usuário (`profile.ai_enabled`)
+- **API.Bible**, proxy server-side com cache permanente de 30d
+- **Vercel**, hospedagem alvo
 
 ## Setup local
 
@@ -63,11 +63,11 @@ npm run typecheck  # tsc --noEmit
 | `/` | Landing pública |
 | `/templates` | Biblioteca de frameworks homiléticos (pública) |
 | `/auth/login` · `/auth/register` | Auth Supabase |
-| `/dashboard` | Painel — stats, recentes, série ativa |
+| `/dashboard` | Painel, stats, recentes, série ativa |
 | `/sermons` | Banco de conteúdo com busca FTS + filtros URL |
 | `/sermons/new` | Wizard de criação (4 passos) |
 | `/sermons/[id]` | Editor de esboço (TipTap) ou painel de slides |
-| `/sermons/[id]/present` | Modo apresentação — esboço (teleprompter) ou slides |
+| `/sermons/[id]/present` | Modo apresentação, esboço (teleprompter) ou slides |
 | `/courses` · `/courses/[id]` | Lista e editor de cursos |
 | `/study` · `/study/[moduleId]` | Trilhas de estudo guiado |
 | `/series` | Séries de sermões |

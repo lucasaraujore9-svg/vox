@@ -58,7 +58,7 @@ export function LinkPicker({ contentType, value, onChange }: LinkPickerProps) {
         setCourses(data.courses ?? []);
       })
       .catch(() => {
-        // silencioso — usuário ainda pode criar nova série
+        // silencioso, usuário ainda pode criar nova série
       });
     return () => {
       cancelled = true;
@@ -116,42 +116,42 @@ export function LinkPicker({ contentType, value, onChange }: LinkPickerProps) {
             </p>
           ) : null}
           {series.length > 0 ? (
-          <section>
-            <p className="vox-eyebrow mb-3">Séries</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {series.map((s) => {
-                const selected = value.seriesId === s.id;
-                return (
-                  <button
-                    key={s.id}
-                    type="button"
-                    onClick={() =>
-                      set({
-                        seriesId: selected ? null : s.id,
-                        courseId: null,
-                      })
-                    }
-                    className={cn(
-                      "text-left rounded-xl p-4 transition-all",
-                      "bg-card border"
-                    )}
-                    style={{
-                      borderColor: selected ? "var(--vox-forest)" : "var(--vox-whisper)",
-                      borderWidth: selected ? "1.5px" : "1px",
-                      boxShadow: selected
-                        ? "var(--vox-shadow-card-hover)"
-                        : "var(--vox-shadow-card)",
-                    }}
-                  >
-                    <p className="font-medium text-sm">{s.title}</p>
-                    <p className="vox-mono text-xs text-vox-muted mt-1">
-                      {s.sermon_count} conteúdos
-                    </p>
-                  </button>
-                );
-              })}
-            </div>
-          </section>
+            <section>
+              <p className="vox-eyebrow mb-3">Séries</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {series.map((s) => {
+                  const selected = value.seriesId === s.id;
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() =>
+                        set({
+                          seriesId: selected ? null : s.id,
+                          courseId: null,
+                        })
+                      }
+                      className={cn(
+                        "text-left rounded-xl p-4 transition-all",
+                        "bg-card border"
+                      )}
+                      style={{
+                        borderColor: selected ? "var(--vox-forest)" : "var(--vox-whisper)",
+                        borderWidth: selected ? "1.5px" : "1px",
+                        boxShadow: selected
+                          ? "var(--vox-shadow-card-hover)"
+                          : "var(--vox-shadow-card)",
+                      }}
+                    >
+                      <p className="font-medium text-sm">{s.title}</p>
+                      <p className="vox-mono text-xs text-vox-muted mt-1">
+                        {s.sermon_count} conteúdos
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
           ) : null}
 
           {contentType === "aula" && courses.length > 0 ? (
@@ -207,7 +207,7 @@ export function LinkPicker({ contentType, value, onChange }: LinkPickerProps) {
                 id="new-series"
                 value={value.newSeriesTitle ?? ""}
                 onChange={(e) => set({ newSeriesTitle: e.target.value })}
-                placeholder="Ex: Romanos — A Justificação pela Fé"
+                placeholder="Ex: Romanos, A Justificação pela Fé"
                 autoFocus
               />
             </div>

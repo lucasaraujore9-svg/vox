@@ -1,4 +1,4 @@
-# Issue 009 — Curso: Editor UI Proto
+# Issue 009, Curso: Editor UI Proto
 
 **Status:** [ ] PENDENTE
 **Tipo:** proto
@@ -15,10 +15,10 @@ carga horária) + lista de aulas vinculadas.
 
 ## Componentes Envolvidos
 
-- `src/components/course/CourseEditor.tsx` — formulário de metadados do curso
-- `src/components/course/LessonList.tsx` — lista de aulas vinculadas (drag-and-drop)
-- `src/app/(app)/courses/new/page.tsx` — página de criação
-- `src/app/(app)/courses/[id]/page.tsx` — página de edição
+- `src/components/course/CourseEditor.tsx`, formulário de metadados do curso
+- `src/components/course/LessonList.tsx`, lista de aulas vinculadas (drag-and-drop)
+- `src/app/(app)/courses/new/page.tsx`, página de criação
+- `src/app/(app)/courses/[id]/page.tsx`, página de edição
 
 ## Layout
 
@@ -46,7 +46,7 @@ carga horária) + lista de aulas vinculadas.
 - Input numérico + "horas" em linha (ex: `[  24  ] horas`)
 - Geist Mono para o número
 
-### Painel Lateral (1/3 da largura) — Aulas
+### Painel Lateral (1/3 da largura), Aulas
 
 **Header:** "Aulas" eyebrow + contador "0 aulas · 0h"
 
@@ -124,7 +124,7 @@ Criar `src/components/course/CourseEditor.tsx` (`"use client"`):
 - Textarea ementa com placeholder e border whisper
 - Lista de objetivos: `objectives.map()` → inputs inline + botão "×" por item + "+ Adicionar objetivo"
 - Input numérico de carga horária: `[number] horas`, Geist Mono no número
-- Layout: `grid grid-cols-3 gap-6` — main (col-span-2) + aside (col-span-1)
+- Layout: `grid grid-cols-3 gap-6`, main (col-span-2) + aside (col-span-1)
 
 **3. Criar páginas de curso**
 Criar `src/app/(app)/courses/new/page.tsx` e `src/app/(app)/courses/[id]/page.tsx`:

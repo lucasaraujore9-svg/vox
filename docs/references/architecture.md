@@ -1,10 +1,10 @@
-# VOX — Arquitetura Técnica
+# VOX, Arquitetura Técnica
 
 ---
 
 ## Visão de Produto
 
-VOX é uma **plataforma de comunicação pastoral e educacional** — não apenas um editor de sermões.
+VOX é uma **plataforma de comunicação pastoral e educacional**, não apenas um editor de sermões.
 Cobre o ciclo: preparação → entrega → arquivo, para qualquer formato de conteúdo.
 
 ### Tipos de Conteúdo
@@ -14,7 +14,7 @@ Cobre o ciclo: preparação → entrega → arquivo, para qualquer formato de co
 | **Sermão** | Pregação em culto/celebração | Esboço, Slides, Ambos |
 | **Palestra** | Comunicação em evento/conferência | Esboço, Slides, Ambos |
 | **Aula** | Ensino em célula/escola bíblica | Esboço, Slides, Ambos |
-| **Curso** | Container de aulas com estrutura curricular | — (gerencia aulas) |
+| **Curso** | Container de aulas com estrutura curricular |, (gerencia aulas) |
 
 Sermão, Palestra e Aula compartilham a mesma tabela `sermons` com discriminador `content_type`.
 Curso é uma entidade separada com ementa, objetivos e carga horária.
@@ -56,7 +56,7 @@ Os blocos são usados em: editor de esboço, comentários de slides, notas de es
 | Tecnologia | Versão | Justificativa |
 |-----------|--------|---------------|
 | Next.js | 15 (App Router) | Server Components nativos, excelente para PWA, deploy fácil na Vercel |
-| TypeScript | 5+ | Tipagem estrita — crítico para manter qualidade com IA gerando código |
+| TypeScript | 5+ | Tipagem estrita, crítico para manter qualidade com IA gerando código |
 | Tailwind CSS | 4 | Utility-first, integração nativa com shadcn/ui |
 | shadcn/ui | latest | Componentes acessíveis, customizáveis, sem lock-in |
 | Supabase | latest | PostgreSQL gerenciado + Auth + Realtime + Storage em um lugar |
@@ -64,7 +64,7 @@ Os blocos são usados em: editor de esboço, comentários de slides, notas de es
 | next-pwa | latest | PWA com Service Worker e cache offline para Next.js |
 | Zod | 3 | Validação de schemas em runtime + inferência TypeScript |
 | React Hook Form | 7 | Forms performáticos sem re-render desnecessário |
-| TipTap | 2 | Editor rico extensível — base do editor de sermões |
+| TipTap | 2 | Editor rico extensível, base do editor de sermões |
 | OpenAI SDK | 4 | Módulo de IA opcional |
 
 ---
@@ -91,29 +91,29 @@ src/
 │   │   ├── dashboard/
 │   │   │   └── page.tsx
 │   │   ├── sermons/
-│   │   │   ├── page.tsx              # /sermons — banco (sermões + palestras + aulas)
+│   │   │   ├── page.tsx              # /sermons, banco (sermões + palestras + aulas)
 │   │   │   ├── new/
-│   │   │   │   └── page.tsx          # /sermons/new — wizard de criação
+│   │   │   │   └── page.tsx          # /sermons/new, wizard de criação
 │   │   │   └── [id]/
-│   │   │       ├── page.tsx          # /sermons/[id] — editor
+│   │   │       ├── page.tsx          # /sermons/[id], editor
 │   │   │       └── present/
-│   │   │           └── page.tsx      # /sermons/[id]/present — bifurca por type
+│   │   │           └── page.tsx      # /sermons/[id]/present, bifurca por type
 │   │   ├── courses/
-│   │   │   ├── page.tsx              # /courses — lista de cursos
+│   │   │   ├── page.tsx              # /courses, lista de cursos
 │   │   │   ├── new/
-│   │   │   │   └── page.tsx          # /courses/new — criar curso
+│   │   │   │   └── page.tsx          # /courses/new, criar curso
 │   │   │   └── [id]/
-│   │   │       └── page.tsx          # /courses/[id] — editor do curso
+│   │   │       └── page.tsx          # /courses/[id], editor do curso
 │   │   ├── study/
-│   │   │   ├── page.tsx              # /study — trilhas disponíveis
+│   │   │   ├── page.tsx              # /study, trilhas disponíveis
 │   │   │   └── [moduleId]/
-│   │   │       └── page.tsx          # /study/[moduleId] — sessão de estudo
+│   │   │       └── page.tsx          # /study/[moduleId], sessão de estudo
 │   │   ├── import/
 │   │   │   └── page.tsx
 │   │   └── settings/
 │   │       ├── page.tsx
 │   │       └── blocks/
-│   │           └── page.tsx          # /settings/blocks — configurar cores dos blocos
+│   │           └── page.tsx          # /settings/blocks, configurar cores dos blocos
 │   └── api/
 │       ├── sermons/
 │       │   └── export/
@@ -153,9 +153,9 @@ src/
 │   ├── study/
 │   │   ├── StudyModuleCard.tsx       # Card de módulo de estudo disponível
 │   │   ├── StudySession.tsx          # Interface da sessão de estudo ativa
-│   │   ├── StudyNotes.tsx            # Editor de notas (usa BlockEditor — mesmos blocos)
+│   │   ├── StudyNotes.tsx            # Editor de notas (usa BlockEditor, mesmos blocos)
 │   │   ├── StudyProgress.tsx         # Barra de progresso do módulo
-│   │   └── StudyOutputPicker.tsx     # "Gerar conteúdo" — escolha de tipo de output
+│   │   └── StudyOutputPicker.tsx     # "Gerar conteúdo", escolha de tipo de output
 │   ├── blocks/
 │   │   ├── BlockEditor.tsx           # Editor de blocos visuais (usado em editor, slides, estudo)
 │   │   ├── BlockItem.tsx             # Bloco individual com barra colorida
@@ -211,7 +211,7 @@ src/
 
 ## Schema do Banco (Supabase / PostgreSQL)
 
-### Migrations — executar em ordem
+### Migrations, executar em ordem
 
 ```sql
 -- 001_profiles.sql
@@ -427,7 +427,7 @@ create policy "Usuário gerencia próprias cores"
 
 ---
 
-## Supabase Storage — Slides
+## Supabase Storage, Slides
 
 ### Bucket: `sermon-slides`
 
@@ -472,7 +472,7 @@ npm install pdf-to-img # PDF → imagens (usa pdfjs-dist)
 - Armazena apenas a URL em `sermons.slides_url`
 - Exibe via `<iframe src="{url}/embed?slide=1">` no modo apresentação
 - Thumbnails: `https://docs.google.com/presentation/d/{id}/export/png?pageid=p{N}`
-- Sem processamento server-side — depende do link ser público
+- Sem processamento server-side, depende do link ser público
 
 ---
 
@@ -485,7 +485,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  // Rotas públicas — não proteger
+  // Rotas públicas, não proteger
   const publicPaths = ['/', '/auth/login', '/auth/register', '/templates']
   if (publicPaths.some(p => request.nextUrl.pathname === p)) {
     return NextResponse.next()
@@ -509,9 +509,9 @@ export async function middleware(request: NextRequest) {
 
 ### Camadas de persistência
 
-1. **Supabase** (source of truth) — dados no PostgreSQL
-2. **IndexedDB** (cache offline) — espelho local dos sermões em edição
-3. **Service Worker** (next-pwa) — cache de assets e navegação offline
+1. **Supabase** (source of truth), dados no PostgreSQL
+2. **IndexedDB** (cache offline), espelho local dos sermões em edição
+3. **Service Worker** (next-pwa), cache de assets e navegação offline
 
 ### Fluxo de sync
 
@@ -541,7 +541,7 @@ const withPWA = require('next-pwa')({
 
 ## Módulo de IA (opcional por usuário)
 
-### Guard pattern — verificar flag antes de qualquer renderização
+### Guard pattern, verificar flag antes de qualquer renderização
 
 ```typescript
 // Server Component
@@ -580,7 +580,7 @@ npx supabase gen types typescript --project-id SEU_PROJECT_ID > src/types/databa
 
 ## Performance e Segurança
 
-- **RLS (Row Level Security)** ativado em todas as tabelas — cada usuário só acessa seus dados
+- **RLS (Row Level Security)** ativado em todas as tabelas, cada usuário só acessa seus dados
 - **Service Role Key** apenas em Route Handlers server-side, nunca no cliente
 - **Content Security Policy** configurado no `next.config.ts`
 - **Imagens:** Next.js Image component com domínios permitidos configurados

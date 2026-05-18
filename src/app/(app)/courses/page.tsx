@@ -1,4 +1,4 @@
-// Issue 009 (parcial) — listagem de cursos. Editor entra em /courses/[id].
+// Issue 009 (parcial), listagem de cursos. Editor entra em /courses/[id].
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";

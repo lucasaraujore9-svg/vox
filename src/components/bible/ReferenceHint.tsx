@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 interface ReferenceHintProps {
   canonical: string;
   version: BibleVersionId;
-  /** Callback ao clicar "+ Inserir bloco" — recebe a referência canônica, o texto e a versão escolhida */
+  /** Callback ao clicar "+ Inserir bloco", recebe a referência canônica, o texto e a versão escolhida */
   onInsert?: (canonical: string, fullText: string, version: BibleVersionId) => void;
   /** Permite remover/dispensar essa hint */
   onDismiss?: () => void;
@@ -104,7 +104,7 @@ export function ReferenceHint({
         </Popover>
       ) : null}
 
-      {/* Seletor de versão inline — permite trocar antes de inserir */}
+      {/* Seletor de versão inline, permite trocar antes de inserir */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button

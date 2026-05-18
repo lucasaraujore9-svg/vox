@@ -49,7 +49,7 @@ const FRIENDLY_AUTH_ERRORS: Record<string, string> = {
   user_already_exists: "Já existe uma conta com este email",
   email_not_confirmed:
     "Confirme seu email antes de entrar (verifique sua caixa de entrada)",
-  weak_password: "Senha muito fraca — use ao menos 8 caracteres",
+  weak_password: "Senha muito fraca, use ao menos 8 caracteres",
 };
 
 function flattenZodErrors(error: z.ZodError): Record<string, string> {

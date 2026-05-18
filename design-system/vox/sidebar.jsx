@@ -1,20 +1,20 @@
-// Sidebar — VOX navigation
+// Sidebar, VOX navigation
 const Sidebar = ({ screen, setScreen, collapsed, onToggleCollapsed }) => {
   const navItems = [
-    { id: "library",   label: "Biblioteca",        icon: "book",       screen: "library" },
-    { id: "drafts",    label: "Em rascunho",       icon: "draft",      screen: "library", filter: "drafting", count: 4 },
-    { id: "present",   label: "Apresentar",        icon: "present",    screen: "present" },
-    { id: "collection", label: "Coletânea",        icon: "collection", screen: "library", muted: true },
-    { id: "calendar",  label: "Calendário pastoral", icon: "calendar", screen: "library", muted: true },
+    { id: "library", label: "Biblioteca", icon: "book", screen: "library" },
+    { id: "drafts", label: "Em rascunho", icon: "draft", screen: "library", filter: "drafting", count: 4 },
+    { id: "present", label: "Apresentar", icon: "present", screen: "present" },
+    { id: "collection", label: "Coletânea", icon: "collection", screen: "library", muted: true },
+    { id: "calendar", label: "Calendário pastoral", icon: "calendar", screen: "library", muted: true },
   ];
 
   const recent = window.VOX_DATA.SERMONS.slice(0, 3);
 
   // Active inference
   const activeId = screen === "editor" ? "drafts"
-                 : screen === "present" ? "present"
-                 : screen === "new"     ? null
-                 : "library";
+    : screen === "present" ? "present"
+      : screen === "new" ? null
+        : "library";
 
   return (
     <aside
@@ -128,7 +128,7 @@ const Sidebar = ({ screen, setScreen, collapsed, onToggleCollapsed }) => {
         })}
       </nav>
 
-      {/* Recent — hidden when collapsed */}
+      {/* Recent, hidden when collapsed */}
       {!collapsed && (
         <div style={{ padding: "16px 14px 4px", overflow: "hidden" }}>
           <div className="eyebrow eyebrow-tight" style={{ padding: "10px 4px 8px", color: "var(--muted)" }}>

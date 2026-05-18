@@ -1,4 +1,4 @@
-// Issue 038 — registra um sermão como apresentação com fonte = Google Slides.
+// Issue 038, registra um sermão como apresentação com fonte = Google Slides.
 // Sem upload server-side: guarda apenas a URL.
 
 import { NextResponse, type NextRequest } from "next/server";

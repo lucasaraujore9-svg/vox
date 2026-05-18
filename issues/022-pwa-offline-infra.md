@@ -1,4 +1,4 @@
-# Issue 022 — PWA + Offline (cache básico)
+# Issue 022, PWA + Offline (cache básico)
 
 **Status:** [ ] PENDENTE
 **Tipo:** infra
@@ -15,11 +15,11 @@ cache de assets, navegação offline e cache de sermões para leitura sem intern
 
 ## Componentes Envolvidos
 
-- `next.config.ts` — Configuração do next-pwa
-- `public/manifest.json` — Web App Manifest
-- `src/lib/offline/sync.ts` — Lógica de sync offline → online
-- `src/hooks/useOfflineSync.ts` — Hook de detecção e sync
-- `public/icons/` — Ícones do app (TODO: gerar com design system)
+- `next.config.ts`, Configuração do next-pwa
+- `public/manifest.json`, Web App Manifest
+- `src/lib/offline/sync.ts`, Lógica de sync offline → online
+- `src/hooks/useOfflineSync.ts`, Hook de detecção e sync
+- `public/icons/`, Ícones do app (TODO: gerar com design system)
 
 ## Comportamentos
 
@@ -28,7 +28,7 @@ cache de assets, navegação offline e cache de sermões para leitura sem intern
 - Sermões recentemente acessados ficam disponíveis offline (NetworkFirst)
 - Edições feitas offline são salvas no IndexedDB
 - Ao reconectar, sync automático envia pendentes para Supabase
-- Indicador visual de status: "Online" / "Offline — salvando localmente"
+- Indicador visual de status: "Online" / "Offline, salvando localmente"
 - Conflict resolution no MVP: last-write-wins
 
 ## Critério de Aceite
@@ -90,7 +90,7 @@ interface OfflineDB {
 ### public/manifest.json
 ```json
 {
-  "name": "VOX — Palestras e Sermões",
+  "name": "VOX, Palestras e Sermões",
   "short_name": "VOX",
   "description": "Ferramenta pastoral para preparação e arquivo de sermões",
   "start_url": "/dashboard",
@@ -105,9 +105,9 @@ interface OfflineDB {
 ```
 
 ### Atenção
-- `next-pwa` gera `sw.js` e `workbox-*.js` em `/public` — adicionar ao `.gitignore`
+- `next-pwa` gera `sw.js` e `workbox-*.js` em `/public`, adicionar ao `.gitignore`
 - Testar offline com DevTools → Network → Offline
-- Wake Lock API (modo apresentação) é separado desta issue — ver issue 033
+- Wake Lock API (modo apresentação) é separado desta issue, ver issue 033
 
 ## Plano de Implementação
 

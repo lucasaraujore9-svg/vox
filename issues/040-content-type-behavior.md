@@ -1,4 +1,4 @@
-# Issue 040 — Palestra e Aula: Behavior (content_type)
+# Issue 040, Palestra e Aula: Behavior (content_type)
 
 **Status:** [ ] PENDENTE
 **Tipo:** behavior
@@ -15,9 +15,9 @@ seja salvo corretamente e que a UI adapte labels, badges e navegação conforme 
 
 ## Comportamentos
 
-### Wizard de criação — Step 0
+### Wizard de criação, Step 0
 - Usuário escolhe `content_type` (sermão / palestra / aula)
-- Valor salvo no state do wizard — só persiste no Supabase após Step 1 (TypePicker)
+- Valor salvo no state do wizard, só persiste no Supabase após Step 1 (TypePicker)
 - `INSERT INTO sermons (user_id, content_type, type, title)`
 
 ### Adaptação de UI por content_type

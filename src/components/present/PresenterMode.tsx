@@ -1,4 +1,4 @@
-// Issue 011 — Modo Apresentador UI proto.
+// Issue 011, Modo Apresentador UI proto.
 // Behavior real (BroadcastChannel + duas janelas) em 043.
 // Aqui simulamos as duas telas lado a lado num único componente.
 
@@ -40,7 +40,7 @@ export function PresenterMode({ title, slides, backHref }: PresenterModeProps) {
         e.preventDefault();
         goPrev();
       } else if (e.key === "Escape") {
-        if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+        if (document.fullscreenElement) document.exitFullscreen().catch(() => { });
       }
     }
     window.addEventListener("keydown", onKey);
@@ -62,7 +62,7 @@ export function PresenterMode({ title, slides, backHref }: PresenterModeProps) {
       </header>
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6 p-6">
-        {/* Janela 1 — espelhada para a audiência */}
+        {/* Janela 1, espelhada para a audiência */}
         <section className="flex flex-col gap-3 min-h-0">
           <p className="vox-eyebrow opacity-60">Audiência (Janela 1)</p>
           <div
@@ -84,7 +84,7 @@ export function PresenterMode({ title, slides, backHref }: PresenterModeProps) {
           </div>
         </section>
 
-        {/* Janela 2 — painel do apresentador */}
+        {/* Janela 2, painel do apresentador */}
         <section className="flex flex-col gap-3 min-h-0">
           <p className="vox-eyebrow opacity-60">Painel do apresentador (Janela 2)</p>
 
@@ -144,7 +144,7 @@ export function PresenterMode({ title, slides, backHref }: PresenterModeProps) {
               >
                 {!next?.image_url ? (
                   <span className="opacity-50 vox-mono text-2xl">
-                    {next ? String(next.order).padStart(2, "0") : "—"}
+                    {next ? String(next.order).padStart(2, "0") : ","}
                   </span>
                 ) : null}
               </div>

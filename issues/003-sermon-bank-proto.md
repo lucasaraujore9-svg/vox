@@ -1,4 +1,4 @@
-# Issue 003 — Banco de Sermões UI Proto
+# Issue 003, Banco de Sermões UI Proto
 
 **Status:** [ ] PENDENTE
 **Tipo:** proto
@@ -15,13 +15,13 @@ busca e ações por card. Dados mockados.
 
 ## Componentes Envolvidos
 
-- `src/app/(app)/sermons/page.tsx` — Página do banco (mock)
-- `src/components/sermon/SermonGrid.tsx` — Grid de cards
-- `src/components/sermon/SermonCard.tsx` — Card individual (reusar da issue 001)
-- `src/components/sermon/SermonFilters.tsx` — Painel de filtros
-- `src/components/shared/ConfirmDialog.tsx` — Modal de confirmação de exclusão
+- `src/app/(app)/sermons/page.tsx`, Página do banco (mock)
+- `src/components/sermon/SermonGrid.tsx`, Grid de cards
+- `src/components/sermon/SermonCard.tsx`, Card individual (reusar da issue 001)
+- `src/components/sermon/SermonFilters.tsx`, Painel de filtros
+- `src/components/shared/ConfirmDialog.tsx`, Modal de confirmação de exclusão
 
-## Comportamentos (proto — apenas visual)
+## Comportamentos (proto, apenas visual)
 
 - Header da página: título "Meus Sermões" + contador + botão "Novo Sermão"
 - Campo de busca no topo (visual, sem funcionalidade de busca real)
@@ -51,7 +51,7 @@ busca e ações por card. Dados mockados.
 ## Notas de Implementação
 
 - Usar os 12 mocks criados na issue 001 (ou expandir para 12 itens)
-- SermonCard já criado na issue 001 — não duplicar, reusar
+- SermonCard já criado na issue 001, não duplicar, reusar
 - Filtros: usar shadcn `Checkbox`, `Select`, `Sheet` para drawer mobile
 - ConfirmDialog: shadcn `AlertDialog`
 - Skeleton: shadcn `Skeleton`
@@ -61,7 +61,7 @@ busca e ações por card. Dados mockados.
 
 ### Pré-requisitos
 - Issue 023 concluída (shadcn/ui disponível)
-- Issue 001 concluída (`SermonCard` já existe — não recriar)
+- Issue 001 concluída (`SermonCard` já existe, não recriar)
 
 ### Passos
 
@@ -79,18 +79,18 @@ Criar `src/components/sermon/SermonGrid.tsx`:
 **3. Criar ConfirmDialog**
 Criar `src/components/shared/ConfirmDialog.tsx`:
 - Props: `open`, `onOpenChange`, `onConfirm`, `title`, `description`
-- Usa shadcn `AlertDialog` — botão destrutivo para confirmar
+- Usa shadcn `AlertDialog`, botão destrutivo para confirmar
 
 **4. Criar SermonFilters**
 Criar `src/components/sermon/SermonFilters.tsx`:
 - Filtros inline (desktop) + Sheet (mobile)
 - Checkboxes para framework (6 opções), `Select` para livro/série/status, radio para ordenação
-- `onFilterChange` props — no proto, apenas visual (sem lógica real)
+- `onFilterChange` props, no proto, apenas visual (sem lógica real)
 - Botão "Limpar filtros"
 
 **5. Criar página /sermons**
 Criar `src/app/(app)/sermons/page.tsx`:
-- `"use client"` — estado local: `deleteTarget`, `showSkeleton` (toggle manual para testar)
+- `"use client"`, estado local: `deleteTarget`, `showSkeleton` (toggle manual para testar)
 - Header: "Meus Sermões" + contador + botão "Novo Sermão"
 - `<Input placeholder="Buscar...">` no topo (visual)
 - Layout: filtros à esquerda (lg+) + `<SermonGrid>` à direita

@@ -1,6 +1,6 @@
 // Service Worker do VOX (gerado pelo @serwist/next).
 // Estratégia:
-//   - precache: shell estático (assets do build) — instalado no install.
+//   - precache: shell estático (assets do build), instalado no install.
 //   - runtime cache: páginas (network-first), Bible API (stale-while-revalidate
 //     via defaultCache), Supabase REST não cacheia (autenticado).
 //   - navegação offline: fallback pra /offline (página estática).

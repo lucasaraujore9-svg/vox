@@ -1,4 +1,4 @@
-# VOX — Especificação do Sistema
+# VOX, Especificação do Sistema
 
 > Documento vivo. Atualize à medida que o produto evolui.
 > Leia este arquivo antes de qualquer implementação.
@@ -14,7 +14,7 @@ O diferencial central são os **frameworks homiléticos** como templates guiados
 
 ---
 
-## Página: `/` — Landing Page
+## Página: `/`, Landing Page
 
 **Objetivo:** Apresentar o VOX e converter visitantes em usuários.
 
@@ -90,7 +90,7 @@ O diferencial central são os **frameworks homiléticos** como templates guiados
 
 ## Página: `/dashboard`
 
-**Objetivo:** Painel principal — visão geral do ministério do pastor.
+**Objetivo:** Painel principal, visão geral do ministério do pastor.
 
 **Componentes:**
 - Header com nome do pastor e avatar
@@ -149,12 +149,12 @@ e depois o sistema abre o fluxo correto para cada modalidade.
 
 ---
 
-### Step 1 — Escolha do Tipo
+### Step 1, Escolha do Tipo
 
 **Componentes:**
 - Dois cards grandes lado a lado (ou empilhados no mobile):
-  - **Esboço Guia** — ícone de manuscrito, descrição: "Escreva seu sermão por blocos, com estrutura definida por um framework homilético."
-  - **Apresentação** — ícone de slides, descrição: "Importe seus slides (PDF, PPT ou Google Slides) e adicione comentários para cada slide."
+  - **Esboço Guia**, ícone de manuscrito, descrição: "Escreva seu sermão por blocos, com estrutura definida por um framework homilético."
+  - **Apresentação**, ícone de slides, descrição: "Importe seus slides (PDF, PPT ou Google Slides) e adicione comentários para cada slide."
 - Seleção: card fica marcado com borda Forest Deep, botão "Continuar" habilita
 
 **Comportamentos:**
@@ -164,9 +164,9 @@ e depois o sistema abre o fluxo correto para cada modalidade.
 
 ---
 
-### Fluxo A — Esboço Guia (tipo: `esboço`)
+### Fluxo A, Esboço Guia (tipo: `esboço`)
 
-**Step 2A:** Seleção de framework (cards dos 6 frameworks — mesmo fluxo anterior)
+**Step 2A:** Seleção de framework (cards dos 6 frameworks, mesmo fluxo anterior)
 
 **Step 3A:** Informações básicas (título, referência bíblica, data prevista, série, tags)
 
@@ -184,7 +184,7 @@ e depois o sistema abre o fluxo correto para cada modalidade.
 
 ---
 
-### Fluxo B — Apresentação (tipo: `apresentação`)
+### Fluxo B, Apresentação (tipo: `apresentação`)
 
 **Step 2B:** Informações básicas + escolha da fonte dos slides
 
@@ -194,9 +194,9 @@ e depois o sistema abre o fluxo correto para cada modalidade.
 - Data prevista (opcional)
 - Série (opcional), Tags
 - **Seleção de fonte dos slides** (3 opções em radio cards):
-  - **Upload de arquivo** — PDF ou PPT/PPTX, máx 50MB
-  - **Link do Google Slides** — campo de URL
-  - **Sem slides ainda** — começa com lista de slides vazia, adiciona depois
+  - **Upload de arquivo**, PDF ou PPT/PPTX, máx 50MB
+  - **Link do Google Slides**, campo de URL
+  - **Sem slides ainda**, começa com lista de slides vazia, adiciona depois
 
 **Step 3B:** Painel de slides
 
@@ -232,7 +232,7 @@ e depois o sistema abre o fluxo correto para cada modalidade.
 - [ ] Reordenação de slides por drag funciona
 - [ ] Auto-save de comentários funciona (online e offline)
 
-**Critério de aceite (Fluxo A — mantidos):**
+**Critério de aceite (Fluxo A, mantidos):**
 - [ ] 6 frameworks disponíveis com descrição clara
 - [ ] Seleção de framework gera estrutura no editor
 - [ ] Informações básicas salvas corretamente
@@ -276,12 +276,12 @@ o **tipo** do sermão (`esboço` ou `apresentação`).
 
 ---
 
-### Modo Apresentação — Esboço Guia (tipo: `esboço`)
+### Modo Apresentação, Esboço Guia (tipo: `esboço`)
 
 **Componentes:**
 - Tela limpa (sem sidebar, sem distrações)
 - Texto do bloco atual em fonte grande (ajustável: médio/grande/muito grande)
-- Indicador de bloco atual (ex: "Desenvolvimento 2/4") — discreto no topo
+- Indicador de bloco atual (ex: "Desenvolvimento 2/4"), discreto no topo
 - Barra de controle inferior: ◀ ▶ blocos, A− A+, modo noturno, sair
 - Wake Lock + Fullscreen API
 
@@ -294,7 +294,7 @@ o **tipo** do sermão (`esboço` ou `apresentação`).
 
 ---
 
-### Modo Apresentação — Apresentação de Slides (tipo: `apresentação`)
+### Modo Apresentação, Apresentação de Slides (tipo: `apresentação`)
 
 **Layout:** Dois painéis lado a lado (splitscreen):
 - **Painel esquerdo (60%):** imagem do slide atual em tela cheia
@@ -305,7 +305,7 @@ o **tipo** do sermão (`esboço` ou `apresentação`).
 - Toggle na barra de controles para alternar entre os modos
 
 **Componentes:**
-- Slide image (painel esquerdo) — `<img>` ou iframe do Google Slides
+- Slide image (painel esquerdo), `<img>` ou iframe do Google Slides
 - Comentário do slide (painel direito, fonte Fraunces 26px, Warm Off-White, fundo Stage Dark)
 - Barra de controle inferior: ◀ ▶ slides, toggle "Slide / Só comentário", modo noturno, sair
 - Indicador: "Slide 3 / 12" Geist Mono Stage muted
@@ -431,17 +431,17 @@ type          text NOT NULL DEFAULT 'esboço'
               CHECK (type IN ('esboço', 'apresentação'))
 -- Campos de Esboço Guia
 framework     text (expositivo|tematico|narrativo|topico|textual|livre)
-              nullable — só relevante quando type = 'esboço'
+              nullable, só relevante quando type = 'esboço'
 content       jsonb  -- array de blocos (tipo esboço)
-              nullable — só relevante quando type = 'esboço'
+              nullable, só relevante quando type = 'esboço'
 word_count    int default 0
 -- Campos de Apresentação
 slides_source text CHECK (slides_source IN ('upload','google_slides','manual'))
-              nullable — só relevante quando type = 'apresentação'
+              nullable, só relevante quando type = 'apresentação'
 slides_url    text  -- URL do Google Slides (quando slides_source = 'google_slides')
               nullable
 -- Campos comuns
-bible_ref     text (nullable, ex: "Romanos 5:1—11")
+bible_ref     text (nullable, ex: "Romanos 5:1,11")
 bible_book    text (nullable, para filtro)
 status        text NOT NULL DEFAULT 'rascunho'
               CHECK (status IN ('rascunho', 'pronto'))
@@ -491,7 +491,7 @@ description   text (nullable)
 created_at    timestamptz
 ```
 
-### Supabase Storage — Bucket: `sermon-slides`
+### Supabase Storage, Bucket: `sermon-slides`
 ```
 sermon-slides/
 └── {user_id}/
@@ -500,7 +500,7 @@ sermon-slides/
         ├── slide-002.webp
         └── slide-003.webp
 ```
-- Acesso: RLS — usuário só acessa seus próprios arquivos
+- Acesso: RLS, usuário só acessa seus próprios arquivos
 - Formato de output: WebP (melhor compressão que PNG para thumbnails)
 - Tamanho máximo de upload: 50MB (PDF/PPT)
 - Resolução de output: 1280×720px por slide

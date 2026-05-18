@@ -1,4 +1,4 @@
-// Issue 015 — Biblioteca de Frameworks (proto público)
+// Issue 015, Biblioteca de Frameworks (proto público)
 
 import Link from "next/link";
 import { VOX_FRAMEWORKS } from "@/lib/mocks/frameworks";
@@ -37,7 +37,7 @@ export default function FrameworksPage() {
         <p className="vox-eyebrow">Biblioteca</p>
         <h1 className="vox-h1 mt-3">Frameworks homiléticos</h1>
         <p className="vox-body mt-5 max-w-2xl">
-          Seis estruturas testadas no púlpito. Cada uma é uma postura — não uma fórmula.
+          Seis estruturas testadas no púlpito. Cada uma é uma postura, não uma fórmula.
           Escolha conforme o texto, a congregação e o momento.
         </p>
       </section>

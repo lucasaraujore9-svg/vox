@@ -19,7 +19,7 @@ export default function OfflinePage() {
           >
             painel
           </Link>{" "}
-          ou abra um manuscrito que você já visitou — o conteúdo continua
+          ou abra um manuscrito que você já visitou, o conteúdo continua
           editável e será sincronizado quando a conexão voltar.
         </p>
         <p className="vox-mono text-xs text-vox-muted">

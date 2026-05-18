@@ -1,4 +1,4 @@
-# Issue 020 — Setup Supabase + Schema de DB
+# Issue 020, Setup Supabase + Schema de DB
 
 **Status:** [ ] PENDENTE
 **Tipo:** infra
@@ -15,11 +15,11 @@ necessárias para o MVP do VOX.
 
 ## Componentes Envolvidos
 
-- `src/lib/supabase/client.ts` — Browser client (singleton)
-- `src/lib/supabase/server.ts` — Server client (cookies/SSR)
-- `src/middleware.ts` — Supabase session middleware
-- `src/types/database.ts` — Tipos gerados pelo Supabase CLI
-- `supabase/migrations/` — Arquivos de migration SQL
+- `src/lib/supabase/client.ts`, Browser client (singleton)
+- `src/lib/supabase/server.ts`, Server client (cookies/SSR)
+- `src/middleware.ts`, Supabase session middleware
+- `src/types/database.ts`, Tipos gerados pelo Supabase CLI
+- `supabase/migrations/`, Arquivos de migration SQL
 
 ## Comportamentos
 
@@ -46,9 +46,9 @@ necessárias para o MVP do VOX.
 ## Notas de Implementação
 
 - Seguir exatamente o schema em `docs/references/architecture.md`
-- O campo `content` de `sermons` é `jsonb` — array de blocos estruturados
+- O campo `content` de `sermons` é `jsonb`, array de blocos estruturados
 - Full-text search em português: `to_tsvector('portuguese', ...)`
-- Usar `@supabase/ssr` (não `@supabase/auth-helpers-nextjs` — deprecated)
+- Usar `@supabase/ssr` (não `@supabase/auth-helpers-nextjs`, deprecated)
 - Service Role Key: NUNCA expor no cliente, apenas em Route Handlers server-side
 
 ### Packages necessários
@@ -59,7 +59,7 @@ npm install @supabase/supabase-js @supabase/ssr
 ### Estrutura dos clients
 
 ```typescript
-// src/lib/supabase/client.ts — browser
+// src/lib/supabase/client.ts, browser
 import { createBrowserClient } from '@supabase/ssr'
 import type { Database } from '@/types/database'
 
@@ -70,7 +70,7 @@ export function createClient() {
   )
 }
 
-// src/lib/supabase/server.ts — server (async, usa cookies)
+// src/lib/supabase/server.ts, server (async, usa cookies)
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import type { Database } from '@/types/database'
@@ -126,7 +126,7 @@ Executar: `supabase gen types typescript --project-id <id> > src/types/database.
 **7. Configurar middleware**
 Criar `src/middleware.ts`:
 - Atualizar sessão Supabase via `@supabase/ssr` em cada request
-- Não fazer redirect aqui (apenas refresh de token) — proteção de rotas é na issue 021
+- Não fazer redirect aqui (apenas refresh de token), proteção de rotas é na issue 021
 
 ### Como Verificar
 - Abrir Supabase Dashboard → Tables: profiles, series, sermons existem com colunas corretas

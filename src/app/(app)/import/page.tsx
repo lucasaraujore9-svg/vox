@@ -1,4 +1,4 @@
-// Issue 034 — Página de importação. Liga em /api/sermons/import.
+// Issue 034, Página de importação. Liga em /api/sermons/import.
 
 "use client";
 
@@ -109,7 +109,7 @@ export default function ImportPage() {
             defaultValue="livre"
             className="w-full h-10 rounded-md border border-input px-3 text-sm bg-card"
           >
-            <option value="livre">Livre — sem estrutura imposta</option>
+            <option value="livre">Livre, sem estrutura imposta</option>
             <option value="expositivo">Expositivo</option>
             <option value="textual">Textual</option>
             <option value="narrativo">Narrativo</option>

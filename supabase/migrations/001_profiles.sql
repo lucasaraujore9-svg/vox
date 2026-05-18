@@ -1,4 +1,4 @@
--- Migration 001 — profiles
+-- Migration 001, profiles
 -- Issue 020 · cria tabela profiles + RLS + trigger de auto-criação após signup
 -- Schema canônico: docs/references/architecture.md
 

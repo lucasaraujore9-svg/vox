@@ -1,6 +1,6 @@
 "use server";
 
-// Issue 042 — Estudo guiado: progresso, notas, gerar output (sermão a partir de notas).
+// Issue 042, Estudo guiado: progresso, notas, gerar output (sermão a partir de notas).
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";

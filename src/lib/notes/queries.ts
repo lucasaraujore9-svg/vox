@@ -1,4 +1,4 @@
-// Leitura de notas — usado em Server Components.
+// Leitura de notas, usado em Server Components.
 
 import { createClient } from "@/lib/supabase/server";
 

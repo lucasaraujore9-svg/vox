@@ -1,7 +1,7 @@
 "use client";
 
 // Toolbar flutuante via BubbleMenu oficial do TipTap. Aparece sobre QUALQUER
-// editor TipTap focado com seleção não-vazia — não há mais conflito entre
+// editor TipTap focado com seleção não-vazia, não há mais conflito entre
 // múltiplos editores (cada instância gerencia seu próprio menu via Tippy.js).
 //
 // Inclui: bold/italic/underline/strike, H2, blockquote, link, inserir versículo,
@@ -38,7 +38,7 @@ interface BubbleToolbarProps {
   bibleVersion?: BibleVersionId;
 }
 
-// Paleta enxuta — alinhada ao design-system. Editorial, sem neon.
+// Paleta enxuta, alinhada ao design-system. Editorial, sem neon.
 const TEXT_COLORS: Array<{ name: string; value: string }> = [
   { name: "Padrão", value: "" }, // limpa cor
   { name: "Ink", value: "#18181B" },

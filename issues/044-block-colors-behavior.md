@@ -1,4 +1,4 @@
-# Issue 044 — Cores dos Blocos: Behavior (Configuração e Aplicação)
+# Issue 044, Cores dos Blocos: Behavior (Configuração e Aplicação)
 
 **Status:** [ ] PENDENTE
 **Tipo:** behavior
@@ -23,9 +23,9 @@ cores em todo o sistema: editor de esboço, comentários de slides e notas de es
 ```
 
 O hook `useBlockColors` retorna as cores resolvidas e é consumido por:
-- `BlockItem.tsx` — aplica a cor na barra lateral esquerda
-- `BlockColorPicker.tsx` — exibe cores atuais + permite editar
-- `StudyNotes.tsx` — mesmas cores nas notas de estudo
+- `BlockItem.tsx`, aplica a cor na barra lateral esquerda
+- `BlockColorPicker.tsx`, exibe cores atuais + permite editar
+- `StudyNotes.tsx`, mesmas cores nas notas de estudo
 
 ### Salvar preferência de cor
 ```typescript
@@ -43,7 +43,7 @@ await supabase.from('block_color_preferences')
   .eq('user_id', user_id)
   .eq('block_type', block_type)
 ```
-- Remove a preferência — sistema volta a usar o default
+- Remove a preferência, sistema volta a usar o default
 
 ### Restaurar todos os padrões
 ```typescript
@@ -62,7 +62,7 @@ await supabase.from('block_color_preferences')
 ### Aplicação no editor de blocos
 - `BlockItem` lê `useBlockColors()` → aplica `borderLeftColor` e `backgroundColor` (tint)
 - Tint = hex com 10% de opacidade: `hex + '1A'` (notation hex de 8 dígitos)
-- Não precisa de re-render do editor — apenas CSS custom property atualizada
+- Não precisa de re-render do editor, apenas CSS custom property atualizada
 
 ### CSS Custom Properties (approach recomendado)
 ```typescript
@@ -78,7 +78,7 @@ function applyColorsToRoot(colors: Record<string, string>) {
 ```
 
 ```css
-/* BlockItem.tsx — usa as CSS custom properties */
+/* BlockItem.tsx, usa as CSS custom properties */
 .block-item[data-type="Texto Bíblico"] {
   border-left-color: var(--block-texto-bíblico);
   background-color: var(--block-texto-bíblico-tint);

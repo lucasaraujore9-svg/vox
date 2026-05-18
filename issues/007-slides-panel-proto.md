@@ -1,4 +1,4 @@
-# Issue 007 — Painel de Slides (Apresentação) UI Proto
+# Issue 007, Painel de Slides (Apresentação) UI Proto
 
 **Status:** [ ] PENDENTE
 **Tipo:** proto
@@ -16,15 +16,15 @@ e editor de comentário por slide.
 
 ## Componentes Envolvidos
 
-- `src/components/slides/SlidesPanel.tsx` — painel principal (dois painéis)
-- `src/components/slides/SlidesList.tsx` — lista lateral de miniaturas
-- `src/components/slides/SlideComment.tsx` — área de comentário do slide selecionado
-- `src/components/slides/SlidesUpload.tsx` — zona de upload (drag-and-drop)
-- `src/components/slides/GoogleSlidesInput.tsx` — campo de URL
+- `src/components/slides/SlidesPanel.tsx`, painel principal (dois painéis)
+- `src/components/slides/SlidesList.tsx`, lista lateral de miniaturas
+- `src/components/slides/SlideComment.tsx`, área de comentário do slide selecionado
+- `src/components/slides/SlidesUpload.tsx`, zona de upload (drag-and-drop)
+- `src/components/slides/GoogleSlidesInput.tsx`, campo de URL
 
-## Comportamentos (proto — dados mockados)
+## Comportamentos (proto, dados mockados)
 
-### Step 2B — Escolha da fonte (tela dentro do /sermons/new)
+### Step 2B, Escolha da fonte (tela dentro do /sermons/new)
 
 Três opções em radio cards compactos (menores que os cards de tipo):
 
@@ -40,11 +40,11 @@ Três opções em radio cards compactos (menores que os cards de tipo):
 - Ícone plus + texto "Sem slides ainda"
 - Sublabel "Adicione slides manualmente depois"
 
-### Step 3B — Painel principal de slides
+### Step 3B, Painel principal de slides
 
 **Layout dois painéis:**
 
-**Painel esquerdo (280px fixo) — Lista de slides:**
+**Painel esquerdo (280px fixo), Lista de slides:**
 - Background Linen (`--vox-surface-elev`)
 - Header: "Slides" eyebrow + contador "3 slides" Geist Mono 12px Muted
 - Lista vertical com scroll:
@@ -55,7 +55,7 @@ Três opções em radio cards compactos (menores que os cards de tipo):
   - Hover: sombra card-hover
 - Botão "+ Adicionar slide" ghost, base da lista
 
-**Painel direito (flex 1) — Comentário do slide:**
+**Painel direito (flex 1), Comentário do slide:**
 - Header: "Slide [N]" Fraunces 600 20px + badge com número total
 - Miniatura do slide grande (16:9, máx 640px de largura, centralizada)
 - Divisor whisper

@@ -1,4 +1,4 @@
--- Migration 003 — sermons (base)
+-- Migration 003, sermons (base)
 -- Issue 020 · tabela compartilhada por sermão/palestra/aula (content_type vem em 005)
 -- Full-text search em português · soft delete · jsonb content de blocos.
 

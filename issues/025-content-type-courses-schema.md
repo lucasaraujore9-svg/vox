@@ -1,4 +1,4 @@
-# Issue 025 — Schema: content_type + Cursos
+# Issue 025, Schema: content_type + Cursos
 
 **Status:** [ ] PENDENTE
 **Tipo:** infra
@@ -15,13 +15,13 @@ e `course_lessons` com RLS adequada.
 
 ## Componentes Envolvidos
 
-- `supabase/migrations/006_content_type.sql` — campo content_type em sermons
-- `supabase/migrations/007_courses.sql` — tabelas courses + course_lessons
-- `src/types/database.ts` — regenerar após migrations
+- `supabase/migrations/006_content_type.sql`, campo content_type em sermons
+- `supabase/migrations/007_courses.sql`, tabelas courses + course_lessons
+- `src/types/database.ts`, regenerar após migrations
 
 ## SQL
 
-### Migration 006 — content_type em sermons
+### Migration 006, content_type em sermons
 
 ```sql
 -- supabase/migrations/006_content_type.sql
@@ -30,7 +30,7 @@ alter table public.sermons
     check (content_type in ('sermão', 'palestra', 'aula'));
 ```
 
-### Migration 007 — courses + course_lessons
+### Migration 007, courses + course_lessons
 
 ```sql
 -- supabase/migrations/007_courses.sql
@@ -95,13 +95,13 @@ create index course_lessons_order_idx on course_lessons(course_id, "order");
 - [ ] Migration 007 aplicada sem erro
 - [ ] RLS em `courses`: usuário só acessa seus cursos
 - [ ] RLS em `course_lessons`: usuário só acessa aulas dos seus cursos
-- [ ] `sermon_id` em `course_lessons` só pode referenciar aulas (`content_type = 'aula'`) — validar no app, não no DB
+- [ ] `sermon_id` em `course_lessons` só pode referenciar aulas (`content_type = 'aula'`), validar no app, não no DB
 - [ ] Tipos gerados atualizados (`npx supabase gen types`)
 
 ## Notas
 
-- `course_lessons.sermon_id` referencia a tabela `sermons` — o app deve garantir que só aulas (`content_type = 'aula'`) sejam vinculadas
-- Soft delete em `courses`: `deleted_at` — não deletar fisicamente
+- `course_lessons.sermon_id` referencia a tabela `sermons`, o app deve garantir que só aulas (`content_type = 'aula'`) sejam vinculadas
+- Soft delete em `courses`: `deleted_at`, não deletar fisicamente
 - `hours` pode ser preenchida manualmente ou calculada como soma das durações das aulas
 
 ## Plano de Implementação

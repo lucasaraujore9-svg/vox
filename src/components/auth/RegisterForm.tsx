@@ -1,6 +1,6 @@
 "use client";
 
-// Formulário de "deixe seu interesse" — o sistema é fechado, signup público
+// Formulário de "deixe seu interesse", o sistema é fechado, signup público
 // está desligado. O super admin vê os interesses em /admin e libera quem
 // julgar conveniente.
 

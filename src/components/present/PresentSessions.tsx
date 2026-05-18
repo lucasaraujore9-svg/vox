@@ -6,7 +6,7 @@
 // Responsivo:
 //   - Portrait (h > w):   padding lateral menor, header empilhado, peek em barra
 //                         fina no rodapé (acima dos controles), controles em 2 linhas.
-//   - Landscape (w > h):  layout original — peek flutuante no canto direito, controles
+//   - Landscape (w > h):  layout original, peek flutuante no canto direito, controles
 //                         em uma linha só.
 // Fonte default em telas estreitas é `md`, em landscape `lg`.
 
@@ -91,9 +91,9 @@ export function PresentSessions({
   const toggleFullscreen = useCallback(() => {
     if (typeof document === "undefined") return;
     if (document.fullscreenElement) {
-      document.exitFullscreen().catch(() => {});
+      document.exitFullscreen().catch(() => { });
     } else {
-      document.documentElement.requestFullscreen().catch(() => {});
+      document.documentElement.requestFullscreen().catch(() => { });
     }
   }, []);
 
@@ -120,7 +120,7 @@ export function PresentSessions({
         e.preventDefault();
         prev();
       } else if (e.key === "Escape") {
-        if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+        if (document.fullscreenElement) document.exitFullscreen().catch(() => { });
       } else if (e.key === "f" || e.key === "F") {
         e.preventDefault();
         toggleFullscreen();
@@ -140,7 +140,7 @@ export function PresentSessions({
     return () => window.removeEventListener("keydown", onKey);
   }, [next, prev, toggleFullscreen]);
 
-  // Swipe horizontal (touch) — desabilita se o gesto começou em texto rolável
+  // Swipe horizontal (touch), desabilita se o gesto começou em texto rolável
   useEffect(() => {
     let startX = 0;
     let startY = 0;
@@ -176,7 +176,7 @@ export function PresentSessions({
         // sem suporte
       }
     })();
-    return () => void lock?.release().catch(() => {});
+    return () => void lock?.release().catch(() => { });
   }, []);
 
   function cycleFont() {
@@ -280,7 +280,7 @@ export function PresentSessions({
         </article>
       </main>
 
-      {/* Peek "Próximo" — flutuante em landscape, barra fina em portrait/compact */}
+      {/* Peek "Próximo", flutuante em landscape, barra fina em portrait/compact */}
       {peek ? (
         isCompact || isPortrait ? (
           <div
@@ -299,7 +299,7 @@ export function PresentSessions({
               <span className="vox-mono opacity-60 truncate hidden sm:inline">
                 · {getBlockType(peek.firstItemType)?.label}
                 {peek.firstItemContent && stripHtml(peek.firstItemContent).trim()
-                  ? ` — ${previewSnippet(peek.firstItemContent, 40)}`
+                  ? `, ${previewSnippet(peek.firstItemContent, 40)}`
                   : ""}
               </span>
             ) : null}
@@ -308,7 +308,7 @@ export function PresentSessions({
           <div
             className="absolute right-10 bottom-20 max-w-sm rounded-lg p-4"
             style={{
-              // Fundo OPACO — usa a cor do palco para mascarar o texto da sessão
+              // Fundo OPACO, usa a cor do palco para mascarar o texto da sessão
               // atual quando ela rola até o rodapé. Sem isso, o conteúdo cruzava
               // com o card "Próximo".
               background: stageDark ? "var(--vox-stage-bg)" : "var(--vox-bg)",

@@ -1,4 +1,4 @@
-// Issue 035/051 — Assistente de IA.
+// Issue 035/051, Assistente de IA.
 // Sempre verifica `profile.ai_enabled`. Rate limit simples por usuário (10/h em memória).
 // Em prod, mover rate limit para Upstash/Redis ou Supabase Edge Function.
 
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
   if (!rate.allowed) {
     return NextResponse.json(
       {
-        error: `Limite atingido — tente novamente em ${rate.retryAfter}s.`,
+        error: `Limite atingido, tente novamente em ${rate.retryAfter}s.`,
       },
       { status: 429, headers: { "Retry-After": String(rate.retryAfter) } }
     );
@@ -101,8 +101,8 @@ export async function POST(request: NextRequest) {
     bibleRef ? `Referência bíblica: ${bibleRef}` : null,
     existingBlocks?.length
       ? `Blocos já escritos (não duplique):\n${existingBlocks
-          .map((b, i) => `${i + 1}. [${b.type}] ${b.title}: ${b.content.slice(0, 200)}`)
-          .join("\n")}`
+        .map((b, i) => `${i + 1}. [${b.type}] ${b.title}: ${b.content.slice(0, 200)}`)
+        .join("\n")}`
       : null,
     "",
     "Devolva 5 a 8 blocos sugeridos no formato JSON especificado.",

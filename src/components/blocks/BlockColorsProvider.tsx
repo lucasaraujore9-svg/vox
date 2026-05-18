@@ -1,4 +1,4 @@
-// Issue 044 — Context que aplica as cores escolhidas como CSS custom properties no <html>.
+// Issue 044, Context que aplica as cores escolhidas como CSS custom properties no <html>.
 // Renderiza nada visualmente; só injeta um <style> com :root overrides.
 
 "use client";

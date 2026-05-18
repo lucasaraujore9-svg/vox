@@ -1,4 +1,4 @@
-# Issue 004 — Modo Apresentação UI Proto
+# Issue 004, Modo Apresentação UI Proto
 
 **Status:** [ ] PENDENTE
 **Tipo:** proto
@@ -15,12 +15,12 @@ Foco em legibilidade, controles e experiência de pregação.
 
 ## Componentes Envolvidos
 
-- `src/app/(app)/sermons/[id]/present/page.tsx` — Página de apresentação
-- `src/components/present/PresentationMode.tsx` — Componente principal
-- `src/components/present/PresentationControls.tsx` — Barra de controles
-- `src/components/present/PresentationBlock.tsx` — Bloco de conteúdo no modo apresentação
+- `src/app/(app)/sermons/[id]/present/page.tsx`, Página de apresentação
+- `src/components/present/PresentationMode.tsx`, Componente principal
+- `src/components/present/PresentationControls.tsx`, Barra de controles
+- `src/components/present/PresentationBlock.tsx`, Bloco de conteúdo no modo apresentação
 
-## Comportamentos (proto — dados mockados)
+## Comportamentos (proto, dados mockados)
 
 - **Layout:** Fullscreen, sem sidebar, sem header padrão
 - **Conteúdo:** Texto do sermão em fonte grande, centralizado verticalmente
@@ -60,7 +60,7 @@ Foco em legibilidade, controles e experiência de pregação.
 - Animação de troca de bloco: `transition-opacity` + `transition-transform` suave
 - A barra de controles deve usar `position: fixed; bottom: 0` com blur de fundo
 - Testar que a barra não bloqueia o texto no mobile
-- Wake Lock API e Fullscreen API são da issue 033 (behavior) — não implementar aqui
+- Wake Lock API e Fullscreen API são da issue 033 (behavior), não implementar aqui
 
 ## Plano de Implementação
 
@@ -85,12 +85,12 @@ Criar `src/components/present/PresentationBlock.tsx`:
 Criar `src/components/present/PresentationControls.tsx`:
 - Props: `onPrev`, `onNext`, `onFontDecrease`, `onFontIncrease`, `onToggleDark`, `isDark`, `onExit`
 - `fixed bottom-0 w-full` com `backdrop-blur-md bg-black/30`
-- Botões com ícones SVG (sem Lucide — conforme design system)
+- Botões com ícones SVG (sem Lucide, conforme design system)
 - Indicador de bloco: `"Contexto 1/4"` via prop `currentLabel`
 
 **4. Criar PresentationMode**
 Criar `src/components/present/PresentationMode.tsx`:
-- `"use client"` — useState: `currentIndex`, `fontSize` (24/32/42), `isDark`
+- `"use client"`, useState: `currentIndex`, `fontSize` (24/32/42), `isDark`
 - Renderiza bloco atual com `<PresentationBlock>`
 - Gerencia transição: ao trocar index, brevemente `opacity-0` depois `opacity-100`
 - Renderiza `<PresentationControls>` com callbacks

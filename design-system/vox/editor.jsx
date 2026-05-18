@@ -1,8 +1,8 @@
-// Block editor — central writing surface
+// Block editor, central writing surface
 const Editor = ({ setScreen }) => {
   const doc = window.VOX_DATA.EDITOR_DOC;
   const [blocks, setBlocks] = React.useState(doc.blocks);
-  const [activeId, setActiveId] = React.useState("b8"); // start on Conclusão (empty) — most natural place to write
+  const [activeId, setActiveId] = React.useState("b8"); // start on Conclusão (empty), most natural place to write
   const [showAdd, setShowAdd] = React.useState(false);
 
   // Responsive: track container width to collapse rails on narrow viewports
@@ -18,7 +18,7 @@ const Editor = ({ setScreen }) => {
   }, []);
 
   const outlineW = width < 900 ? 220 : 260;
-  const refsW    = width < 1100 ? 0 : 300;
+  const refsW = width < 1100 ? 0 : 300;
   const [refsOpen, setRefsOpen] = React.useState(true);
   const refsVisible = refsOpen && width >= 1100;
 
@@ -454,7 +454,7 @@ const EditorCanvas = ({ block, onChange, framework, compact }) => {
           />
         )}
 
-        {/* Block footer — meta */}
+        {/* Block footer, meta */}
         <div style={{
           display: "flex",
           alignItems: "center",
@@ -493,7 +493,7 @@ const EditorCanvas = ({ block, onChange, framework, compact }) => {
           }}>/</div>
           <div style={{ flex: 1, fontSize: 13, color: "var(--prose)" }}>
             Digite <span className="mono" style={{ color: "var(--forest)" }}>/</span> para inserir
-            bloco, citação ou referência cruzada — sem soltar do teclado.
+            bloco, citação ou referência cruzada, sem soltar do teclado.
           </div>
           <Kbd>⌘</Kbd><Kbd>K</Kbd>
         </div>
@@ -593,7 +593,7 @@ const RefsList = () => (
     <div className="eyebrow eyebrow-tight" style={{ color: "var(--muted)" }}>Texto base</div>
     <div className="card" style={{ padding: 16, background: "var(--surface)" }}>
       <div className="mono" style={{ color: "var(--gold)", fontSize: 11.5, marginBottom: 6 }}>
-        Tiago 1:22—25 · ACF
+        Tiago 1:22,25 · ACF
       </div>
       <p style={{
         margin: 0,
@@ -613,9 +613,9 @@ const RefsList = () => (
 
     <div className="eyebrow eyebrow-tight" style={{ color: "var(--muted)", marginTop: 4 }}>Referências cruzadas</div>
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      <RefItem ref_="Mateus 7:24—27" note="A casa sobre a rocha — ouvir e fazer." />
+      <RefItem ref_="Mateus 7:24,27" note="A casa sobre a rocha, ouvir e fazer." />
       <RefItem ref_="Romanos 2:13" note="Não os ouvintes da lei, mas os cumpridores." />
-      <RefItem ref_="Lucas 6:46—49" note="Por que me chamais Senhor e não fazeis?" />
+      <RefItem ref_="Lucas 6:46,49" note="Por que me chamais Senhor e não fazeis?" />
       <RefItem ref_="João 13:17" note="Bem-aventurados se as fizerdes." />
     </div>
 
@@ -633,7 +633,7 @@ const RefsList = () => (
       <span style={{ color: "var(--gold)", fontFamily: "var(--font-mono)", fontSize: 11 }}>v. 22 · grego</span>
       <div style={{ marginTop: 6 }}>γίνεσθε δὲ ποιηταὶ λόγου</div>
       <div style={{ fontSize: 12, color: "var(--prose)", marginTop: 4, fontStyle: "italic" }}>
-        ginesthe de poiētai logou — “tornai-vos fazedores da palavra”
+        ginesthe de poiētai logou, “tornai-vos fazedores da palavra”
       </div>
     </div>
   </>
@@ -657,7 +657,7 @@ const NotesList = () => (
     <div className="eyebrow eyebrow-tight" style={{ color: "var(--muted)" }}>Suas anotações</div>
     <NoteItem
       date="13 mai · 14:22"
-      text="Comparar com Calvino, Comentário Tiago, sobre 'lei perfeita da liberdade' — boa quebra para subponto 2."
+      text="Comparar com Calvino, Comentário Tiago, sobre 'lei perfeita da liberdade', boa quebra para subponto 2."
     />
     <NoteItem
       date="11 mai · 21:08"
@@ -665,7 +665,7 @@ const NotesList = () => (
     />
     <NoteItem
       date="9 mai · 07:34"
-      text="Lembrar de Maria, irmã da congregação que pediu oração — talvez ela esteja na ilustração de Aplicação."
+      text="Lembrar de Maria, irmã da congregação que pediu oração, talvez ela esteja na ilustração de Aplicação."
     />
   </>
 );

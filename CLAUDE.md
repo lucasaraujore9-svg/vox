@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 O app Next.js já está inicializado e **todas as 32 issues do MVP estão marcadas como
 concluídas no código** (`issues/README.md`). `npm run build` passa limpo. O que ainda
-não roda em runtime é o backend — depende do usuário provisionar o projeto Supabase
+não roda em runtime é o backend, depende do usuário provisionar o projeto Supabase
 real, popular `.env.local` e rodar as migrations em `supabase/migrations/`.
 
 Comportamento defensivo: o Dashboard, o Banco e o middleware verificam
@@ -57,7 +57,7 @@ mocks (e o middleware deixa de proteger rotas). Útil para validar UI antes do b
 
 ## Sabotagens conhecidas (gaps deixados de propósito)
 
-- **Service Worker:** o `manifest.json` está pronto mas o SW não — `next-pwa` ainda não
+- **Service Worker:** o `manifest.json` está pronto mas o SW não, `next-pwa` ainda não
   suporta Next 16 estável. Migrar para `@serwist/next` quando o sw for prioridade.
 - **`@supabase/ssr` types:** o stub em `src/types/database.ts` cobre os campos usados
   mas não inclui `Relationships` reais. Substituir pelo output do `gen types`
@@ -74,12 +74,12 @@ mocks (e o middleware deixa de proteger rotas). Útil para validar UI antes do b
 de um conteúdo pastoral: **preparação → entrega → arquivo**.
 
 O diferencial central são os **frameworks homiléticos de comunicação** como templates
-guiados dentro do editor — não é um editor de texto genérico, é uma ferramenta pastoral.
+guiados dentro do editor, não é um editor de texto genérico, é uma ferramenta pastoral.
 
-### Escopo expandido (importante — não trate como "app de sermões")
+### Escopo expandido (importante, não trate como "app de sermões")
 
 O produto cobre Sermão, Palestra **e** Aula, mais Cursos e Estudo Guiado. Toda decisão
-de UI/API precisa considerar essas dimensões — elas vivem majoritariamente na mesma
+de UI/API precisa considerar essas dimensões, elas vivem majoritariamente na mesma
 tabela `sermons` com discriminadores:
 
 | Dimensão | Valores | Onde |
@@ -90,7 +90,7 @@ tabela `sermons` com discriminadores:
 | Entidade separada | `study_modules` + `study_sessions` (estudo guiado, notas em blocos) | tabela própria |
 
 **Modos de apresentação:** Teleprompter (esboço), Simples (slide fullscreen sem UI,
-para projeção), Apresentador (duas janelas — slide para audiência + painel de controle
+para projeção), Apresentador (duas janelas, slide para audiência + painel de controle
 com próximo slide e comentários para o pastor).
 
 **Sistema de blocos visuais (núcleo do editor):** cada tipo de bloco tem cor configurável
@@ -115,7 +115,7 @@ Definida em `docs/references/architecture.md`. Resumo:
 | PWA / Offline | next-pwa + Service Worker + IndexedDB |
 | Editor rico | TipTap 2 |
 | Forms / Validação | React Hook Form + Zod |
-| Estado global (raro) | Zustand — preferir Server State |
+| Estado global (raro) | Zustand, preferir Server State |
 | IA (opcional) | OpenAI GPT-4o atrás de `profile.ai_enabled` + Route Handler `/api/ai/suggest` |
 | Bíblia | API.Bible atrás de Route Handler proxy `/api/bible` |
 | Hospedagem | Vercel |
@@ -132,11 +132,11 @@ Loop oficial: **SPEC → BREAK → PLAN → EXECUTE → REVIEW → NEXT**. Detal
 
 Para começar qualquer trabalho:
 
-1. `/status` — ver concluído/pendente
-2. `/next` — escolher próxima issue por impacto e dependências
-3. `/plan <issue>` — produzir plano e **aguardar aprovação explícita do usuário**
-4. `/execute` — implementar seguindo o plano
-5. `/review <issue>` — validar contra critérios de aceite
+1. `/status`, ver concluído/pendente
+2. `/next`, escolher próxima issue por impacto e dependências
+3. `/plan <issue>`, produzir plano e **aguardar aprovação explícita do usuário**
+4. `/execute`, implementar seguindo o plano
+5. `/review <issue>`, validar contra critérios de aceite
 6. Marcar a issue como `[x] CONCLUÍDA` em `issues/README.md`
 
 ### Convenção de issues (em `issues/README.md`)
@@ -167,16 +167,16 @@ paralelo com infra.
 
 ## Regras de código inegociáveis
 
-1. **Server Components por padrão** — `"use client"` só com justificativa explícita
-2. **Nunca `any`** no TypeScript — use os tipos gerados em `src/types/database.ts`
+1. **Server Components por padrão**, `"use client"` só com justificativa explícita
+2. **Nunca `any`** no TypeScript, use os tipos gerados em `src/types/database.ts`
    (`npx supabase gen types typescript --project-id ... > src/types/database.ts`)
 3. **Sempre Zod** para validar dados antes de salvar no banco
 4. **Sempre cheque `profile.ai_enabled`** antes de renderizar QUALQUER UI de IA
-5. **RLS ativo em todas as tabelas** — usuário só acessa seus próprios dados;
+5. **RLS ativo em todas as tabelas**, usuário só acessa seus próprios dados;
    `SUPABASE_SERVICE_ROLE_KEY` só em Route Handlers, **nunca** no cliente
-6. **Auto-save com offline-first** — escrever em IndexedDB e sincronizar com Supabase;
+6. **Auto-save com offline-first**, escrever em IndexedDB e sincronizar com Supabase;
    conflict resolution é last-write-wins no MVP (ver `architecture.md`)
-7. **Fetch de dados** sempre em Server Components ou Route Handlers — nunca cliente
+7. **Fetch de dados** sempre em Server Components ou Route Handlers, nunca cliente
 
 ### Convenções de arquivos
 - Componentes: `PascalCase`, um por arquivo, em `src/components/`
@@ -195,14 +195,14 @@ docs(spec): atualizar spec da apresentação
 
 ---
 
-## Design System — leia antes de criar qualquer UI
+## Design System, leia antes de criar qualquer UI
 
 **Fonte da verdade:**
-- `design-system/colors_and_type.css` — todos os tokens CSS (importar primeiro)
-- `design-system/BRANDBOOK.md` — voz, tom, filosofia visual
-- `design-system/vox/primitives.jsx` — componentes de referência (`VoxIcon`, `VoxMark`,
+- `design-system/colors_and_type.css`, todos os tokens CSS (importar primeiro)
+- `design-system/BRANDBOOK.md`, voz, tom, filosofia visual
+- `design-system/vox/primitives.jsx`, componentes de referência (`VoxIcon`, `VoxMark`,
   `FrameworkBadge`, `Status`, `Kbd`)
-- `design-system/VOX.html` — abrir no browser para ver as 4 telas de referência ao vivo
+- `design-system/VOX.html`, abrir no browser para ver as 4 telas de referência ao vivo
 
 Resumo navegável em `docs/references/design-system.md`.
 
@@ -214,9 +214,9 @@ Resumo navegável em `docs/references/design-system.md`.
 | Elemento | Token | Valor |
 |---|---|---|
 | Background | `--vox-bg` | `#F9F7F4` (Parchment Canvas) |
-| Texto | `--vox-ink` | `#18181B` (Charcoal — **nunca** `#000`) |
+| Texto | `--vox-ink` | `#18181B` (Charcoal, **nunca** `#000`) |
 | Acento primário | `--vox-forest` | `#166534` (Forest Deep) |
-| Acento bíblico | `--vox-gold` | `#B45309` (Scripture Gold — só refs bíblicas) |
+| Acento bíblico | `--vox-gold` | `#B45309` (Scripture Gold, só refs bíblicas) |
 | Stage (apresentação) | `--vox-stage-bg` | `#0B0F0D` |
 | Display | `--vox-font-display` | Fraunces |
 | UI | `--vox-font-ui` | Geist |
@@ -224,20 +224,20 @@ Resumo navegável em `docs/references/design-system.md`.
 
 Cores fechadas por framework (Expositivo · Textual · Narrativo · Temático · Tópico · Livre)
 em `design-system.md`. **Não adicionar novas cores.** Use apenas como ancoragens cromáticas
-pequenas (badges, dots) — nunca como flood fill.
+pequenas (badges, dots), nunca como flood fill.
 
 ### Regras inegociáveis de design
 
-1. Nunca `#000000` — sempre `--vox-ink`
-2. Nunca `Inter` — Fraunces (display) ou Geist (UI)
-3. Nunca emoji em UI — só `<VoxIcon name="..." />` (não importar Lucide/Hero Icons)
-4. Nunca 3 cards iguais em linha — bento grid assimétrico
-5. Nunca hero centralizado — split-screen ou left-aligned
+1. Nunca `#000000`, sempre `--vox-ink`
+2. Nunca `Inter`, Fraunces (display) ou Geist (UI)
+3. Nunca emoji em UI, só `<VoxIcon name="..." />` (não importar Lucide/Hero Icons)
+4. Nunca 3 cards iguais em linha, bento grid assimétrico
+5. Nunca hero centralizado, split-screen ou left-aligned
 6. Nunca imagens religiosas clichê (cruzes, pombas, raios de luz)
-7. Nunca AI-purple neon — violeta só como cor do framework Narrativo, em badge
+7. Nunca AI-purple neon, violeta só como cor do framework Narrativo, em badge
 8. Sombras com undertone verde (`rgba(22,101,52,...)`), nunca cinza frio/glass
-9. Referências bíblicas com em-dash: `Romanos 5:1—11` (nunca hífen simples)
-10. Máximo 1 cor de acento por contexto — Forest **ou** Gold
+9. Referências bíblicas com em-dash: `Romanos 5:1,11` (nunca hífen simples)
+10. Máximo 1 cor de acento por contexto, Forest **ou** Gold
 
 ### Voz e copy
 
@@ -270,9 +270,9 @@ pequenas (badges, dots) — nunca como flood fill.
 
 - Implementar sem ler a issue + `docs/SPEC.md` + seção relevante de `architecture.md`
 - Renderizar UI de IA sem checar `profile.ai_enabled`
-- Tratar `sermons` como só "sermões" — esquecer Palestra/Aula via `content_type`
+- Tratar `sermons` como só "sermões", esquecer Palestra/Aula via `content_type`
 - Usar o mesmo fluxo de Present para `type = 'esboço'` e `type = 'apresentação'`
-  (são modos visualmente diferentes — ver SPEC seção `/sermons/[id]/present`)
+  (são modos visualmente diferentes, ver SPEC seção `/sermons/[id]/present`)
 - Importar ícones de Lucide/Hero Icons em vez de estender `VoxIcon`
 - Cair em `Inter` ou `#000` por hábito
 - Criar componente novo quando `design-system/vox/primitives.jsx` já tem o equivalente

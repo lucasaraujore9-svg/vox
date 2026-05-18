@@ -1,4 +1,4 @@
-# Issue 030 — CRUD de Sermões
+# Issue 030, CRUD de Sermões
 
 **Status:** [ ] PENDENTE
 **Tipo:** behavior
@@ -15,12 +15,12 @@ Implementar criação, leitura, atualização e exclusão (soft delete) de serm�
 
 ## Componentes Envolvidos
 
-- `src/app/(app)/sermons/page.tsx` — Carrega sermões reais via Server Component
-- `src/app/(app)/sermons/new/page.tsx` — Criação real com salvamento
-- `src/app/(app)/sermons/[id]/page.tsx` — Edição real com auto-save
-- `src/lib/supabase/actions/sermons.ts` — Server Actions de CRUD
-- `src/hooks/useAutoSave.ts` — Auto-save com debounce de 3s
-- `src/hooks/useOfflineSync.ts` — Sync offline/online
+- `src/app/(app)/sermons/page.tsx`, Carrega sermões reais via Server Component
+- `src/app/(app)/sermons/new/page.tsx`, Criação real com salvamento
+- `src/app/(app)/sermons/[id]/page.tsx`, Edição real com auto-save
+- `src/lib/supabase/actions/sermons.ts`, Server Actions de CRUD
+- `src/hooks/useAutoSave.ts`, Auto-save com debounce de 3s
+- `src/hooks/useOfflineSync.ts`, Sync offline/online
 
 ## Comportamentos
 
@@ -107,9 +107,9 @@ export async function createSermon(data: unknown) {
 ```
 
 ### Segurança
-- Sempre verificar `user_id = auth.uid()` — RLS garante no banco,
+- Sempre verificar `user_id = auth.uid()`, RLS garante no banco,
   mas validar também na Server Action para feedback imediato
-- Nunca expor `deleted_at` — sempre filtrar no select
+- Nunca expor `deleted_at`, sempre filtrar no select
 
 ## Plano de Implementação
 

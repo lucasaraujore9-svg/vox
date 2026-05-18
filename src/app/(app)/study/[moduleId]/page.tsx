@@ -1,4 +1,4 @@
-// Issue 010 — Sessão de estudo guiado UI proto. Behavior em 042.
+// Issue 010, Sessão de estudo guiado UI proto. Behavior em 042.
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -19,8 +19,8 @@ export default async function StudySessionPage({ params }: PageProps) {
         </p>
         <h1 className="vox-h1 mt-3">Como ler um texto bíblico em três passos</h1>
         <p className="vox-body mt-3 max-w-2xl">
-          Nesta sessão você vai praticar a leitura indutiva — observar, interpretar e
-          aplicar — sobre um trecho curto de Filipenses 2.
+          Nesta sessão você vai praticar a leitura indutiva, observar, interpretar e
+          aplicar, sobre um trecho curto de Filipenses 2.
         </p>
       </header>
 
@@ -51,7 +51,7 @@ export default async function StudySessionPage({ params }: PageProps) {
               sendo em forma de Deus, não considerou como usurpação o ser igual a Deus,
               mas esvaziou-se a si mesmo&rdquo;
             </p>
-            <p className="vox-ref mt-2">Filipenses 2:5—7</p>
+            <p className="vox-ref mt-2">Filipenses 2:5,7</p>
           </article>
 
           <article className="space-y-3">

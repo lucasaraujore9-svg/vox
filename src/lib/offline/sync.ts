@@ -20,7 +20,7 @@ export async function syncPendingSermons(): Promise<SyncResult> {
     errors: [],
   };
 
-  // Sem Supabase configurado, não há pra onde sincronizar — no-op
+  // Sem Supabase configurado, não há pra onde sincronizar, no-op
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return result;
   }
@@ -33,7 +33,7 @@ export async function syncPendingSermons(): Promise<SyncResult> {
 
   for (const record of pending) {
     try {
-      // Confere remote updated_at — last-write-wins
+      // Confere remote updated_at, last-write-wins
       const { data: remote } = await supabase
         .from("sermons")
         .select("updated_at")
@@ -44,7 +44,7 @@ export async function syncPendingSermons(): Promise<SyncResult> {
       const localTimestamp = record.updated_at;
 
       if (!remoteTimestamp || localTimestamp >= remoteTimestamp) {
-        // O hook useAutoSave guarda o SermonContent ({ sessions: [...] }) cru —
+        // O hook useAutoSave guarda o SermonContent ({ sessions: [...] }) cru,
         // aqui envolvemos no campo `content` da tabela.
         const update: TablesUpdate<"sermons"> = {
           content: record.payload as TablesUpdate<"sermons">["content"],
@@ -55,7 +55,7 @@ export async function syncPendingSermons(): Promise<SyncResult> {
           .eq("id", record.id);
         if (error) throw error;
       }
-      // Caso contrário, remote venceu — descarta o local.
+      // Caso contrário, remote venceu, descarta o local.
 
       await markSynced(record.id);
       result.succeeded += 1;

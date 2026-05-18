@@ -1,4 +1,4 @@
--- Migration 013 — papéis de usuário (pastor / admin / super_admin)
+-- Migration 013, papéis de usuário (pastor / admin / super_admin)
 -- Modelo de acesso fechado: signup público desligado no Auth do Supabase.
 -- Apenas admin/super_admin criam novos usuários via API admin (service_role).
 

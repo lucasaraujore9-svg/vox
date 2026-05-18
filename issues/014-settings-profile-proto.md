@@ -1,4 +1,4 @@
-# Issue 014 — Configurações de Perfil UI Proto
+# Issue 014, Configurações de Perfil UI Proto
 
 **Status:** [ ] PENDENTE
 **Tipo:** proto
@@ -15,19 +15,19 @@ preferências do sistema, e toggles de funcionalidades opcionais.
 
 ## Componentes Envolvidos
 
-- `src/app/(app)/settings/page.tsx` — página de settings com tabs
-- `src/components/settings/ProfileForm.tsx` — formulário de perfil
-- `src/components/settings/PreferencesForm.tsx` — preferências de sistema
-- `src/components/settings/AvatarUpload.tsx` — upload de foto de perfil
+- `src/app/(app)/settings/page.tsx`, página de settings com tabs
+- `src/components/settings/ProfileForm.tsx`, formulário de perfil
+- `src/components/settings/PreferencesForm.tsx`, preferências de sistema
+- `src/components/settings/AvatarUpload.tsx`, upload de foto de perfil
 
 ## Layout Geral
 
 - Tabs laterais (desktop) / tabs horizontais (mobile):
-  - "Perfil" — dados pessoais e foto
-  - "Preferências" — bíblia, idioma, notificações
-  - "IA" — toggle de módulo de IA
+  - "Perfil", dados pessoais e foto
+  - "Preferências", bíblia, idioma, notificações
+  - "IA", toggle de módulo de IA
   - "Blocos" → link para `/settings/blocks` (issue 012)
-  - "Conta" — alterar senha, deletar conta
+  - "Conta", alterar senha, deletar conta
 
 ---
 
@@ -88,7 +88,7 @@ preferências do sistema, e toggles de funcionalidades opcionais.
 
 ### Zona de perigo
 - Seção com borda vermelha suave
-- "Excluir minha conta" — botão outline vermelho
+- "Excluir minha conta", botão outline vermelho
 - Hint: "Esta ação é irreversível. Todos os seus sermões serão deletados."
 
 ## Critério de Aceite

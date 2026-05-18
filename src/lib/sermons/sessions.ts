@@ -1,6 +1,6 @@
 // Modelo de duas camadas: Sermão → Sessões → Itens.
 // O `sermons.content` (jsonb) passa a guardar { sessions: SessionNode[] }.
-// Nada é obrigatório — frameworks só sugerem o que cada papel costuma ter.
+// Nada é obrigatório, frameworks só sugerem o que cada papel costuma ter.
 
 import type { BlockTypeId } from "@/lib/mocks/blocks";
 import type { FrameworkId } from "@/lib/mocks/frameworks";
@@ -22,7 +22,7 @@ export interface SessionItem {
   /** Dica pedagógica expandida (mostrada em popover de ajuda). Para iniciantes. */
   tip?: string;
   /** Referências bíblicas (canônico) cujo hint foi dispensado ou inserido pelo
-      usuário. Persistido junto com o item — não reaparece após reload. Só
+      usuário. Persistido junto com o item, não reaparece após reload. Só
       "renasce" quando a ref some do texto e volta a ser digitada. */
   dismissedRefs?: string[];
 }
@@ -40,7 +40,7 @@ export interface SermonContent {
 }
 
 /**
- * Esqueleto inicial — o que cada framework cria quando o sermão nasce.
+ * Esqueleto inicial, o que cada framework cria quando o sermão nasce.
  * Cada item carrega o tipo de bloco subjacente + rótulo idiomático do
  * framework + hint que aparece como placeholder dentro do editor.
  */
@@ -50,7 +50,7 @@ type SkeletonItem = {
   label?: string;
   /** Placeholder dentro do editor pra esse passo específico. */
   hint?: string;
-  /** Dica pedagógica expandida (popover de ajuda) — voltada a iniciantes. */
+  /** Dica pedagógica expandida (popover de ajuda), voltada a iniciantes. */
   tip?: string;
 };
 
@@ -167,7 +167,7 @@ export const FRAMEWORK_SKELETONS: Record<FrameworkId, SkeletonSession[]> = {
   ],
 
   // -------------------- NARRATIVO --------------------
-  // A história bíblica conduz. Cenário, tensão, reviravolta — depois
+  // A história bíblica conduz. Cenário, tensão, reviravolta, depois
   // identificação e apelo. O ouvinte entra na cena antes da aplicação.
   narrativo: [
     {
@@ -344,7 +344,7 @@ export const FRAMEWORK_SKELETONS: Record<FrameworkId, SkeletonSession[]> = {
 };
 
 /**
- * Sugestões por papel de sessão. Informativo — nada é obrigatório.
+ * Sugestões por papel de sessão. Informativo, nada é obrigatório.
  * Editor mostra ✓ presente, • ausente. Itens fora desta lista são exibidos
  * como "extra", sem marcar como erro.
  */

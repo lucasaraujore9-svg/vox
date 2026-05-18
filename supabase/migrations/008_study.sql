@@ -1,4 +1,4 @@
--- Migration 008 — study modules + sessions
+-- Migration 008, study modules + sessions
 -- Issue 026 · trilhas de estudo guiado (seed pelo sistema) + progresso por usuário
 
 create table if not exists public.study_modules (

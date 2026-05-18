@@ -1,4 +1,4 @@
-# VOX — pacote da marca
+# VOX, pacote da marca
 
 A identidade visual completa do VOX. Use sempre os arquivos prontos; não recolora nem distorça o wordmark manualmente.
 
@@ -12,7 +12,7 @@ logo/
 ├── README.md                 ← este arquivo
 ├── svg/                      ← arquivos vetoriais (escaláveis sem perda)
 │   ├── vox-wordmark*.svg     (5 variantes)
-│   ├── vox-mark*.svg         (monograma V — 4 variantes)
+│   ├── vox-mark*.svg         (monograma V, 4 variantes)
 │   ├── vox-lockup-*.svg      (lockups com tagline)
 │   ├── vox-favicon-*.svg     (16 e 32 px)
 │   ├── vox-app-icon-512.svg
@@ -25,7 +25,7 @@ logo/
     └── vox-punctum-{64,128,256}.png          + gold
 ```
 
-## Variantes oficiais — quando usar qual
+## Variantes oficiais, quando usar qual
 
 | Contexto | Use | Notas |
 |---|---|---|
@@ -53,7 +53,7 @@ logo/
 | Charcoal Ink | `#18181B` | Pantone Black 6 C |
 | Scripture Gold | `#B45309` | Pantone 1395 C |
 | Parchment Canvas | `#F9F7F4` | Pantone 9080 C |
-| Sage Glow (stage punctum) | `#86EFAC` | — |
+| Sage Glow (stage punctum) | `#86EFAC` |, |
 
 Nunca recolora o punctum para uma cor fora desta lista. Sem roxo, sem azul, sem neon.
 
@@ -67,16 +67,16 @@ Os SVGs aqui usam `<text>` referenciando a Fraunces. Funcionam em qualquer naveg
 
 Todos os PNGs foram rasterizados em alta qualidade com Fraunces 600/700 propriamente carregada. Use-os direto quando o destino não suportar SVG (ícones de app, favicons, anexos de e-mail).
 
-## Mau uso — proibido
+## Mau uso, proibido
 
 - Esticar, condensar ou rotacionar o wordmark
 - Recolorir o punctum para qualquer cor fora da paleta oficial
 - Adicionar sombras projetadas, gradientes sobre as letras, efeitos 3D
-- Versão outline (contorno) — o wordmark é massa, não traço
+- Versão outline (contorno), o wordmark é massa, não traço
 - Punctum sem o V/wordmark em contexto onde não está claro que se refere ao VOX
 
 Consulte `Livro da Marca.html` para a galeria completa de exemplos do que não fazer.
 
 ---
 
-**v1 · maio de 2026** — Para revisões deste pacote, contate o time de design do VOX.
+**v1 · maio de 2026**, Para revisões deste pacote, contate o time de design do VOX.

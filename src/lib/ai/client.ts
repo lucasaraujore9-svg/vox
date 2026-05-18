@@ -1,4 +1,4 @@
-// Singleton da OpenAI. Issue 051 — usar SOMENTE em Route Handlers / Server Actions.
+// Singleton da OpenAI. Issue 051, usar SOMENTE em Route Handlers / Server Actions.
 // Verificação de `profile.ai_enabled` deve preceder cada chamada.
 
 import OpenAI from "openai";

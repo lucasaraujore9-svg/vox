@@ -1,6 +1,6 @@
 // Tipos compartilhados de "engagement" (registro de pregação/uso de sermão).
 // Os dados reais vêm do Supabase (tabela sermon_engagements).
-// Antes do MVP existir, este arquivo trazia exemplos — já foi removido.
+// Antes do MVP existir, este arquivo trazia exemplos, já foi removido.
 
 export interface MockEngagement {
   id: string;

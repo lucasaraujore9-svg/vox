@@ -1,6 +1,6 @@
 "use client";
 
-// Tabela de usuários — admin altera role, super_admin pode excluir.
+// Tabela de usuários, admin altera role, super_admin pode excluir.
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -36,7 +36,7 @@ const ROLE_COLOR: Record<string, string> = {
 };
 
 function formatDate(iso: string | null): string {
-  if (!iso) return "—";
+  if (!iso) return ",";
   try {
     return new Date(iso).toLocaleDateString("pt-BR", {
       day: "2-digit",
@@ -44,7 +44,7 @@ function formatDate(iso: string | null): string {
       year: "numeric",
     });
   } catch {
-    return "—";
+    return ",";
   }
 }
 
@@ -118,8 +118,8 @@ export function AdminUsersTable({ users }: { users: AdminUser[] }) {
               className="hover:bg-accent/30 transition-colors"
               style={{ borderBottom: "1px solid var(--vox-whisper)" }}
             >
-              <td className="px-5 py-3 font-medium">{user.name || "—"}</td>
-              <td className="px-5 py-3 vox-mono text-xs">{user.email || "—"}</td>
+              <td className="px-5 py-3 font-medium">{user.name || ","}</td>
+              <td className="px-5 py-3 vox-mono text-xs">{user.email || ","}</td>
               <td className="px-5 py-3">
                 <Badge
                   variant="outline"

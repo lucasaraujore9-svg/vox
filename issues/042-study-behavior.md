@@ -1,4 +1,4 @@
-# Issue 042 — Estudo Guiado: Behavior Completo
+# Issue 042, Estudo Guiado: Behavior Completo
 
 **Status:** [ ] PENDENTE
 **Tipo:** behavior
@@ -57,7 +57,7 @@ Aparece quando `progress >= 50` (pelo menos metade do módulo concluída):
 2. Modal `StudyOutputPicker`: escolhe tipo (sermão/palestra/aula/curso)
 3. Sistema cria rascunho:
    - Para sermão/palestra/aula: `INSERT INTO sermons (user_id, content_type, title, content)`
-     - `title`: "[Título do módulo] — [Tipo]"
+     - `title`: "[Título do módulo], [Tipo]"
      - `content`: blocos das notas do estudo, reorganizados como esboço inicial
    - Para curso: `INSERT INTO courses (user_id, title, ementa)`
      - `ementa`: resumo das notas
@@ -128,7 +128,7 @@ export function useStudy(moduleId: string) {
   }
 
   async function generateContent(contentType: ContentType) {
-    const title = `${module.title} — ${contentType}`
+    const title = `${module.title}, ${contentType}`
     const content = session?.notes_content ?? []
     // Cria rascunho no tipo escolhido
   }

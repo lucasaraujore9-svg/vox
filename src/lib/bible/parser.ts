@@ -19,8 +19,11 @@ export interface ParsedReference {
   canonical: string;
 }
 
-// Em-dash, en-dash, hífen e travessão pra range
-const RANGE_SEP = /[—–\-−]/;
+// Em-dash, en-dash, hífen e travessão pra range.
+// NÃO inclui vírgula — vírgula já é separador de capítulo/versículo em
+// CV_SEP (ex: "Rom 5,1" = "Rom 5:1"). Incluí-la aqui produziria parsing
+// ambíguo: "Rom 5:1,11" viraria range em vez de v.1 + v.11.
+const RANGE_SEP = /[—–−\-]/;
 // Dois-pontos ou vírgula latina entre capítulo e versículo
 const CV_SEP = "[:,.]";
 

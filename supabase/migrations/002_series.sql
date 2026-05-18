@@ -1,5 +1,5 @@
--- Migration 002 — series
--- Issue 020 · agrupamento de sermões em séries (ex: "Romanos 5 — A Justificação pela Fé")
+-- Migration 002, series
+-- Issue 020 · agrupamento de sermões em séries (ex: "Romanos 5, A Justificação pela Fé")
 
 create table if not exists public.series (
   id          uuid default gen_random_uuid() primary key,

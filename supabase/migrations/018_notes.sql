@@ -1,4 +1,4 @@
--- Migration 018 — Notas
+-- Migration 018, Notas
 -- Inbox de rascunhos pastorais, separado dos sermões. Cada nota pode ser
 -- "promovida" para um sermão folha em branco depois (action no app).
 -- archived_at e deleted_at espelham o padrão usado em sermons.

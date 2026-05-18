@@ -45,7 +45,7 @@ export function BiblePalette() {
   const router = useRouter();
   const lastSearchRef = useRef<string>("");
 
-  // Atalho Cmd+Shift+B / Ctrl+Shift+B — Shift evita conflito com o "negrito"
+  // Atalho Cmd+Shift+B / Ctrl+Shift+B, Shift evita conflito com o "negrito"
   // do TipTap (⌘B) dentro do editor de sermão.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {

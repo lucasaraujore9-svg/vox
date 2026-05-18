@@ -4,7 +4,7 @@
 // abre uma lista flutuante com inserções rápidas (subtítulo, citação, lista,
 // versículo bíblico, oração, separador). ESC fecha. ↑↓ navega. Enter insere.
 //
-// Não usa @tiptap/suggestion (não está instalado) — implementação manual via
+// Não usa @tiptap/suggestion (não está instalado), implementação manual via
 // listener de selectionUpdate + posição do cursor.
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -82,7 +82,7 @@ function makeItems(bibleVersion: BibleVersionId): SlashItem[] {
       Icon: Minus,
       keywords: ["separador", "linha", "hr", "divisor"],
       run: (editor) => {
-        // Insere um <hr> como HTML — StarterKit não inclui horizontalRule aqui,
+        // Insere um <hr> como HTML, StarterKit não inclui horizontalRule aqui,
         // mas o navegador renderiza tag bruta.
         editor.chain().focus().insertContent("<hr>").run();
       },
@@ -163,7 +163,7 @@ export function SlashCommandMenu({
   const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
   const [filter, setFilter] = useState("");
   const [activeIdx, setActiveIdx] = useState(0);
-  // Posição no documento onde o "/" foi digitado — usada para substituir.
+  // Posição no documento onde o "/" foi digitado, usada para substituir.
   const slashStartRef = useRef<number | null>(null);
 
   useEffect(() => setMounted(true), []);
@@ -171,10 +171,10 @@ export function SlashCommandMenu({
   const allItems = makeItems(bibleVersion);
   const items = filter
     ? allItems.filter((it) =>
-        [it.label, ...it.keywords].some((s) =>
-          s.toLowerCase().includes(filter.toLowerCase())
-        )
+      [it.label, ...it.keywords].some((s) =>
+        s.toLowerCase().includes(filter.toLowerCase())
       )
+    )
     : allItems;
 
   const close = useCallback(() => {

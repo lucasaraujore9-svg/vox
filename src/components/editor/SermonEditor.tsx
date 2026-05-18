@@ -27,7 +27,7 @@ import { createClient } from "@/lib/supabase/client";
 import { getPending } from "@/lib/offline/db";
 
 interface SermonEditorProps {
-  /** ID do sermão no Supabase — necessário pra auto-save. Quando omitido, o editor opera só no estado local. */
+  /** ID do sermão no Supabase, necessário pra auto-save. Quando omitido, o editor opera só no estado local. */
   sermonId?: string;
   framework: FrameworkId;
   initialContent: SermonContent;
@@ -71,7 +71,7 @@ export function SermonEditor({
   const [recoveredFromOffline, setRecoveredFromOffline] = useState(false);
 
   // Recupera conteúdo pendente do IndexedDB no mount. Se houver, ele é mais
-  // novo que o vindo do servidor (sync ainda não rodou) — preferi-lo evita
+  // novo que o vindo do servidor (sync ainda não rodou), preferi-lo evita
   // que um reload em transição offline→online apague o que foi escrito.
   useEffect(() => {
     if (!sermonId) return;
@@ -82,7 +82,7 @@ export function SermonEditor({
         if (cancelled || !pending) return;
         const payload = pending.payload as Partial<SermonContent>;
         if (!payload || !Array.isArray(payload.sessions)) return;
-        // Só sobrescreve se o payload diferir do que veio do servidor —
+        // Só sobrescreve se o payload diferir do que veio do servidor,
         // evita um set redundante que poderia limpar foco do editor.
         const restored: SermonContent = { sessions: payload.sessions };
         const same =
@@ -92,7 +92,7 @@ export function SermonEditor({
         setRecoveredFromOffline(true);
         onChange?.(restored);
       } catch {
-        // IDB indisponível — segue com o initialContent normal.
+        // IDB indisponível, segue com o initialContent normal.
       }
     })();
     return () => {
@@ -195,12 +195,12 @@ export function SermonEditor({
         s.id !== sessionId
           ? s
           : {
-              ...s,
-              items: [
-                ...s.items,
-                { id: newId(), type, content: "", order: s.items.length + 1 },
-              ],
-            }
+            ...s,
+            items: [
+              ...s.items,
+              { id: newId(), type, content: "", order: s.items.length + 1 },
+            ],
+          }
       )
     );
   }
@@ -241,7 +241,7 @@ export function SermonEditor({
           order: idx + 2,
         };
         const before = s.items.slice(0, idx).concat(
-          // Marca a ref como dismissed no item DE ORIGEM — assim, ao reabrir
+          // Marca a ref como dismissed no item DE ORIGEM, assim, ao reabrir
           // o sermão, a pílula não pede pra inserir de novo aquela ref.
           (() => {
             const origin = s.items[idx];
@@ -260,7 +260,7 @@ export function SermonEditor({
     );
   }
 
-  /** Atualiza o dismissedRefs de um item — o auto-save normal cuida da
+  /** Atualiza o dismissedRefs de um item, o auto-save normal cuida da
       persistência no Supabase via content jsonb. */
   function handleItemDismissedRefsChange(
     sessionId: string,
@@ -272,20 +272,20 @@ export function SermonEditor({
         s.id !== sessionId
           ? s
           : {
-              ...s,
-              items: s.items.map((i) =>
-                i.id === itemId
-                  ? next.length > 0
-                    ? { ...i, dismissedRefs: next }
-                    : (() => {
-                        // Limpa o campo quando vazio pra não inflar o jsonb.
-                        const { dismissedRefs: _drop, ...rest } = i;
-                        void _drop;
-                        return rest;
-                      })()
-                  : i
-              ),
-            }
+            ...s,
+            items: s.items.map((i) =>
+              i.id === itemId
+                ? next.length > 0
+                  ? { ...i, dismissedRefs: next }
+                  : (() => {
+                    // Limpa o campo quando vazio pra não inflar o jsonb.
+                    const { dismissedRefs: _drop, ...rest } = i;
+                    void _drop;
+                    return rest;
+                  })()
+                : i
+            ),
+          }
       )
     );
   }
@@ -343,9 +343,9 @@ export function SermonEditor({
   function handleAddSession(role: SessionRole) {
     const label =
       role === "introducao" ? "Introdução" :
-      role === "conclusao" ? "Conclusão" :
-      role === "topico" ? `Tópico ${content.sessions.filter((s) => s.role === "topico").length + 1}` :
-      "Nova sessão";
+        role === "conclusao" ? "Conclusão" :
+          role === "topico" ? `Tópico ${content.sessions.filter((s) => s.role === "topico").length + 1}` :
+            "Nova sessão";
     update({
       sessions: [
         ...content.sessions,
@@ -397,7 +397,7 @@ export function SermonEditor({
         </div>
       ) : null}
 
-      {/* "Folha branca" — uma única superfície contínua. Tópicos ficam dentro,
+      {/* "Folha branca", uma única superfície contínua. Tópicos ficam dentro,
          separados apenas por espaço e uma barra de cor à esquerda. Não há
          cards individuais. */}
       <article

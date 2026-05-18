@@ -1,4 +1,4 @@
-// Tokens visuais resolvidos para hex — usados nos builders de PDF/DOCX,
+// Tokens visuais resolvidos para hex, usados nos builders de PDF/DOCX,
 // que não entendem var(--vox-...) do CSS. Mantém a paridade com o editor.
 
 import type { BlockTypeId } from "@/lib/mocks/blocks";
@@ -18,7 +18,7 @@ export const VOX_HEX = {
   destructive: "#B91C1C",
 } as const;
 
-/** Cor hex por tipo de bloco — espelha VOX_BLOCK_TYPES, sem var(). */
+/** Cor hex por tipo de bloco, espelha VOX_BLOCK_TYPES, sem var(). */
 export const BLOCK_COLOR_HEX: Record<BlockTypeId, string> = {
   texto_biblico: VOX_HEX.gold,
   introducao: VOX_HEX.forest,

@@ -1,7 +1,7 @@
 "use server";
 
 // Server Actions de gestão de usuários.
-// Só admin/super_admin podem rodar — checagem via current_user_is_admin().
+// Só admin/super_admin podem rodar, checagem via current_user_is_admin().
 // Cria usuário via Supabase Auth Admin API (service_role) + atualiza role
 // + opcionalmente liga ao interesse origem (marca como invited).
 

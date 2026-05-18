@@ -1,4 +1,4 @@
-// Issue 010 — Estudo Guiado UI proto (lista de trilhas). Behavior em 042.
+// Issue 010, Estudo Guiado UI proto (lista de trilhas). Behavior em 042.
 
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

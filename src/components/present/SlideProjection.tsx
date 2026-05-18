@@ -1,6 +1,6 @@
 "use client";
 
-// Modo Simples (Projeção) — só o slide em tela cheia, sem painel de comentário.
+// Modo Simples (Projeção), só o slide em tela cheia, sem painel de comentário.
 // Mesma estética da janela de audiência, mas standalone (não escuta channel).
 // Pra usar quando o monitor é o mesmo onde o pastor está.
 
@@ -44,7 +44,7 @@ export function SlideProjection({ title, slides, backHref }: SlideProjectionProp
         e.preventDefault();
         goPrev();
       } else if (e.key === "Escape") {
-        if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+        if (document.fullscreenElement) document.exitFullscreen().catch(() => { });
       }
     }
     function onChange() {
@@ -89,7 +89,7 @@ export function SlideProjection({ title, slides, backHref }: SlideProjectionProp
         // sem suporte
       }
     })();
-    return () => void lock?.release().catch(() => {});
+    return () => void lock?.release().catch(() => { });
   }, []);
 
   async function enterFullscreen() {
@@ -171,7 +171,7 @@ function SlideRender({ slide }: { slide: SlideItem | undefined }) {
       />
     );
   }
-  // Slide sem imagem — primeiro item visível em destaque
+  // Slide sem imagem, primeiro item visível em destaque
   const firstItem = slide.comment_items?.sessions
     ?.flatMap((s) => s.items)
     .find((i) => VISIBLE_TYPES.has(i.type));

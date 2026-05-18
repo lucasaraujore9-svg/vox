@@ -1,4 +1,4 @@
--- Migration 011 — sermon_versions
+-- Migration 011, sermon_versions
 -- Toda vez que o pastor "Salva versão" um snapshot é gravado aqui.
 -- Permite ver versões antigas e restaurar.
 

@@ -1,4 +1,4 @@
-# Issue 002 — Editor de Sermão UI Proto
+# Issue 002, Editor de Sermão UI Proto
 
 **Status:** [ ] PENDENTE
 **Tipo:** proto
@@ -11,17 +11,17 @@
 ## O Que Fazer
 
 Criar o protótipo visual do editor de sermões: seleção de framework e
-editor de blocos com TipTap. Sem salvamento real — apenas a experiência visual.
+editor de blocos com TipTap. Sem salvamento real, apenas a experiência visual.
 
 ## Componentes Envolvidos
 
-- `src/app/(app)/sermons/new/page.tsx` — Página com 3 steps (mock)
-- `src/components/sermon/FrameworkPicker.tsx` — Seleção de framework
-- `src/components/editor/SermonEditor.tsx` — Editor principal
-- `src/components/editor/SermonBlock.tsx` — Bloco individual editável
-- `src/components/editor/BlockToolbar.tsx` — Toolbar do bloco
+- `src/app/(app)/sermons/new/page.tsx`, Página com 3 steps (mock)
+- `src/components/sermon/FrameworkPicker.tsx`, Seleção de framework
+- `src/components/editor/SermonEditor.tsx`, Editor principal
+- `src/components/editor/SermonBlock.tsx`, Bloco individual editável
+- `src/components/editor/BlockToolbar.tsx`, Toolbar do bloco
 
-## Comportamentos (proto — apenas visual)
+## Comportamentos (proto, apenas visual)
 
 - **Step 1:** Grid de 6 cards de frameworks (Expositivo, Temático, Narrativo, Tópico, Textual, Livre)
   - Cada card: ícone, nome, descrição curta de 1 linha, exemplo de estrutura
@@ -74,7 +74,7 @@ const FRAMEWORK_BLOCKS = {
 }
 ```
 
-### FrameworkPicker — estrutura de dados
+### FrameworkPicker, estrutura de dados
 ```typescript
 const FRAMEWORKS = [
   {
@@ -129,7 +129,7 @@ Criar `src/components/editor/SermonEditor.tsx`:
 
 **6. Criar página /sermons/new com stepper**
 Criar `src/app/(app)/sermons/new/page.tsx`:
-- `"use client"` — estado local para step atual (1/2/3) e framework selecionado
+- `"use client"`, estado local para step atual (1/2/3) e framework selecionado
 - Step 1: `<FrameworkPicker>` + botão "Próximo" habilitado só se framework selecionado
 - Step 2: formulário com `Input` (título, ref bíblica, data) + campo de tags com chips simples
 - Step 3: `<SermonEditor framework={selectedFramework} />`

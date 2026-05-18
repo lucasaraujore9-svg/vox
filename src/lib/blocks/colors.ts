@@ -1,4 +1,4 @@
-// Issue 044 — defaults canônicos das cores de bloco e Server Action de persistência.
+// Issue 044, defaults canônicos das cores de bloco e Server Action de persistência.
 
 "use server";
 

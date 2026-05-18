@@ -1,5 +1,5 @@
 {
-  "name": "VOX — Palestras e Sermões",
+  "name": "VOX, Palestras e Sermões",
   "short_name": "VOX",
   "description": "Companheiro silencioso do púlpito. Prepare, pregue e arquive sermões, palestras e aulas.",
   "start_url": "/dashboard",
@@ -9,7 +9,11 @@
   "background_color": "#F9F7F4",
   "theme_color": "#166534",
   "lang": "pt-BR",
-  "categories": ["productivity", "education", "lifestyle"],
+  "categories": [
+    "productivity",
+    "education",
+    "lifestyle"
+  ],
   "icons": [
     {
       "src": "/logo/png/vox-app-icon-192.png",

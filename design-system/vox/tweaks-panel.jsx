@@ -170,7 +170,7 @@ function useTweaks(defaults) {
     setValues((prev) => ({ ...prev, ...edits }));
     window.parent.postMessage({ type: '__edit_mode_set_keys', edits }, '*');
     // Same-window signal so in-page listeners (deck-stage rail thumbnails)
-    // can react — the parent message only reaches the host, not peers.
+    // can react, the parent message only reaches the host, not peers.
     window.dispatchEvent(new CustomEvent('tweakchange', { detail: edits }));
   }, []);
   return [values, setTweak];
@@ -178,7 +178,7 @@ function useTweaks(defaults) {
 
 // ── TweaksPanel ─────────────────────────────────────────────────────────────
 // Floating shell. Registers the protocol listener BEFORE announcing
-// availability — if the announce ran first, the host's activate could land
+// availability, if the announce ran first, the host's activate could land
 // before our handler exists and the toolbar toggle would silently no-op.
 // The close button posts __edit_mode_dismissed so the host's toolbar toggle
 // flips off in lockstep; the host echoes __deactivate_edit_mode back which
@@ -190,7 +190,7 @@ function TweaksPanel({ title = 'Tweaks', noDeckControls = false, children }) {
   // toggle drives the deck's per-viewer _railVisible via window message;
   // state is mirrored from the same localStorage key the deck reads so
   // the control reflects reality across reloads. The mechanism is the
-  // message — authors who want custom placement can post it directly
+  // message, authors who want custom placement can post it directly
   // and pass noDeckControls to suppress this one.
   const hasDeckStage = React.useMemo(
     () => typeof document !== 'undefined' && !!document.querySelector('deck-stage'),
@@ -199,7 +199,7 @@ function TweaksPanel({ title = 'Tweaks', noDeckControls = false, children }) {
   // deck-stage enables its rail in connectedCallback, but this panel can
   // mount before that element has upgraded. The initial read catches the
   // common case; the listener covers mounting first. (Older deck-stage.js
-  // copies still wait for the host's __omelette_rail_enabled postMessage —
+  // copies still wait for the host's __omelette_rail_enabled postMessage,
   // same listener handles those.)
   const [railEnabled, setRailEnabled] = React.useState(
     () => hasDeckStage && !!document.querySelector('deck-stage')?._railEnabled,
@@ -291,12 +291,12 @@ function TweaksPanel({ title = 'Tweaks', noDeckControls = false, children }) {
     <>
       <style>{__TWEAKS_STYLE}</style>
       <div ref={dragRef} className="twk-panel" data-noncommentable=""
-           style={{ right: offsetRef.current.x, bottom: offsetRef.current.y }}>
+        style={{ right: offsetRef.current.x, bottom: offsetRef.current.y }}>
         <div className="twk-hd" onMouseDown={onDragStart}>
           <b>{title}</b>
           <button className="twk-x" aria-label="Close tweaks"
-                  onMouseDown={(e) => e.stopPropagation()}
-                  onClick={dismiss}>✕</button>
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={dismiss}>✕</button>
         </div>
         <div className="twk-body">
           {children}
@@ -340,7 +340,7 @@ function TweakSlider({ label, value, min = 0, max = 100, step = 1, unit = '', on
   return (
     <TweakRow label={label} value={`${value}${unit}`}>
       <input type="range" className="twk-slider" min={min} max={max} step={step}
-             value={value} onChange={(e) => onChange(Number(e.target.value))} />
+        value={value} onChange={(e) => onChange(Number(e.target.value))} />
     </TweakRow>
   );
 }
@@ -350,8 +350,8 @@ function TweakToggle({ label, value, onChange }) {
     <div className="twk-row twk-row-h">
       <div className="twk-lbl"><span>{label}</span></div>
       <button type="button" className="twk-toggle" data-on={value ? '1' : '0'}
-              role="switch" aria-checked={!!value}
-              onClick={() => onChange(!value)}><i /></button>
+        role="switch" aria-checked={!!value}
+        onClick={() => onChange(!value)}><i /></button>
     </div>
   );
 }
@@ -360,27 +360,27 @@ function TweakRadio({ label, value, options, onChange }) {
   const trackRef = React.useRef(null);
   const [dragging, setDragging] = React.useState(false);
   // The active value is read by pointer-move handlers attached for the lifetime
-  // of a drag — ref it so a stale closure doesn't fire onChange for every move.
+  // of a drag, ref it so a stale closure doesn't fire onChange for every move.
   const valueRef = React.useRef(value);
   valueRef.current = value;
 
   // Segments wrap mid-word once per-segment width runs out. The track is
   // ~248px (280 panel − 28 body pad − 4 seg pad), each button loses 12px
-  // to its own padding, and 11.5px system-ui averages ~6.3px/char — so 2
+  // to its own padding, and 11.5px system-ui averages ~6.3px/char, so 2
   // options fit ~16 chars each, 3 fit ~10. Past that (or >3 options), fall
   // back to a dropdown rather than wrap.
   const labelLen = (o) => String(typeof o === 'object' ? o.label : o).length;
   const maxLen = options.reduce((m, o) => Math.max(m, labelLen(o)), 0);
   const fitsAsSegments = maxLen <= ({ 2: 16, 3: 10 }[options.length] ?? 0);
   if (!fitsAsSegments) {
-    // <select> emits strings — map back to the original option value so the
+    // <select> emits strings, map back to the original option value so the
     // fallback stays type-preserving (numbers, booleans) like the segment path.
     const resolve = (s) => {
       const m = options.find((o) => String(typeof o === 'object' ? o.value : o) === s);
       return m === undefined ? s : typeof m === 'object' ? m.value : m;
     };
     return <TweakSelect label={label} value={value} options={options}
-                        onChange={(s) => onChange(resolve(s))} />;
+      onChange={(s) => onChange(resolve(s))} />;
   }
   const opts = options.map((o) => (typeof o === 'object' ? o : { value: o, label: o }));
   const idx = Math.max(0, opts.findIndex((o) => o.value === value));
@@ -414,10 +414,12 @@ function TweakRadio({ label, value, options, onChange }) {
   return (
     <TweakRow label={label}>
       <div ref={trackRef} role="radiogroup" onPointerDown={onPointerDown}
-           className={dragging ? 'twk-seg dragging' : 'twk-seg'}>
+        className={dragging ? 'twk-seg dragging' : 'twk-seg'}>
         <div className="twk-seg-thumb"
-             style={{ left: `calc(2px + ${idx} * (100% - 4px) / ${n})`,
-                      width: `calc((100% - 4px) / ${n})` }} />
+          style={{
+            left: `calc(2px + ${idx} * (100% - 4px) / ${n})`,
+            width: `calc((100% - 4px) / ${n})`
+          }} />
         {opts.map((o) => (
           <button key={o.value} type="button" role="radio" aria-checked={o.value === value}>
             {o.label}
@@ -446,7 +448,7 @@ function TweakText({ label, value, placeholder, onChange }) {
   return (
     <TweakRow label={label}>
       <input className="twk-field" type="text" value={value} placeholder={placeholder}
-             onChange={(e) => onChange(e.target.value)} />
+        onChange={(e) => onChange(e.target.value)} />
     </TweakRow>
   );
 }
@@ -479,13 +481,13 @@ function TweakNumber({ label, value, min, max, step = 1, unit = '', onChange }) 
     <div className="twk-num">
       <span className="twk-num-lbl" onPointerDown={onScrubStart}>{label}</span>
       <input type="number" value={value} min={min} max={max} step={step}
-             onChange={(e) => onChange(clamp(Number(e.target.value)))} />
+        onChange={(e) => onChange(clamp(Number(e.target.value)))} />
       {unit && <span className="twk-num-unit">{unit}</span>}
     </div>
   );
 }
 
-// Relative-luminance contrast pick — checkmarks drawn over a swatch need to
+// Relative-luminance contrast pick, checkmarks drawn over a swatch need to
 // read on both #111 and #fafafa without per-option configuration. Hex input
 // only (#rgb / #rrggbb); named or rgb()/hsl() colors fall through to "light".
 function __twkIsLight(hex) {
@@ -500,13 +502,13 @@ function __twkIsLight(hex) {
 const __TwkCheck = ({ light }) => (
   <svg viewBox="0 0 14 14" aria-hidden="true">
     <path d="M3 7.2 5.8 10 11 4.2" fill="none" strokeWidth="2.2"
-          strokeLinecap="round" strokeLinejoin="round"
-          stroke={light ? 'rgba(0,0,0,.78)' : '#fff'} />
+      strokeLinecap="round" strokeLinejoin="round"
+      stroke={light ? 'rgba(0,0,0,.78)' : '#fff'} />
   </svg>
 );
 
-// TweakColor — curated color/palette picker. Each option is either a single
-// hex string or an array of 1-5 hex strings; the card adapts — a lone color
+// TweakColor, curated color/palette picker. Each option is either a single
+// hex string or an array of 1-5 hex strings; the card adapts, a lone color
 // renders solid, a palette renders colors[0] as the hero (left ~2/3) with the
 // rest stacked in a sharp column on the right. onChange emits the
 // option in the shape it was passed (string stays string, array stays array).
@@ -517,7 +519,7 @@ function TweakColor({ label, value, options, onChange }) {
       <div className="twk-row twk-row-h">
         <div className="twk-lbl"><span>{label}</span></div>
         <input type="color" className="twk-swatch" value={value}
-               onChange={(e) => onChange(e.target.value)} />
+          onChange={(e) => onChange(e.target.value)} />
       </div>
     );
   }
@@ -536,10 +538,10 @@ function TweakColor({ label, value, options, onChange }) {
           const on = key(o) === cur;
           return (
             <button key={i} type="button" className="twk-chip" role="radio"
-                    aria-checked={on} data-on={on ? '1' : '0'}
-                    aria-label={colors.join(', ')} title={colors.join(' · ')}
-                    style={{ background: hero }}
-                    onClick={() => onChange(o)}>
+              aria-checked={on} data-on={on ? '1' : '0'}
+              aria-label={colors.join(', ')} title={colors.join(' · ')}
+              style={{ background: hero }}
+              onClick={() => onChange(o)}>
               {sup.length > 0 && (
                 <span>
                   {sup.map((c, j) => <i key={j} style={{ background: c }} />)}
@@ -557,7 +559,7 @@ function TweakColor({ label, value, options, onChange }) {
 function TweakButton({ label, onClick, secondary = false }) {
   return (
     <button type="button" className={secondary ? 'twk-btn secondary' : 'twk-btn'}
-            onClick={onClick}>{label}</button>
+      onClick={onClick}>{label}</button>
   );
 }
 

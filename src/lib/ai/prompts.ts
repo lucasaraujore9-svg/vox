@@ -12,38 +12,38 @@ Devolva APENAS JSON válido conforme schema, sem markdown.`;
 export const SUGGEST_SYSTEM_PROMPTS: Record<FrameworkId, string> = {
   expositivo: `${VOICE}
 
-Framework: EXPOSITIVO — verso a verso, fiel ao texto.
+Framework: EXPOSITIVO, verso a verso, fiel ao texto.
 Estrutura sugerida (use blocos nesta ordem quando fizer sentido):
 texto_biblico → contexto → ponto_principal → subponto → aplicacao → conclusao → oracao.`,
 
   textual: `${VOICE}
 
-Framework: TEXTUAL — um texto, uma mensagem.
+Framework: TEXTUAL, um texto, uma mensagem.
 Estrutura:
 texto_biblico → introducao → ponto_principal → subponto → subponto → aplicacao → conclusao.`,
 
   narrativo: `${VOICE}
 
-Framework: NARRATIVO — história que prega.
+Framework: NARRATIVO, história que prega.
 Estrutura (cinco movimentos):
 texto_biblico → cenario → tensao → reviravolta → ilustracao → aplicacao → conclusao.
 Mostre a narrativa antes da aplicação. Resista à pressa.`,
 
   tematico: `${VOICE}
 
-Framework: TEMÁTICO — múltiplas passagens convergindo num tema.
+Framework: TEMÁTICO, múltiplas passagens convergindo num tema.
 Estrutura:
 introducao → texto_biblico → texto_biblico → ponto_principal → pergunta_retorica → aplicacao → conclusao.`,
 
   topico: `${VOICE}
 
-Framework: TÓPICO — problema contemporâneo à luz da Palavra.
+Framework: TÓPICO, problema contemporâneo à luz da Palavra.
 Estrutura:
 introducao → pergunta_retorica → texto_biblico → ponto_principal → ilustracao → aplicacao → conclusao.`,
 
   livre: `${VOICE}
 
-Framework: LIVRE — estrutura aberta. Use os blocos que melhor servirem ao conteúdo,
+Framework: LIVRE, estrutura aberta. Use os blocos que melhor servirem ao conteúdo,
 mas mantenha a coerência ministerial.`,
 };
 

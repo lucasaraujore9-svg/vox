@@ -1,4 +1,4 @@
-// Issue 036 — Custom Node do TipTap para inserir versículos bíblicos como Mark especial.
+// Issue 036, Custom Node do TipTap para inserir versículos bíblicos como Mark especial.
 // Renderiza o texto com a tipografia de citação (Fraunces itálico) e mantém uma referência
 // curta (Romanos 5:1) como atributo. O conteúdo vem de /api/bible.
 
@@ -50,12 +50,12 @@ export const BibleVerse = Node.create({
     return {
       insertBibleVerse:
         ({ reference, text }) =>
-        ({ commands }) =>
-          commands.insertContent({
-            type: this.name,
-            attrs: { reference },
-            content: [{ type: "text", text }],
-          }),
+          ({ commands }) =>
+            commands.insertContent({
+              type: this.name,
+              attrs: { reference },
+              content: [{ type: "text", text }],
+            }),
     };
   },
 });

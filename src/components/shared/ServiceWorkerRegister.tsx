@@ -16,7 +16,7 @@ export function ServiceWorkerRegister() {
       navigator.serviceWorker
         .register("/sw.js", { scope: "/" })
         .catch(() => {
-          // Falha silenciosa — sem SW o app ainda funciona online.
+          // Falha silenciosa, sem SW o app ainda funciona online.
         });
     };
 

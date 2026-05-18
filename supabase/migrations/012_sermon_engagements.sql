@@ -1,6 +1,6 @@
--- Migration 012 — sermon_engagements
+-- Migration 012, sermon_engagements
 -- Linha por pregação real (um sermão pode ser pregado N vezes em locais diferentes).
--- Substitui o uso de sermons.preached_at como fonte da verdade — esse campo passa a
+-- Substitui o uso de sermons.preached_at como fonte da verdade, esse campo passa a
 -- ser cache da DATA da última pregação (atualizado por trigger).
 
 create table if not exists public.sermon_engagements (

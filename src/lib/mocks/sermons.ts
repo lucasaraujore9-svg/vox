@@ -1,6 +1,6 @@
 // Tipos compartilhados de sermão/série usados pelas Views.
 // Os dados reais vêm do Supabase via src/lib/sermons/queries.ts.
-// Antes do MVP existir, este arquivo trazia exemplos pra UI rodar sem backend —
+// Antes do MVP existir, este arquivo trazia exemplos pra UI rodar sem backend,
 // já foi removido. Mantemos só os tipos e helpers de conteúdo.
 
 import type { ContentType, SermonStatus, SermonType } from "@/types/database";

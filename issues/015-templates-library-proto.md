@@ -1,4 +1,4 @@
-# Issue 015 — Biblioteca de Templates/Frameworks UI Proto
+# Issue 015, Biblioteca de Templates/Frameworks UI Proto
 
 **Status:** [ ] PENDENTE
 **Tipo:** proto
@@ -10,16 +10,16 @@
 
 ## O Que Fazer
 
-Criar o protótipo visual da biblioteca pública de frameworks homiléticos —
+Criar o protótipo visual da biblioteca pública de frameworks homiléticos,
 uma página exploratória onde o usuário aprende sobre cada framework antes de usá-lo.
 
 ## Componentes Envolvidos
 
-- `src/app/(public)/templates/page.tsx` — página pública (sem autenticação)
-- `src/components/templates/FrameworkCard.tsx` — card expandível do framework
-- `src/components/templates/FrameworkDetail.tsx` — modal com detalhes completos
+- `src/app/(public)/templates/page.tsx`, página pública (sem autenticação)
+- `src/components/templates/FrameworkCard.tsx`, card expandível do framework
+- `src/components/templates/FrameworkDetail.tsx`, modal com detalhes completos
 
-## Comportamentos (proto — dados mockados de design-system/vox/data.js)
+## Comportamentos (proto, dados mockados de design-system/vox/data.js)
 
 ### Header da página
 - Título: "Frameworks Homiléticos" Fraunces 600 36px
@@ -27,7 +27,7 @@ uma página exploratória onde o usuário aprende sobre cada framework antes de 
 - Breadcrumb: "VOX / Frameworks" (página pública, acessível sem login)
 - CTA: "Criar sermão →" (Forest Deep, redireciona para `/auth/register` se não autenticado)
 
-### Grid de FrameworkCards (bento assimétrico — não 3 iguais em linha)
+### Grid de FrameworkCards (bento assimétrico, não 3 iguais em linha)
 6 frameworks dos dados de `design-system/vox/data.js`:
 
 **Cada FrameworkCard:**

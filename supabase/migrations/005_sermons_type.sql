@@ -1,4 +1,4 @@
--- Migration 005 — content_type + sermon type + slides_source
+-- Migration 005, content_type + sermon type + slides_source
 -- Issue 025 · expande sermons para Sermão / Palestra / Aula e Esboço / Apresentação
 
 alter table public.sermons

@@ -1,4 +1,4 @@
-# Issue 038 — Slides Upload: Behavior (Fluxo Completo)
+# Issue 038, Slides Upload: Behavior (Fluxo Completo)
 
 **Status:** [ ] PENDENTE
 **Tipo:** behavior
@@ -15,15 +15,15 @@ implementando o fluxo completo de upload → processamento → exibição → ed
 
 ## Componentes Envolvidos
 
-- `src/components/slides/SlidesUpload.tsx` — dropzone funcional
-- `src/components/slides/SlidesPanel.tsx` — lista + comentário conectados
-- `src/components/slides/GoogleSlidesInput.tsx` — validação e save de URL
-- `src/hooks/useSlides.ts` — CRUD de slides + upload
-- `src/app/api/sermons/slides/upload/route.ts` — Route Handler (issue 024)
+- `src/components/slides/SlidesUpload.tsx`, dropzone funcional
+- `src/components/slides/SlidesPanel.tsx`, lista + comentário conectados
+- `src/components/slides/GoogleSlidesInput.tsx`, validação e save de URL
+- `src/hooks/useSlides.ts`, CRUD de slides + upload
+- `src/app/api/sermons/slides/upload/route.ts`, Route Handler (issue 024)
 
 ## Comportamentos
 
-### Step 2B — Escolha da fonte
+### Step 2B, Escolha da fonte
 1. Usuário escolhe entre Upload / Google Slides / Começar em branco
 2. Seleção salva `sermons.slides_source` no Supabase:
    - `upload` → avança para Step 3B (upload)
@@ -73,7 +73,7 @@ implementando o fluxo completo de upload → processamento → exibição → ed
 ### Reordenação de Slides
 - Drag-and-drop via `@dnd-kit/sortable` (mesmo do editor de blocos)
 - Ao soltar: `UPDATE slides SET "order" = $1 WHERE id = $2` para cada slide afetado
-- Otimistic update — lista reordena antes de confirmar com Supabase
+- Otimistic update, lista reordena antes de confirmar com Supabase
 
 ### Deleção de Slide
 - Ícone de lixeira aparece no hover da miniatura

@@ -1,4 +1,4 @@
-# Issue 023 — Setup Next.js 15 + Estrutura Base
+# Issue 023, Setup Next.js 15 + Estrutura Base
 
 **Status:** [ ] PENDENTE
 **Tipo:** infra
@@ -15,13 +15,13 @@ fontes, layout raiz e estrutura de pastas conforme `docs/references/architecture
 
 ## Componentes Envolvidos
 
-- `package.json` — Dependências do projeto
-- `next.config.ts` — Configuração do Next.js
-- `tailwind.config.ts` — Configuração do Tailwind
-- `src/app/layout.tsx` — Root layout (providers, fontes, metadata)
-- `src/app/globals.css` — Design tokens + reset
-- `src/components/ui/` — shadcn/ui instalado
-- `src/lib/utils/cn.ts` — Helper clsx + twMerge
+- `package.json`, Dependências do projeto
+- `next.config.ts`, Configuração do Next.js
+- `tailwind.config.ts`, Configuração do Tailwind
+- `src/app/layout.tsx`, Root layout (providers, fontes, metadata)
+- `src/app/globals.css`, Design tokens + reset
+- `src/components/ui/`, shadcn/ui instalado
+- `src/lib/utils/cn.ts`, Helper clsx + twMerge
 
 ## Comportamentos
 
@@ -88,7 +88,7 @@ export const metadata: Metadata = {
 }
 ```
 
-### Fontes — Design System definido (usar exatamente estas)
+### Fontes, Design System definido (usar exatamente estas)
 ```typescript
 // src/app/layout.tsx
 import { Fraunces, Geist, Geist_Mono } from 'next/font/google'
@@ -97,7 +97,7 @@ const fraunces = Fraunces({
   subsets: ['latin'],
   variable: '--vox-font-display',
   display: 'swap',
-  axes: ['opsz'],  // optical size axis — importante para Fraunces
+  axes: ['opsz'],  // optical size axis, importante para Fraunces
 })
 
 const geist = Geist({
@@ -115,7 +115,7 @@ const geistMono = Geist_Mono({
 // No <html> do layout: className={`${fraunces.variable} ${geist.variable} ${geistMono.variable}`}
 ```
 
-### globals.css — importar tokens do design system
+### globals.css, importar tokens do design system
 ```css
 /* PRIMEIRO: importar os tokens do design system VOX */
 @import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap");
@@ -146,7 +146,7 @@ const geistMono = Geist_Mono({
   }
 }
 
-/* Paper grain (muito sutil — não remover) */
+/* Paper grain (muito sutil, não remover) */
 body {
   background-image:
     radial-gradient(ellipse at top, rgba(180,140,60,0.025), transparent 60%),
@@ -201,9 +201,9 @@ Criar `src/lib/utils/cn.ts`:
 - `export function cn(...inputs) { return twMerge(clsx(inputs)) }`
 
 **7. Criar layouts de grupo vazios**
-- `src/app/(public)/layout.tsx` — pass-through
-- `src/app/(auth)/layout.tsx` — placeholder (será preenchido na issue 005)
-- `src/app/(app)/layout.tsx` — placeholder (será preenchido na issue 001)
+- `src/app/(public)/layout.tsx`, pass-through
+- `src/app/(auth)/layout.tsx`, placeholder (será preenchido na issue 005)
+- `src/app/(app)/layout.tsx`, placeholder (será preenchido na issue 001)
 
 ### Como Verificar
 - `npm run dev` → sem erros, acessar `http://localhost:3000`

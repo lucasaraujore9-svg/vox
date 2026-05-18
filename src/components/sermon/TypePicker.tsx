@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { SermonType } from "@/types/database";
 import { cn } from "@/lib/utils";
 
-// O wizard usa um "modo de escrita" expandido — Folha em branco é um perfil
+// O wizard usa um "modo de escrita" expandido, Folha em branco é um perfil
 // do esboço (type=esboço + framework=livre) sem wizard de framework. Não muda
 // o schema; o id "branco" só vive no wizard.
 export type WritingMode = SermonType | "branco";

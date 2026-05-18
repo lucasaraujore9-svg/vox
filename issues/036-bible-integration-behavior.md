@@ -1,4 +1,4 @@
-# Issue 036 — Integração de Versículos Bíblicos no Editor
+# Issue 036, Integração de Versículos Bíblicos no Editor
 
 **Status:** [ ] PENDENTE
 **Tipo:** behavior
@@ -15,10 +15,10 @@ com suporte a múltiplas traduções e inserção como bloco especial de versíc
 
 ## Componentes Envolvidos
 
-- `src/components/editor/BibleSearch.tsx` — Componente de busca (Popover)
-- `src/app/api/bible/route.ts` — Proxy para API.Bible
-- `src/lib/bible/client.ts` — Wrapper da API.Bible
-- `src/lib/bible/versions.ts` — Traduções disponíveis e IDs da API
+- `src/components/editor/BibleSearch.tsx`, Componente de busca (Popover)
+- `src/app/api/bible/route.ts`, Proxy para API.Bible
+- `src/lib/bible/client.ts`, Wrapper da API.Bible
+- `src/lib/bible/versions.ts`, Traduções disponíveis e IDs da API
 
 ## Comportamentos
 
@@ -97,7 +97,7 @@ export async function GET(request: Request) {
 
 ### Atenção sobre licenças
 - Verificar os termos de uso da API.Bible para cada tradução antes de usar
-- ARC é domínio público; NVI/NVT têm direitos autorais — verificar permissões
+- ARC é domínio público; NVI/NVT têm direitos autorais, verificar permissões
 - TODO: preencher IDs corretos das traduções após criar conta na API.Bible
 
 ## Plano de Implementação

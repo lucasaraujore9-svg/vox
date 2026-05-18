@@ -1,4 +1,4 @@
-// Tipos de bloco do editor — referência canônica até issue 044 puxar do Supabase.
+// Tipos de bloco do editor, referência canônica até issue 044 puxar do Supabase.
 // Paridade com design-system/vox/data.js → VOX_DATA.BLOCK_TYPES.
 
 export type BlockTypeId =
@@ -22,7 +22,7 @@ export interface BlockType {
   id: BlockTypeId;
   label: string;
   hint: string;
-  /** CSS color token (default — sobreposto por block_color_preferences) */
+  /** CSS color token (default, sobreposto por block_color_preferences) */
   color: string;
   /** Indica se aparece no Modo Apresentação. notas_pessoais = false */
   visibleInPresentation: boolean;
@@ -74,7 +74,7 @@ export const VOX_BLOCK_TYPES: readonly BlockType[] = [
   {
     id: "desenvolvimento",
     label: "Desenvolvimento",
-    hint: "Exposição e elaboração do tópico — corpo do argumento",
+    hint: "Exposição e elaboração do tópico, corpo do argumento",
     color: "#475569",
     visibleInPresentation: true,
   },
@@ -130,7 +130,7 @@ export const VOX_BLOCK_TYPES: readonly BlockType[] = [
   {
     id: "notas_pessoais",
     label: "Notas pessoais",
-    hint: "Apenas para o pregador — invisível em apresentação",
+    hint: "Apenas para o pregador, invisível em apresentação",
     color: "var(--vox-muted)",
     visibleInPresentation: false,
   },

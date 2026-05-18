@@ -1,4 +1,4 @@
--- Migration 010 — comment_items em slides
+-- Migration 010, comment_items em slides
 -- Cada slide passa a ter um manuscrito estruturado (sessions + items),
 -- na mesma forma de sermons.content. O campo `comment` (text) fica como fallback
 -- legado e pode ser usado em paralelo até o reorder completo.

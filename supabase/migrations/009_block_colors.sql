@@ -1,4 +1,4 @@
--- Migration 009 — block_color_preferences
+-- Migration 009, block_color_preferences
 -- Issue 026 · cores configuráveis por tipo de bloco, por usuário.
 -- Defaults vivem em src/lib/blocks/colors.ts; persistência aqui é override.
 

@@ -1,4 +1,4 @@
-# Issue 021 — Autenticação Supabase Auth
+# Issue 021, Autenticação Supabase Auth
 
 **Status:** [ ] PENDENTE
 **Tipo:** infra
@@ -15,13 +15,13 @@ login, cadastro, logout e proteção de rotas via middleware.
 
 ## Componentes Envolvidos
 
-- `src/app/(auth)/layout.tsx` — Layout do grupo de auth
-- `src/app/(auth)/login/page.tsx` — Página de login
-- `src/app/(auth)/register/page.tsx` — Página de cadastro
-- `src/app/(app)/layout.tsx` — Layout do grupo autenticado
-- `src/middleware.ts` — Proteção de rotas
-- `src/components/shared/AppHeader.tsx` — Botão de logout
-- `src/lib/supabase/actions.ts` — Server Actions de auth
+- `src/app/(auth)/layout.tsx`, Layout do grupo de auth
+- `src/app/(auth)/login/page.tsx`, Página de login
+- `src/app/(auth)/register/page.tsx`, Página de cadastro
+- `src/app/(app)/layout.tsx`, Layout do grupo autenticado
+- `src/middleware.ts`, Proteção de rotas
+- `src/components/shared/AppHeader.tsx`, Botão de logout
+- `src/lib/supabase/actions.ts`, Server Actions de auth
 
 ## Comportamentos
 

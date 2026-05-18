@@ -1,6 +1,6 @@
 "use client";
 
-// Apaga em definitivo — sem possibilidade de restaurar. Exige digitar o título
+// Apaga em definitivo, sem possibilidade de restaurar. Exige digitar o título
 // como confirmação (padrão de "destructive action" usado em GitHub, Vercel, etc).
 
 import { useState, useTransition } from "react";

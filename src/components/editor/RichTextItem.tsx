@@ -3,7 +3,7 @@
 // Editor rico baseado em TipTap para um item de sessão.
 // - Auto-grow nativo (sem rows, pretende ocupar o necessário).
 // - BubbleToolbar via @tiptap/extension-bubble-menu (oficial, mais robusto
-//   que portal manual — funciona em todos os blocos, posiciona certo, não
+//   que portal manual, funciona em todos os blocos, posiciona certo, não
 //   compete entre instâncias).
 // - SlashCommandMenu (manual) ao digitar "/".
 // - Suporte a cor do texto e highlight translúcido.
@@ -24,7 +24,7 @@ import { SlashCommandMenu } from "./SlashCommandMenu";
 interface RichTextItemProps {
   initialContent: string;
   placeholder?: string;
-  /** Tipo do bloco — usado pra escolher variante visual (citação, escritura). */
+  /** Tipo do bloco, usado pra escolher variante visual (citação, escritura). */
   variant?: "default" | "scripture";
   /** Versão bíblica para o BubbleMenu (botão Inserir versículo) */
   bibleVersion?: import("@/lib/bible/versions").BibleVersionId;
@@ -54,7 +54,7 @@ export function RichTextItem({
         autolink: true,
         HTMLAttributes: { rel: "noopener noreferrer", target: "_blank" },
       }),
-      // TextStyle precisa vir antes de Color — Color depende dele.
+      // TextStyle precisa vir antes de Color, Color depende dele.
       TextStyle,
       Color,
       Highlight.configure({ multicolor: true }),

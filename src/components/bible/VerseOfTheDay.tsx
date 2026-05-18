@@ -37,7 +37,7 @@ export function VerseOfTheDay({
     return () => controller.abort();
   }, [version]);
 
-  if (error) return null; // falha silenciosa — não desabilita o dashboard
+  if (error) return null; // falha silenciosa, não desabilita o dashboard
   if (!verse) {
     return (
       <Card>

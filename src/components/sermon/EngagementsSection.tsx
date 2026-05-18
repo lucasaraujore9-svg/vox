@@ -84,7 +84,7 @@ export function EngagementsSection({
           <h2 className="vox-h2 mt-2">Pregações</h2>
           <p className="vox-body text-sm mt-2 max-w-lg">
             Toda vez que pregar, palestrar ou dar a aula, registre como foi. Cria
-            memória ministerial — e melhora a próxima vez.
+            memória ministerial, e melhora a próxima vez.
           </p>
         </div>
         <Button onClick={openCreate}>+ Registrar pregação</Button>
@@ -131,8 +131,8 @@ export function EngagementsSection({
             <DialogDescription>
               {deletingEngagement?.location
                 ? `Pregação em ${deletingEngagement.location} (${new Date(
-                    deletingEngagement.preached_at + "T12:00:00"
-                  ).toLocaleDateString("pt-BR")}).`
+                  deletingEngagement.preached_at + "T12:00:00"
+                ).toLocaleDateString("pt-BR")}).`
                 : "Esse registro será removido permanentemente."}{" "}
               Essa ação não pode ser desfeita.
             </DialogDescription>
@@ -303,7 +303,7 @@ function EngagementDialog({
         setError(result.error);
         return;
       }
-      // Sucesso real (com Supabase) — atualiza lista local com o id retornado
+      // Sucesso real (com Supabase), atualiza lista local com o id retornado
       onSaved({
         id: result.id,
         preached_at: date,

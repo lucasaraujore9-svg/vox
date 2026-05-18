@@ -1,4 +1,4 @@
-# Issue 039 — Modo Apresentação de Slides: Behavior
+# Issue 039, Modo Apresentação de Slides: Behavior
 
 **Status:** [ ] PENDENTE
 **Tipo:** behavior
@@ -10,14 +10,14 @@
 
 ## O Que Fazer
 
-Implementar o `PresentModeSlides` — tela de apresentação para sermões do tipo `'apresentação'`.
+Implementar o `PresentModeSlides`, tela de apresentação para sermões do tipo `'apresentação'`.
 Layout split-screen: slide em tela cheia à esquerda + painel de comentários do apresentador à direita.
 
 ## Componentes Envolvidos
 
-- `src/app/(app)/sermons/[id]/present/page.tsx` — bifurca por `sermon.type`
-- `src/components/present/PresentModeSlides.tsx` — novo componente
-- `src/components/present/PresentModeEsboco.tsx` — existente (tipo esboço, inalterado)
+- `src/app/(app)/sermons/[id]/present/page.tsx`, bifurca por `sermon.type`
+- `src/components/present/PresentModeSlides.tsx`, novo componente
+- `src/components/present/PresentModeEsboco.tsx`, existente (tipo esboço, inalterado)
 
 ## Comportamentos
 
@@ -36,7 +36,7 @@ return <PresentModeEsboco sermon={sermon} blocks={sermon.content} />
 ```
 ┌──────────────────────────────┬─────────────────────┐
 │                              │  Slide 3 de 12      │
-│    [SLIDE ATUAL — 16:9]      │                     │
+│    [SLIDE ATUAL, 16:9]      │                     │
 │                              │  Comentários:       │
 │                              │  ─────────────      │
 │                              │  Texto do           │
@@ -48,7 +48,7 @@ return <PresentModeEsboco sermon={sermon} blocks={sermon.content} />
 └──────────────────────────────┴─────────────────────┘
 ```
 
-- Background: `--vox-stage-bg` (`#0B0F0D`) — modo escuro total
+- Background: `--vox-stage-bg` (`#0B0F0D`), modo escuro total
 - Painel esquerdo: slide 16:9 centralizado, máx largura `calc(100vw - 420px)`
 - Painel direito (400px fixo): comentários do apresentador
   - Fonte: Fraunces 600, tamanho configurável (28–48px)
@@ -67,7 +67,7 @@ return <PresentModeEsboco sermon={sermon} blocks={sermon.content} />
 - Slide counter: "3 / 12" Geist Mono, atualiza em tempo real
 
 ### Slide sem comentário
-- Exibe placeholder: "Sem notas para este slide" — Muted, centralizado
+- Exibe placeholder: "Sem notas para este slide", Muted, centralizado
 - Não exibe erro, apenas ausência elegante
 
 ### Modo Tela Cheia (slide only)
@@ -179,7 +179,7 @@ export function PresentModeSlides({ sermon, slides }: PresentModeSlidesProps) {
 
 ### Pré-requisitos
 - Issue 038 concluída (slides no Supabase com `image_url`)
-- Issue 033 concluída (modo apresentação básico — `PresentModeEsboco` existe)
+- Issue 033 concluída (modo apresentação básico, `PresentModeEsboco` existe)
 
 ### Passos
 

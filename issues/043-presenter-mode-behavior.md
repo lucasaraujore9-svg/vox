@@ -1,4 +1,4 @@
-# Issue 043 — Modo Apresentador: Behavior (Duas Janelas)
+# Issue 043, Modo Apresentador: Behavior (Duas Janelas)
 
 **Status:** [ ] PENDENTE
 **Tipo:** behavior
@@ -30,7 +30,7 @@ Ao escolher Modo Apresentador:
 4. Janela de projeção exibe apenas o slide atual, sem UI
 5. Sincronização via `BroadcastChannel('vox-presenter')`
 
-### BroadcastChannel — protocolo de mensagens
+### BroadcastChannel, protocolo de mensagens
 ```typescript
 type PresenterMessage =
   | { type: 'SLIDE_CHANGE'; index: number }
@@ -48,7 +48,7 @@ type PresenterMessage =
 - Ouve `SLIDE_DATA` → inicializa com os slides
 - Ouve `PRESENT_EXIT` → fecha a janela (`window.close()`)
 
-### Painel de controle — funcionalidades
+### Painel de controle, funcionalidades
 - Timer: inicia ao abrir, conta tempo de apresentação (`setInterval` de 1s)
 - Navegação: ← → e teclado (Space, Escape)
 - Preview do próximo slide
@@ -93,7 +93,7 @@ Caso o usuário não consiga abrir o popup, exibir:
 ## Notas de Implementação
 
 ```typescript
-// src/components/present/PresentModePresenter.tsx — channel setup
+// src/components/present/PresentModePresenter.tsx, channel setup
 const channel = new BroadcastChannel('vox-presenter')
 
 useEffect(() => {
@@ -107,7 +107,7 @@ function navigateTo(index: number) {
   channel.postMessage({ type: 'SLIDE_CHANGE', index })
 }
 
-// src/app/(app)/sermons/[id]/present/page.tsx — janela de projeção
+// src/app/(app)/sermons/[id]/present/page.tsx, janela de projeção
 // Se mode=projector: renderiza apenas a imagem, ouve BroadcastChannel
 if (searchParams.get('mode') === 'projector') {
   return <ProjectorView />

@@ -3,7 +3,7 @@
 //   <p>, <br>, <strong>/<b>, <em>/<i>, <u>, <s>, <h2>, <blockquote>,
 //   <ul>/<ol>/<li>, <a href>.
 //
-// Não é HTML completo — é o subconjunto que o editor produz. Para uso só
+// Não é HTML completo, é o subconjunto que o editor produz. Para uso só
 // nos builders de PDF/DOCX (rota /api/sermons/export).
 
 export interface Run {
@@ -58,7 +58,7 @@ export function htmlToParas(html: string): Para[] {
   const out: Para[] = [];
   // Pilha de paragrafos abertos (block-level)
   const stack: Array<{ kind: ParaKind; depth: number; closed: boolean }> = [];
-  // Lista atual (ul/ol) — afeta o "kind" dos <li>
+  // Lista atual (ul/ol), afeta o "kind" dos <li>
   const listStack: Array<"bullet" | "num"> = [];
   const state: ParseState = {
     bold: 0,
@@ -160,7 +160,7 @@ export function htmlToParas(html: string): Para[] {
           state.href = tok.attrs.href ?? null;
           break;
         case "span":
-          // Span sem semântica — não muda formatação.
+          // Span sem semântica, não muda formatação.
           break;
         default:
           // Outras tags abertas: ignora silenciosamente.
@@ -206,7 +206,7 @@ export function htmlToParas(html: string): Para[] {
       stack.pop();
     } else if (tok.kind === "void") {
       if (name === "br") {
-        // Quebra dentro do parágrafo atual — adiciona run de \n.
+        // Quebra dentro do parágrafo atual, adiciona run de \n.
         if (currentKind === null) currentKind = "p";
         currentRuns.push({ text: "\n" });
       }

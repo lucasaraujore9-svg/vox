@@ -1,4 +1,4 @@
-// New sermon — framework picker + outline scaffolding
+// New sermon, framework picker + outline scaffolding
 const NewSermon = ({ setScreen }) => {
   const [step, setStep] = React.useState(1); // 1 = framework, 2 = setup, 3 = outline preview
   const [framework, setFramework] = React.useState("expositivo");
@@ -52,7 +52,7 @@ const NewSermon = ({ setScreen }) => {
       {/* Stepper */}
       <Stepper step={step} />
 
-      {/* Step 1 — framework picker */}
+      {/* Step 1, framework picker */}
       {step === 1 && (
         <FrameworkPicker
           frameworks={frameworks}
@@ -61,7 +61,7 @@ const NewSermon = ({ setScreen }) => {
         />
       )}
 
-      {/* Step 2 — sermon details */}
+      {/* Step 2, sermon details */}
       {step === 2 && (
         <DetailsForm
           fw={fw}
@@ -72,7 +72,7 @@ const NewSermon = ({ setScreen }) => {
         />
       )}
 
-      {/* Step 3 — outline preview */}
+      {/* Step 3, outline preview */}
       {step === 3 && (
         <OutlinePreview fw={fw} title={title} ref_={ref} />
       )}
@@ -284,7 +284,7 @@ const DetailsForm = ({ fw, title, setTitle, ref_, setRef, series, setSeries, dat
       <Field label="Referência bíblica" hint="Use travessão para faixa de versículos.">
         <input
           className="input"
-          placeholder="ex: Lucas 18:1—8"
+          placeholder="ex: Lucas 18:1,8"
           value={ref_}
           onChange={e => setRef(e.target.value)}
           style={{ fontFamily: "var(--font-mono)" }}
@@ -364,7 +364,7 @@ const OutlinePreview = ({ fw, title, ref_ }) => {
           {title || <span style={{ color: "var(--muted)" }}>Manuscrito sem título</span>}
         </h2>
         <span className="mono" style={{ color: "var(--gold)", fontSize: 13, letterSpacing: 0.2 }}>
-          {ref_ || "—"}
+          {ref_ || ","}
         </span>
         <div style={{ flex: 1 }} />
         <div style={{ paddingTop: 14, borderTop: "1px dashed var(--whisper-strong)" }}>

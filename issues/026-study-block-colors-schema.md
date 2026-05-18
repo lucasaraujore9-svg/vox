@@ -1,4 +1,4 @@
-# Issue 026 — Schema: Estudo Guiado + Cores dos Blocos
+# Issue 026, Schema: Estudo Guiado + Cores dos Blocos
 
 **Status:** [ ] PENDENTE
 **Tipo:** infra
@@ -16,14 +16,14 @@ dos módulos de estudo disponíveis.
 
 ## Componentes Envolvidos
 
-- `supabase/migrations/008_study.sql` — tabelas de estudo
-- `supabase/migrations/009_block_colors.sql` — preferências de cores
-- `supabase/seed/study_modules.sql` — seed dos módulos iniciais
-- `src/types/database.ts` — regenerar após migrations
+- `supabase/migrations/008_study.sql`, tabelas de estudo
+- `supabase/migrations/009_block_colors.sql`, preferências de cores
+- `supabase/seed/study_modules.sql`, seed dos módulos iniciais
+- `src/types/database.ts`, regenerar após migrations
 
 ## SQL
 
-### Migration 008 — study_modules + study_sessions
+### Migration 008, study_modules + study_sessions
 
 ```sql
 -- supabase/migrations/008_study.sql
@@ -72,7 +72,7 @@ create index study_sessions_user_idx on study_sessions(user_id);
 create index study_sessions_module_idx on study_sessions(module_id);
 ```
 
-### Migration 009 — block_color_preferences
+### Migration 009, block_color_preferences
 
 ```sql
 -- supabase/migrations/009_block_colors.sql
@@ -92,7 +92,7 @@ create policy "Usuário gerencia próprias cores"
 create index block_colors_user_idx on block_color_preferences(user_id);
 ```
 
-### Seed — Módulos de Estudo Iniciais
+### Seed, Módulos de Estudo Iniciais
 
 ```sql
 -- supabase/seed/study_modules.sql
@@ -128,17 +128,17 @@ insert into public.study_modules (title, description, category, estimated_hours,
 - [ ] Migration 009 aplicada sem erro
 - [ ] RLS: estudo_modules legível por qualquer autenticado, só admins escrevem
 - [ ] RLS: study_sessions acessível só pelo próprio usuário
-- [ ] Seed executado — 6 módulos disponíveis
+- [ ] Seed executado, 6 módulos disponíveis
 - [ ] `block_color_preferences`: check constraint valida formato hex
 - [ ] Tipos gerados atualizados
 
 ## Notas
 
-- `study_modules` é seed do sistema — não há interface admin no MVP para criar módulos
+- `study_modules` é seed do sistema, não há interface admin no MVP para criar módulos
 - `study_sessions.notes_content` usa JSONB com a mesma estrutura de blocos de `sermons.content`
 - Futuramente, `study_modules` pode ter `sessions_content` (JSONB com o conteúdo de cada sessão)
-  — no MVP, o conteúdo das sessões pode ser hardcoded no front como constantes TypeScript
-- `block_color_preferences` armazena apenas as cores **modificadas** — o sistema busca o default
+ , no MVP, o conteúdo das sessões pode ser hardcoded no front como constantes TypeScript
+- `block_color_preferences` armazena apenas as cores **modificadas**, o sistema busca o default
   para blocos não presentes na tabela (lógica no `useBlockColors` hook)
 
 ## Plano de Implementação

@@ -37,10 +37,10 @@ const STATUS_LABEL: Record<MockSermon["status"], string> = {
 };
 
 function formatDate(iso: string | null, withTime = false): string {
-  if (!iso) return "—";
+  if (!iso) return ",";
   try {
     const d = new Date(iso.length === 10 ? iso + "T12:00:00" : iso);
-    if (Number.isNaN(d.getTime())) return "—";
+    if (Number.isNaN(d.getTime())) return ",";
     return d.toLocaleDateString("pt-BR", {
       day: "2-digit",
       month: "long",
@@ -48,7 +48,7 @@ function formatDate(iso: string | null, withTime = false): string {
       ...(withTime ? { hour: "2-digit", minute: "2-digit" } : {}),
     });
   } catch {
-    return "—";
+    return ",";
   }
 }
 
@@ -86,7 +86,7 @@ export function MetadataDialog({
             {sermon.bible_ref ? (
               <span className="vox-ref">{sermon.bible_ref}</span>
             ) : (
-              "—"
+              ","
             )}
           </Row>
           {sermon.bible_book ? <Row label="Livro">{sermon.bible_book}</Row> : null}

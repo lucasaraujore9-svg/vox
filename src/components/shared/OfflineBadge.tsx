@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 export function OfflineBadge({ className }: { className?: string }) {
   const { isOnline, isSyncing } = useOfflineSync();
-  // Evita mismatch SSR/CSR — só renderiza após montar no client
+  // Evita mismatch SSR/CSR, só renderiza após montar no client
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 

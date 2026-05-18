@@ -34,7 +34,7 @@ const SECTIONS: Section[] = [
           <p>
             VOX é uma ferramenta pastoral pra preparar, entregar e arquivar
             sermões, palestras e aulas. O diferencial são os frameworks
-            homiléticos — templates guiados que ajudam você a estruturar a
+            homiléticos, templates guiados que ajudam você a estruturar a
             comunicação sem ter que partir do zero.
           </p>
         ),
@@ -54,9 +54,9 @@ const SECTIONS: Section[] = [
         q: "Qual a diferença entre esboço e apresentação?",
         a: (
           <p>
-            <strong>Esboço</strong> é texto estruturado em blocos — ideal pra
+            <strong>Esboço</strong> é texto estruturado em blocos, ideal pra
             preparar e usar no púlpito (modo teleprompter).{" "}
-            <strong>Apresentação</strong> é uma sequência de slides PDF — ideal
+            <strong>Apresentação</strong> é uma sequência de slides PDF, ideal
             pra projetar em telas. Os dois modos podem coexistir num mesmo
             sermão.
           </p>
@@ -93,7 +93,7 @@ const SECTIONS: Section[] = [
               lugar do app pra abrir a busca rápida.
             </p>
             <p className="mt-2">
-              O editor sugere o texto da passagem em tempo real — escolha a
+              O editor sugere o texto da passagem em tempo real, escolha a
               versão (NVI, ARC, ARA, etc.) na barra de ferramentas.
             </p>
           </>
@@ -147,7 +147,7 @@ const SECTIONS: Section[] = [
         a: (
           <p>
             Pode. Abra o menu de ações (...) no topo do editor e escolha
-            <em> Trocar framework</em>. O conteúdo dos blocos é preservado —
+            <em> Trocar framework</em>. O conteúdo dos blocos é preservado,
             apenas os rótulos e dicas mudam.
           </p>
         ),
@@ -199,7 +199,7 @@ const SECTIONS: Section[] = [
         a: (
           <ul className="space-y-2 list-disc pl-5">
             <li>
-              <strong>Teleprompter:</strong> texto do esboço rolando — ideal
+              <strong>Teleprompter:</strong> texto do esboço rolando, ideal
               pra você ler discretamente do tablet/celular.
             </li>
             <li>
@@ -207,7 +207,7 @@ const SECTIONS: Section[] = [
               o público vê no projetor.
             </li>
             <li>
-              <strong>Apresentador:</strong> duas janelas — uma com o slide
+              <strong>Apresentador:</strong> duas janelas, uma com o slide
               atual pro público, outra com próximo slide + comentários só
               pra você.
             </li>
@@ -220,7 +220,7 @@ const SECTIONS: Section[] = [
           <p>
             Conecte o projetor (ou outra tela) ao seu computador. Inicie a
             apresentação no modo <em>Apresentador</em>. O app abre uma janela
-            secundária com o slide do público — arraste essa janela pra tela
+            secundária com o slide do público, arraste essa janela pra tela
             do projetor e coloque em tela cheia. As duas janelas ficam
             sincronizadas automaticamente.
           </p>
@@ -256,7 +256,7 @@ const SECTIONS: Section[] = [
         q: "Pra que servem os Cursos?",
         a: (
           <p>
-            Cursos agrupam várias aulas numa sequência intencional — pra
+            Cursos agrupam várias aulas numa sequência intencional, pra
             ensino bíblico, treinamento de líderes, escola dominical etc.
             Cada aula é um conteúdo do tipo <em>Aula</em> em{" "}
             <Link href="/sermons" className="text-vox-forest underline-offset-4 hover:underline">Esboços</Link>;
@@ -269,7 +269,7 @@ const SECTIONS: Section[] = [
         a: (
           <p>
             <strong>Curso</strong> é pra quando você ensina pra alguém.{" "}
-            <strong>Estudo Guiado</strong> é pra quando você estuda — anotações
+            <strong>Estudo Guiado</strong> é pra quando você estuda, anotações
             pessoais sobre um livro, tema ou passagem, organizadas em
             sessões com blocos. Pense num módulo de estudo como um caderno
             estruturado de devocionais.
@@ -309,7 +309,7 @@ const SECTIONS: Section[] = [
         a: (
           <p>
             Sim. Em celulares e tablets, use a opção <em>Adicionar à tela
-            inicial</em> do navegador. No desktop, Chrome e Edge oferecem
+              inicial</em> do navegador. No desktop, Chrome e Edge oferecem
             o ícone de <em>Instalar app</em> na barra de endereço.
           </p>
         ),
@@ -324,7 +324,7 @@ const SECTIONS: Section[] = [
         q: "Como crio uma conta?",
         a: (
           <p>
-            O VOX é por convite — não há cadastro público. Se você quer
+            O VOX é por convite, não há cadastro público. Se você quer
             acesso, deixe seu interesse em{" "}
             <Link href="/auth/register" className="text-vox-forest underline-offset-4 hover:underline">
               /auth/register
@@ -341,7 +341,7 @@ const SECTIONS: Section[] = [
             Se você é administrador da plataforma, pode criar contas e
             converter solicitações de interesse em usuários ativos. Veja
             <em> Administração → Usuários</em> no menu do seu avatar.
-            Usuários comuns ainda não podem convidar diretamente — esse
+            Usuários comuns ainda não podem convidar diretamente, esse
             recurso está no roadmap.
           </p>
         ),
@@ -351,7 +351,7 @@ const SECTIONS: Section[] = [
         a: (
           <p>
             Sim. Cada usuário só vê o próprio conteúdo. O acesso é
-            protegido por <em>Row Level Security</em> no banco — isso é
+            protegido por <em>Row Level Security</em> no banco, isso é
             aplicado pelo servidor, não pelo cliente, então não há como
             burlar pela URL ou pelo navegador.
           </p>
@@ -422,7 +422,7 @@ export default function HelpPage() {
         <p className="vox-body mt-3">
           Tudo o que você precisa saber pra preparar, entregar e arquivar
           mensagens com o VOX. Se algo aqui não responder, fale com quem
-          te convidou — esta página substitui suporte humano genérico.
+          te convidou, esta página substitui suporte humano genérico.
         </p>
       </header>
 
@@ -495,7 +495,7 @@ export default function HelpPage() {
         <p className="vox-body mt-2 text-sm">
           Se você é pastor e precisa de ajuda específica, fale com quem te
           convidou pro VOX. Pra problemas técnicos urgentes, descreva o
-          que aconteceu e em qual tela — quanto mais detalhado, mais rápido
+          que aconteceu e em qual tela, quanto mais detalhado, mais rápido
           a solução chega.
         </p>
       </footer>

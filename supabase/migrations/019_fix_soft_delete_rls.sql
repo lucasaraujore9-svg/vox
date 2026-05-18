@@ -1,9 +1,9 @@
--- Migration 019 — corrige RLS pra permitir soft delete via UPDATE
+-- Migration 019, corrige RLS pra permitir soft delete via UPDATE
 --
 -- Problema: a SELECT policy `(auth.uid() = user_id AND deleted_at IS NULL)`
 -- combinada com o supabase-js (que usa `Prefer: return=representation`) faz
 -- com que UPDATEs que setam `deleted_at = now()` retornem o erro
--- "new row violates row-level security policy" — o PostgREST verifica a row
+-- "new row violates row-level security policy", o PostgREST verifica a row
 -- retornada contra a SELECT policy e a row "nova" não passa mais.
 --
 -- Solução: remove o filtro `deleted_at IS NULL` da SELECT policy. O filtro

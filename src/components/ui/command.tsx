@@ -59,7 +59,7 @@ function CommandDialog({
         )}
         showCloseButton={showCloseButton}
       >
-        {/* cmdk requer um <Command> em volta de Input/List/etc. — sem ele,
+        {/* cmdk requer um <Command> em volta de Input/List/etc., sem ele,
            CommandPrimitive.Input quebra com "Command must be used within Command Provider"
            e o atalho ⌘B vira um erro de runtime. */}
         <Command className="bg-transparent">{children}</Command>

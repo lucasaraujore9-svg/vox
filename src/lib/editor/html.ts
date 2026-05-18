@@ -38,12 +38,12 @@ export function previewSnippet(content: string, max = 80): string {
  * Sanitização mínima para `dangerouslySetInnerHTML`. Permite só a whitelist de
  * tags geradas pelo TipTap. Remove <script>, <iframe>, on*-handlers e
  * javascript: em hrefs. Suficiente para conteúdo escrito pelo próprio dono
- * sob RLS — não é defesa contra atacante criando conteúdo cross-account.
+ * sob RLS, não é defesa contra atacante criando conteúdo cross-account.
  */
 export function safeHtml(html: string): string {
   if (!html) return "";
   if (!isHtmlContent(html)) {
-    // Texto puro com possíveis newlines — preserva como parágrafos.
+    // Texto puro com possíveis newlines, preserva como parágrafos.
     return html
       .split(/\n{2,}/)
       .map((p) => `<p>${escapeHtml(p).replace(/\n/g, "<br>")}</p>`)

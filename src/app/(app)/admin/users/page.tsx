@@ -22,7 +22,7 @@ export default async function AdminUsersPage() {
           <p className="vox-eyebrow">Administração</p>
           <h1 className="vox-h1 mt-3">Usuários</h1>
           <p className="vox-body mt-3 max-w-xl">
-            Apenas administradores gerenciam contas. O sistema é por convite —
+            Apenas administradores gerenciam contas. O sistema é por convite,
             ninguém se cadastra sozinho. Use também a página de{" "}
             <Link href="/admin/interests" className="text-vox-forest underline-offset-4 hover:underline">
               interesses

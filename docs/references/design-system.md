@@ -1,6 +1,6 @@
-# VOX — Design System
+# VOX, Design System
 
-> **Fonte da verdade:** `design-system/colors_and_type.css` — importe este arquivo como
+> **Fonte da verdade:** `design-system/colors_and_type.css`, importe este arquivo como
 > o PRIMEIRO stylesheet em qualquer novo componente ou artifact.
 >
 > **Brandbook completo:** `design-system/BRANDBOOK.md`
@@ -15,7 +15,7 @@
 removendo fricção do manuscrito. Nada na marca deve parecer comercial, gamificado,
 marketing evangélico, ou AI-flashy.
 
-**Referência visual:** A gravidade de um diário de couro impresso em Garamond —
+**Referência visual:** A gravidade de um diário de couro impresso em Garamond,
 com a responsividade de um software de escrita contemporâneo.
 
 **Personalidade:** Ministerial, quieto, editorial, cuidadoso, durável.
@@ -72,8 +72,8 @@ design-system/
 | `--vox-ink` | `#18181B` | Charcoal | Texto primário. NUNCA preto puro. |
 | `--vox-prose` | `#4B5563` | Slate Prose | Body, descrições |
 | `--vox-muted` | `#9CA3AF` | Muted Sage | Captions, metadata |
-| `--vox-whisper` | `rgba(226,232,240,0.7)` | — | Bordas hairline |
-| `--vox-whisper-strong` | `rgba(180,188,200,0.65)` | — | Bordas fortes, divisores |
+| `--vox-whisper` | `rgba(226,232,240,0.7)` |, | Bordas hairline |
+| `--vox-whisper-strong` | `rgba(180,188,200,0.65)` |, | Bordas fortes, divisores |
 
 ### Acentos Primários
 
@@ -81,17 +81,17 @@ design-system/
 |-----------|-----|------|-----|
 | `--vox-forest` | `#166534` | Forest Deep | Botões, active state, acento principal |
 | `--vox-forest-mid` | `#15803D` | Forest Mid | Hover |
-| `--vox-forest-soft` | `rgba(22,101,52,0.08)` | — | Tint de hover em ghost |
-| `--vox-forest-tint` | `rgba(22,101,52,0.14)` | — | Seleção de texto |
+| `--vox-forest-soft` | `rgba(22,101,52,0.08)` |, | Tint de hover em ghost |
+| `--vox-forest-tint` | `rgba(22,101,52,0.14)` |, | Seleção de texto |
 
 ### Acento Secundário
 
 | Token CSS | Hex | Nome | Uso |
 |-----------|-----|------|-----|
 | `--vox-gold` | `#B45309` | Scripture Gold | Referências bíblicas, autoridade |
-| `--vox-gold-soft` | `rgba(180,83,9,0.10)` | — | Tint do gold |
+| `--vox-gold-soft` | `rgba(180,83,9,0.10)` |, | Tint do gold |
 
-### Cores de Framework (conjunto fechado — não adicionar novas)
+### Cores de Framework (conjunto fechado, não adicionar novas)
 
 | Framework | Token CSS | Hex | Uso |
 |-----------|-----------|-----|-----|
@@ -109,9 +109,9 @@ design-system/
 
 | Token CSS | Hex | Uso |
 |-----------|-----|-----|
-| `--vox-destructive` | `#E11D48` | Deep Rose — erro, deletar |
-| `--vox-success` | `#10B981` | Emerald — confirmação |
-| `--vox-info` | `#0D7C7C` | Teal — informação |
+| `--vox-destructive` | `#E11D48` | Deep Rose, erro, deletar |
+| `--vox-success` | `#10B981` | Emerald, confirmação |
+| `--vox-info` | `#0D7C7C` | Teal, informação |
 
 ---
 
@@ -189,14 +189,14 @@ design-system/
 | `--vox-r-card` | 12px | Cards |
 | `--vox-r-pill` | 999px | Filter chips, progress bars |
 
-**Peso de borda:** 1.5px (não 1px) em inputs e botões proeminentes — dá autoridade de letterpress.
-**Borda de card:** `1px solid var(--vox-whisper)` — whisper, não declaração.
+**Peso de borda:** 1.5px (não 1px) em inputs e botões proeminentes, dá autoridade de letterpress.
+**Borda de card:** `1px solid var(--vox-whisper)`, whisper, não declaração.
 
 ---
 
 ## Sombras
 
-Todas têm undertone verde — leia como "papel sobre madeira", não vidro flutuante.
+Todas têm undertone verde, leia como "papel sobre madeira", não vidro flutuante.
 
 | Token | Valor | Uso |
 |-------|-------|-----|
@@ -264,7 +264,7 @@ Hint de atalho de teclado.
 
 ---
 
-## Frameworks Homiléticos — Dados Completos
+## Frameworks Homiléticos, Dados Completos
 
 > **Fonte:** `design-system/vox/data.js` → `VOX_DATA.FRAMEWORKS`
 
@@ -279,7 +279,7 @@ Hint de atalho de teclado.
 
 ---
 
-## Tipos de Bloco do Editor — Cores e Hints
+## Tipos de Bloco do Editor, Cores e Hints
 
 > **Fonte:** `design-system/vox/data.js` → `VOX_DATA.BLOCK_TYPES`
 
@@ -312,7 +312,7 @@ Hint de atalho de teclado.
 
 **Casing:** Title Case para títulos de tela. **Sentence case** para todos os labels, botões e campos.
 **Pronomes:** `você` (formal-warm). Nunca `tu`.
-**Referências bíblicas:** Em-dash para intervalos: `Romanos 5:1—11`. Nunca hífen simples.
+**Referências bíblicas:** Em-dash para intervalos: `Romanos 5:1,11`. Nunca hífen simples.
 **Abreviações de versões:** ACF, ARA, NVI, NAA.
 
 **Palavras banidas:** `Elevate` · `Seamless` · `Transform` · `Next-gen` · `Unlock` · `Empower` · `Magic` · `AI-powered`
@@ -323,16 +323,16 @@ Hint de atalho de teclado.
 
 ## Regras Inegociáveis do Design
 
-1. **Nunca preto puro** (`#000000`) — sempre `--vox-ink` (`#18181B`)
-2. **Nunca branco puro como background** — sempre `--vox-bg` (`#F9F7F4`)
-3. **Nunca AI-purple/violeta neon** — violet só como `--vox-fw-narrativo` (`#6D28D9`) em badges
-4. **Nunca emoji** — iconografia stroke SVG apenas
-5. **Nunca imagens religiosas clichê** — sem cruzes, pombas, raios de luz
-6. **Nunca 3 cards iguais em linha** — usar bento grid assimétrico
-7. **Nunca hero centralizado** — split-screen ou left-aligned
-8. **Nunca Inter** — Fraunces (display) ou Geist (UI)
-9. **Máximo 1 cor de acento por contexto** — Forest Deep OU Gold
-10. **Sombras com undertone verde** — nunca sombras cinzas frias ou glass
+1. **Nunca preto puro** (`#000000`), sempre `--vox-ink` (`#18181B`)
+2. **Nunca branco puro como background**, sempre `--vox-bg` (`#F9F7F4`)
+3. **Nunca AI-purple/violeta neon**, violet só como `--vox-fw-narrativo` (`#6D28D9`) em badges
+4. **Nunca emoji**, iconografia stroke SVG apenas
+5. **Nunca imagens religiosas clichê**, sem cruzes, pombas, raios de luz
+6. **Nunca 3 cards iguais em linha**, usar bento grid assimétrico
+7. **Nunca hero centralizado**, split-screen ou left-aligned
+8. **Nunca Inter**, Fraunces (display) ou Geist (UI)
+9. **Máximo 1 cor de acento por contexto**, Forest Deep OU Gold
+10. **Sombras com undertone verde**, nunca sombras cinzas frias ou glass
 
 ---
 
@@ -369,7 +369,7 @@ body {
 }
 ```
 
-### `next.config.ts` — fontes
+### `next.config.ts`, fontes
 ```typescript
 // src/app/layout.tsx
 import { Fraunces, Geist, Geist_Mono } from 'next/font/google'

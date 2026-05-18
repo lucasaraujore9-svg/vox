@@ -1,4 +1,4 @@
-// VOX — icons + small primitives. No emoji. Stroke-based, 1.6 width.
+// VOX, icons + small primitives. No emoji. Stroke-based, 1.6 width.
 const VoxIcon = ({ name, className = "", size }) => {
   const cls = "icon " + className;
   const style = size ? { width: size, height: size } : undefined;
@@ -65,7 +65,7 @@ const VoxIcon = ({ name, className = "", size }) => {
   }
 };
 
-// Wordmark — VOX in Fraunces with a small dot
+// Wordmark, VOX in Fraunces with a small dot
 const VoxMark = ({ size = 22, color = "var(--ink)", subtle = false }) => (
   <span
     className="display"
@@ -127,9 +127,9 @@ const FrameworkBadge = ({ framework, size = "md" }) => {
 
 const Status = ({ status }) => {
   const map = {
-    published:   { label: "Pregado",      color: "var(--prose)",   bg: "rgba(75,85,99,0.08)" },
-    drafting:    { label: "Em rascunho",  color: "var(--forest)",  bg: "var(--forest-soft)" },
-    draft:       { label: "Esboço",       color: "var(--gold)",    bg: "var(--gold-soft)" },
+    published: { label: "Pregado", color: "var(--prose)", bg: "rgba(75,85,99,0.08)" },
+    drafting: { label: "Em rascunho", color: "var(--forest)", bg: "var(--forest-soft)" },
+    draft: { label: "Esboço", color: "var(--gold)", bg: "var(--gold-soft)" },
   };
   const s = map[status] || map.draft;
   return (

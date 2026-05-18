@@ -1,4 +1,4 @@
--- Migration 017 — Arquivamento de sermões
+-- Migration 017, Arquivamento de sermões
 -- `archived_at` é uma camada separada da lixeira (`deleted_at`):
 --   - archived_at != null: visível em /sermons?view=arquivo, restaurável, com opção
 --     de "apagar permanentemente" (DELETE definitivo).

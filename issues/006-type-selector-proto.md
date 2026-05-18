@@ -1,4 +1,4 @@
-# Issue 006 — Seletor de Tipo (Esboço vs Apresentação) UI Proto
+# Issue 006, Seletor de Tipo (Esboço vs Apresentação) UI Proto
 
 **Status:** [ ] PENDENTE
 **Tipo:** proto
@@ -18,26 +18,26 @@ a configuração de slides (Step 2B).
 
 ## Componentes Envolvidos
 
-- `src/app/(app)/sermons/new/page.tsx` — atualizar para incluir Step 0 (tipo)
-- `src/components/sermon/TypePicker.tsx` — novo componente
+- `src/app/(app)/sermons/new/page.tsx`, atualizar para incluir Step 0 (tipo)
+- `src/components/sermon/TypePicker.tsx`, novo componente
 
-## Comportamentos (proto — apenas visual)
+## Comportamentos (proto, apenas visual)
 
 - Dois cards grandes lado a lado (desktop) ou empilhados (mobile)
 - **Card Esboço Guia:**
-  - Ícone: `feather` (VoxIcon) — metáfora de manuscrito
+  - Ícone: `feather` (VoxIcon), metáfora de manuscrito
   - Título: "Esboço Guia" Fraunces 600 22px
   - Descrição Geist 400 14px Slate: "Escreva seu sermão por blocos, com estrutura definida por um framework homilético."
   - Badge badge "Para manuscritos" Slate
   - Visualização mini: 3 blocos empilhados com labels (Introdução / Ponto Principal / Conclusão)
 - **Card Apresentação:**
-  - Ícone: `present` (VoxIcon) — metáfora de slides
+  - Ícone: `present` (VoxIcon), metáfora de slides
   - Título: "Apresentação" Fraunces 600 22px
   - Descrição Geist 400 14px Slate: "Importe seus slides (PDF, PPT ou Google Slides) e adicione comentários para cada slide."
   - Badge "Para slides" Teal
   - Visualização mini: 3 miniaturas de slide empilhadas horizontalmente com ícone de comentário
 - Seleção: borda Forest Deep 2px + tint forest-soft + checkmark no canto superior direito
-- Botão "Continuar →" — desabilitado até seleção, Forest Deep após seleção
+- Botão "Continuar →", desabilitado até seleção, Forest Deep após seleção
 - Progress breadcrumb no topo: passo 1 de N
 
 ## Critério de Aceite
@@ -64,7 +64,7 @@ interface TypePickerProps {
 - Usar `VoxIcon` de `design-system/vox/primitives.jsx`
 - Cards com `role="radio"` e `aria-checked` para acessibilidade
 - Estado local com `useState<SermonType | null>(null)`
-- A preview mini dos cards é decorativa — usar elementos CSS simples (divs com border)
+- A preview mini dos cards é decorativa, usar elementos CSS simples (divs com border)
 
 ## Plano de Implementação
 
@@ -93,7 +93,7 @@ Editar `src/app/(app)/sermons/new/page.tsx`:
 - `onChange` captura o tipo; botão Continuar chama `onContinue(selectedType)`
 
 **4. Responsividade**
-- Desktop: `flex-row gap-6`; mobile: `flex-col` — via Tailwind `sm:flex-row`
+- Desktop: `flex-row gap-6`; mobile: `flex-col`, via Tailwind `sm:flex-row`
 
 ### Como Verificar
 - Acessar `/sermons/new`, ver dois cards renderizados

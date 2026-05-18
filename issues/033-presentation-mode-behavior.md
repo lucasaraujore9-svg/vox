@@ -1,4 +1,4 @@
-# Issue 033 — Modo Apresentação Funcional
+# Issue 033, Modo Apresentação Funcional
 
 **Status:** [ ] PENDENTE
 **Tipo:** behavior
@@ -15,11 +15,11 @@ implementar as APIs do browser: Fullscreen, Wake Lock e navegação por teclado.
 
 ## Componentes Envolvidos
 
-- `src/app/(app)/sermons/[id]/present/page.tsx` — Carrega dados reais
-- `src/components/present/PresentationMode.tsx` — Lógica real
-- `src/hooks/useWakeLock.ts` — Hook para Wake Lock API
-- `src/hooks/useFullscreen.ts` — Hook para Fullscreen API
-- `src/hooks/useKeyboardNav.ts` — Hook para navegação por teclado
+- `src/app/(app)/sermons/[id]/present/page.tsx`, Carrega dados reais
+- `src/components/present/PresentationMode.tsx`, Lógica real
+- `src/hooks/useWakeLock.ts`, Hook para Wake Lock API
+- `src/hooks/useFullscreen.ts`, Hook para Fullscreen API
+- `src/hooks/useKeyboardNav.ts`, Hook para navegação por teclado
 
 ## Comportamentos
 
@@ -45,7 +45,7 @@ implementar as APIs do browser: Fullscreen, Wake Lock e navegação por teclado.
 - Ao chegar no último bloco: botão ▶ desabilita
 
 ### Conteúdo offline
-- Bloco usa conteúdo já carregado (Server Component) — funciona offline após carregado
+- Bloco usa conteúdo já carregado (Server Component), funciona offline após carregado
 
 ## Critério de Aceite
 

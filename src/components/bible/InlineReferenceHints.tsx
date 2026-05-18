@@ -1,6 +1,6 @@
 "use client";
 
-// Componente "live" — recebe o texto atual de um item, detecta referências
+// Componente "live", recebe o texto atual de um item, detecta referências
 // bíblicas com debounce, e renderiza uma pílula ReferenceHint pra cada uma.
 
 import { useEffect, useMemo, useState } from "react";
@@ -14,7 +14,7 @@ const DEBOUNCE_MS = 350;
 interface InlineReferenceHintsProps {
   text: string;
   version: BibleVersionId;
-  /** Referências canônicas já dispensadas/inseridas pelo usuário —
+  /** Referências canônicas já dispensadas/inseridas pelo usuário,
       persistidas no item.dismissedRefs. */
   dismissed?: string[];
   /** Notifica o pai para persistir o dismiss (na decisão do usuário ou
@@ -33,7 +33,7 @@ export function InlineReferenceHints({
   onInsert,
   className,
 }: InlineReferenceHintsProps) {
-  // Debounce — só re-analisa o texto após parada
+  // Debounce, só re-analisa o texto após parada
   const [debounced, setDebounced] = useState(text);
   useEffect(() => {
     const t = setTimeout(() => setDebounced(text), DEBOUNCE_MS);
@@ -47,7 +47,7 @@ export function InlineReferenceHints({
     return Array.from(new Set(refs.map((r) => r.canonical)));
   }, [debounced]);
 
-  // Limpa do dismissed as refs que SUMIRAM do texto — assim, se o usuário
+  // Limpa do dismissed as refs que SUMIRAM do texto, assim, se o usuário
   // apagar e digitar de novo, o hint reaparece (regra explícita do produto).
   useEffect(() => {
     if (!onDismissedChange) return;

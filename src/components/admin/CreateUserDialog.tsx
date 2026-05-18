@@ -242,7 +242,7 @@ export function CreateUserDialog({
                   </Button>
                 </div>
                 <p className="text-xs text-vox-muted">
-                  Senha gerada automaticamente — anote ou copie depois de criar.
+                  Senha gerada automaticamente, anote ou copie depois de criar.
                 </p>
               </div>
               <div className="space-y-2">

@@ -1,4 +1,4 @@
-# Issue 034 — Importação de Sermões
+# Issue 034, Importação de Sermões
 
 **Status:** [ ] PENDENTE
 **Tipo:** behavior
@@ -15,9 +15,9 @@ Implementar a importação de sermões existentes via upload de arquivo
 
 ## Componentes Envolvidos
 
-- `src/app/(app)/import/page.tsx` — Página de importação
-- `src/app/api/sermons/import/route.ts` — Route Handler para processar arquivo
-- `src/components/sermon/ImportForm.tsx` — Formulário de importação
+- `src/app/(app)/import/page.tsx`, Página de importação
+- `src/app/api/sermons/import/route.ts`, Route Handler para processar arquivo
+- `src/components/sermon/ImportForm.tsx`, Formulário de importação
 
 ## Comportamentos
 
@@ -99,7 +99,7 @@ Criar `src/app/api/sermons/import/route.ts`:
 
 **2. Criar ImportForm**
 Criar `src/components/sermon/ImportForm.tsx`:
-- `"use client"` — estado: `extractedText`, `title`, `bibleRef`, `isLoading`, `error`
+- `"use client"`, estado: `extractedText`, `title`, `bibleRef`, `isLoading`, `error`
 - Aba 1 (Upload): `<input type="file" accept=".docx,.txt">` com drag-and-drop zone visual
 - Aba 2 (Colar): `<textarea>` grande (min 200px)
 - Ao selecionar arquivo ou confirmar cola: POST para `/api/sermons/import` → salvar `extractedText`

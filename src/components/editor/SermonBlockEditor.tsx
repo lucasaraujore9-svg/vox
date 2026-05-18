@@ -1,4 +1,4 @@
-// Issue 031 — Editor de bloco com TipTap real (substitui o <textarea> do proto).
+// Issue 031, Editor de bloco com TipTap real (substitui o <textarea> do proto).
 // Auto-save é responsabilidade do componente pai (useAutoSave).
 
 "use client";

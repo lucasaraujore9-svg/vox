@@ -1,6 +1,6 @@
 // Renderiza o conteúdo de um item (HTML do TipTap ou texto puro legado).
 // Aplica estilos via inline style e classe `vox-present-content` que
-// uniformiza headings, parágrafos, blockquote, listas — herda fonte/tamanho
+// uniformiza headings, parágrafos, blockquote, listas, herda fonte/tamanho
 // do container.
 
 import { safeHtml } from "@/lib/editor/html";

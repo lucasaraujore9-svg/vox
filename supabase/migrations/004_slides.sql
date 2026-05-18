@@ -1,4 +1,4 @@
--- Migration 004 — slides + storage policies
+-- Migration 004, slides + storage policies
 -- Issue 024 · slides relacionados a sermons type='apresentação'
 
 create table if not exists public.slides (

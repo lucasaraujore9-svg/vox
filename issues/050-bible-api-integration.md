@@ -1,4 +1,4 @@
-# Issue 050 — API.Bible Integration
+# Issue 050, API.Bible Integration
 
 **Status:** [ ] PENDENTE
 **Tipo:** integration
@@ -15,10 +15,10 @@ busca por texto, suporte a traduções e tratamento de erros.
 
 ## Componentes Envolvidos
 
-- `src/lib/bible/client.ts` — Wrapper da API.Bible
-- `src/lib/bible/versions.ts` — Mapeamento de traduções e IDs
-- `src/lib/bible/types.ts` — Tipos TypeScript da API
-- `src/app/api/bible/route.ts` — Route Handler proxy
+- `src/lib/bible/client.ts`, Wrapper da API.Bible
+- `src/lib/bible/versions.ts`, Mapeamento de traduções e IDs
+- `src/lib/bible/types.ts`, Tipos TypeScript da API
+- `src/app/api/bible/route.ts`, Route Handler proxy
 
 ## Comportamentos
 
@@ -26,7 +26,7 @@ busca por texto, suporte a traduções e tratamento de erros.
 - Mapear IDs das traduções disponíveis (ARC, NVI, NVT, NTLH)
 - Implementar busca por referência (ex: "João 3:16")
 - Implementar busca por texto (full-text na tradução)
-- Cache de resposta: versículos são imutáveis — cache permanente
+- Cache de resposta: versículos são imutáveis, cache permanente
 - Tratamento de rate limit (API.Bible limita requisições por dia)
 
 ## Critério de Aceite
@@ -67,7 +67,7 @@ export async function getVerse(reference: string, versionId: string) {
 ### Atenção importante
 - A API.Bible tem plano gratuito limitado (~5000 requisições/mês)
 - Algumas traduções brasileiras populares (NVI, NVT) podem não estar disponíveis
-  na API pública — verificar antes de prometer ao usuário
+  na API pública, verificar antes de prometer ao usuário
 - Alternativa se NVI/NVT não disponíveis: ARC (domínio público) + NTLH
 - Documentar quais traduções estão efetivamente disponíveis após testes
 
@@ -94,7 +94,7 @@ Criar `src/lib/bible/versions.ts`:
 **3. Criar wrapper client (server-only)**
 Criar `src/lib/bible/client.ts`:
 - `encodeRef(reference)`: converter "João 3:16" para format da API (ex: `JHN.3.16`)
-  — usar mapeamento de livros PT → abreviatura API.Bible
+ , usar mapeamento de livros PT → abreviatura API.Bible
 - `getVerse(reference, versionId)`: conforme código das Notas com `next: { revalidate: false }`
 - `searchVerses(query, versionId)`: `GET /bibles/{id}/search?query={query}&limit=10`
 - Ambas as funções lançam erros tipados: `BibleNotFoundError`, `BibleAPIError`

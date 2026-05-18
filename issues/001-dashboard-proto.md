@@ -1,4 +1,4 @@
-# Issue 001 — Dashboard UI Proto
+# Issue 001, Dashboard UI Proto
 
 **Status:** [ ] PENDENTE
 **Tipo:** proto
@@ -10,19 +10,19 @@
 
 ## O Que Fazer
 
-Criar o protótipo visual do dashboard — layout, componentes e estados visuais
+Criar o protótipo visual do dashboard, layout, componentes e estados visuais
 sem dados reais (usar mocks hardcoded).
 
 ## Componentes Envolvidos
 
-- `src/app/(app)/dashboard/page.tsx` — Página do dashboard (mock)
-- `src/app/(app)/layout.tsx` — Layout com sidebar + header
-- `src/components/shared/AppSidebar.tsx` — Navegação lateral
-- `src/components/shared/AppHeader.tsx` — Header com avatar e nome
-- `src/components/sermon/SermonCard.tsx` — Card de sermão na listagem
-- `src/components/shared/StatsCard.tsx` — Card de estatística
+- `src/app/(app)/dashboard/page.tsx`, Página do dashboard (mock)
+- `src/app/(app)/layout.tsx`, Layout com sidebar + header
+- `src/components/shared/AppSidebar.tsx`, Navegação lateral
+- `src/components/shared/AppHeader.tsx`, Header com avatar e nome
+- `src/components/sermon/SermonCard.tsx`, Card de sermão na listagem
+- `src/components/shared/StatsCard.tsx`, Card de estatística
 
-## Comportamentos (proto — apenas visual)
+## Comportamentos (proto, apenas visual)
 
 - Layout de duas colunas: sidebar fixa à esquerda + conteúdo à direita
 - Sidebar: logo VOX, links de navegação, avatar do usuário no rodapé
@@ -48,7 +48,7 @@ sem dados reais (usar mocks hardcoded).
 - Usar shadcn/ui `Sheet` para o drawer mobile da sidebar
 - Mocks: criar array de 5 sermões fictícios com título, referência, framework, data
 - SermonCard deve exibir: título, referência bíblica, framework (badge colorido), data, tags
-- Design system ainda pendente — usar cores placeholder do Tailwind (azul padrão)
+- Design system ainda pendente, usar cores placeholder do Tailwind (azul padrão)
   que serão substituídas pelas variáveis CSS do design system na issue 031+
 - AppSidebar deve aceitar prop `onClose` para fechar o drawer mobile
 

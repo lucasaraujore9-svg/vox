@@ -1,4 +1,4 @@
-# VOX — Design System
+# VOX, Design System
 
 > **Para desenvolvedores:** Leia `../docs/references/design-system.md` antes de usar estes arquivos.
 > Este diretório é a fonte da verdade visual do VOX.
@@ -14,16 +14,16 @@ Importe `colors_and_type.css` como **primeiro stylesheet** em qualquer novo arqu
 Nunca invente cores ou tamanhos de tipo fora deste arquivo.
 
 ### 3. Componentes de referência
-- `vox/primitives.jsx` — VoxIcon, VoxMark, FrameworkBadge, Status, Kbd
-- `vox/styles.css` — classes CSS primitivas (.btn, .card, .input, .badge)
-- `vox/data.js` — dados dos frameworks, block types e sermões mock
+- `vox/primitives.jsx`, VoxIcon, VoxMark, FrameworkBadge, Status, Kbd
+- `vox/styles.css`, classes CSS primitivas (.btn, .card, .input, .badge)
+- `vox/data.js`, dados dos frameworks, block types e sermões mock
 
 ### 4. Preview do design system
 Abra os arquivos em `preview/` individualmente no browser para ver cada seção:
-- `colors-*.html` — paletas
-- `type-*.html` — escala tipográfica
-- `spacing-*.html` — espaçamento, raios, sombras
-- `components-*.html` — componentes individuais
+- `colors-*.html`, paletas
+- `type-*.html`, escala tipográfica
+- `spacing-*.html`, espaçamento, raios, sombras
+- `components-*.html`, componentes individuais
 
 ## Arquivos
 

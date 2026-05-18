@@ -1,7 +1,7 @@
 "use client";
 
 // Painel lateral da Bíblia para consulta enquanto se escreve um sermão.
-// Sheet à direita — não bloqueia o foco do editor.
+// Sheet à direita, não bloqueia o foco do editor.
 //
 // Funcionalidades:
 //   - Busca por referência (Romanos 5:1—11) ou palavra
@@ -184,7 +184,7 @@ export function BibleSidePanel({ trigger, defaultReference }: BibleSidePanelProp
     if (!refData) return;
     const text =
       refData.verses.map((v) => `${v.number}. ${v.text}`).join(" ") +
-      ` — ${refData.canonical}`;
+      `, ${refData.canonical}`;
     copy(text, refData.canonical);
   }
 
@@ -281,8 +281,7 @@ export function BibleSidePanel({ trigger, defaultReference }: BibleSidePanelProp
                       type="button"
                       onClick={() =>
                         copy(
-                          `${v.text} — ${refData.canonical.split(":")[0]} ${
-                            v.number
+                          `${v.text}, ${refData.canonical.split(":")[0]} ${v.number
                           }`,
                           `v.${v.number}`
                         )

@@ -69,7 +69,7 @@ export async function createSermonAction(input: {
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Não autenticado" };
 
-  // Já popula o conteúdo com o esqueleto do framework — sessões e itens
+  // Já popula o conteúdo com o esqueleto do framework, sessões e itens
   // pré-criados com label/hint idiomáticos. Sem isso, o default '[]'::jsonb
   // do banco faz parseSermonContent cair no fallback "Notas importadas".
   const framework = parsed.data.framework ?? "livre";

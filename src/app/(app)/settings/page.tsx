@@ -1,4 +1,4 @@
-// Issue 014 — Configurações de Perfil (proto).
+// Issue 014, Configurações de Perfil (proto).
 // Tabs: Perfil · Preferências · IA · Blocos · Conta
 // Behavior real entra em 046.
 
@@ -97,11 +97,11 @@ export default function SettingsPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="ARC">ARC — Almeida Revista e Corrigida</SelectItem>
-                    <SelectItem value="ARA">ARA — Almeida Revista e Atualizada</SelectItem>
-                    <SelectItem value="NVI">NVI — Nova Versão Internacional</SelectItem>
-                    <SelectItem value="NAA">NAA — Nova Almeida Atualizada</SelectItem>
-                    <SelectItem value="NVT">NVT — Nova Versão Transformadora</SelectItem>
+                    <SelectItem value="ARC">ARC, Almeida Revista e Corrigida</SelectItem>
+                    <SelectItem value="ARA">ARA, Almeida Revista e Atualizada</SelectItem>
+                    <SelectItem value="NVI">NVI, Nova Versão Internacional</SelectItem>
+                    <SelectItem value="NAA">NAA, Nova Almeida Atualizada</SelectItem>
+                    <SelectItem value="NVT">NVT, Nova Versão Transformadora</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -117,7 +117,7 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle>Assistente de IA</CardTitle>
               <CardDescription>
-                Sugestão de estrutura, ilustrações e referências bíblicas —
+                Sugestão de estrutura, ilustrações e referências bíblicas,
                 opcional e desligado por padrão.
               </CardDescription>
             </CardHeader>
@@ -157,7 +157,7 @@ export default function SettingsPage() {
             <p className="vox-eyebrow">Biblioteca</p>
             <h2 className="vox-h2 mt-2 text-2xl">Frameworks homiléticos</h2>
             <p className="vox-body mt-3 max-w-2xl">
-              Seis estruturas testadas no púlpito. Cada uma é uma postura —
+              Seis estruturas testadas no púlpito. Cada uma é uma postura,
               não uma fórmula. Escolha conforme o texto, a congregação e o momento.
             </p>
           </div>

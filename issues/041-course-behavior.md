@@ -1,4 +1,4 @@
-# Issue 041 — Curso: Behavior Completo
+# Issue 041, Curso: Behavior Completo
 
 **Status:** [ ] PENDENTE
 **Tipo:** behavior
@@ -18,7 +18,7 @@ lista de aulas vinculadas com reordenação, e cálculo de carga horária.
 ### Criação de curso (/courses/new)
 1. Usuário preenche título (obrigatório), ementa, objetivos, carga horária
 2. Salva rascunho imediato: `INSERT INTO courses (user_id, title)`
-3. Editor abre com o curso criado — auto-save nos campos
+3. Editor abre com o curso criado, auto-save nos campos
 
 ### Auto-save dos metadados
 - Ementa e objetivos: auto-save com debounce de 1s
@@ -42,7 +42,7 @@ lista de aulas vinculadas com reordenação, e cálculo de carga horária.
 
 **Remover aula do curso:**
 - `DELETE FROM course_lessons WHERE course_id = $1 AND sermon_id = $2`
-- Aula continua existindo — só desvincula do curso
+- Aula continua existindo, só desvincula do curso
 
 ### Carga horária
 - Pode ser definida manualmente pelo usuário
@@ -98,7 +98,7 @@ export function useCourse(courseId: string) {
       id,
       order: index + 1
     }))
-    // Batch update — usar Promise.all ou upsert
+    // Batch update, usar Promise.all ou upsert
   }
 }
 ```

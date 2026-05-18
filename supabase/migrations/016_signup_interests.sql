@@ -1,4 +1,4 @@
--- Migration 016 — signup_interests
+-- Migration 016, signup_interests
 -- Como o sistema é fechado (signup desligado), quem tentar se cadastrar tem
 -- o interesse registrado aqui. Super admin acompanha pela aba /settings.
 

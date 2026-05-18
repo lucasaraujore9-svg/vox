@@ -1,6 +1,6 @@
 "use client";
 
-// Confirmação leve pra arquivar / desarquivar. Não é destrutivo —
+// Confirmação leve pra arquivar / desarquivar. Não é destrutivo,
 // só esconde do banco principal e move pra /sermons?view=arquivo.
 
 import { useState, useTransition } from "react";

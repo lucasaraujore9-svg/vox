@@ -1,5 +1,5 @@
 // Tipos de conteúdo: Sermão, Palestra, Aula.
-// Paridade com architecture.md — coluna content_type em sermons.
+// Paridade com architecture.md, coluna content_type em sermons.
 
 import type { ContentType } from "@/types/database";
 

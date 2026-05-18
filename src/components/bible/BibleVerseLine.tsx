@@ -44,7 +44,7 @@ export function BibleVerseLine({
 
   async function copyVerse() {
     try {
-      await navigator.clipboard.writeText(`"${text}" — ${canonical}`);
+      await navigator.clipboard.writeText(`"${text}", ${canonical}`);
       toast.success("Versículo copiado", { description: canonical });
     } catch {
       toast.error("Não foi possível copiar");

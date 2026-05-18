@@ -1,4 +1,4 @@
-// Issue 034 — Conversor de .docx ou texto livre em estrutura SermonContent.
+// Issue 034, Conversor de .docx ou texto livre em estrutura SermonContent.
 // Heurística: títulos viram cabeçalhos de blocos; quebra natural em sessões
 // (Introdução / Tópicos / Conclusão) baseada em pistas do cabeçalho.
 
@@ -154,7 +154,7 @@ export function parseTextToContent(
       current = startSession("introducao", "Introdução");
     }
 
-    // Bloco com título e conteúdo — guarda só o conteúdo como item
+    // Bloco com título e conteúdo, guarda só o conteúdo como item
     // (o título já foi usado pra classificar; preservamos no content quando vazio)
     const itemContent = block.content || block.title;
     pushItem(current, block.type, itemContent);

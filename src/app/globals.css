@@ -15,120 +15,120 @@
 @custom-variant data-disabled (&[data-disabled]);
 
 /* =========================================================================
-   VOX — design tokens (fonte: design-system/colors_and_type.css)
+   VOX, design tokens (fonte: design-system/colors_and_type.css)
    ========================================================================= */
 :root {
   /* Surfaces */
-  --vox-bg:               #F9F7F4;
-  --vox-surface:          #FFFFFF;
-  --vox-surface-elev:     #FEFCF9;
-  --vox-surface-deep:     #F4F1EC;
-  --vox-stage-bg:         #0B0F0D;
+  --vox-bg: #F9F7F4;
+  --vox-surface: #FFFFFF;
+  --vox-surface-elev: #FEFCF9;
+  --vox-surface-deep: #F4F1EC;
+  --vox-stage-bg: #0B0F0D;
 
   /* Ink */
-  --vox-ink:              #18181B;
-  --vox-prose:            #4B5563;
-  --vox-muted:            #9CA3AF;
-  --vox-whisper:          rgba(226, 232, 240, 0.7);
-  --vox-whisper-strong:   rgba(180, 188, 200, 0.65);
+  --vox-ink: #18181B;
+  --vox-prose: #4B5563;
+  --vox-muted: #9CA3AF;
+  --vox-whisper: rgba(226, 232, 240, 0.7);
+  --vox-whisper-strong: rgba(180, 188, 200, 0.65);
 
   /* Primary accents */
-  --vox-forest:           #166534;
-  --vox-forest-mid:       #15803D;
-  --vox-forest-soft:      rgba(22, 101, 52, 0.08);
-  --vox-forest-tint:      rgba(22, 101, 52, 0.14);
+  --vox-forest: #166534;
+  --vox-forest-mid: #15803D;
+  --vox-forest-soft: rgba(22, 101, 52, 0.08);
+  --vox-forest-tint: rgba(22, 101, 52, 0.14);
 
   /* Secondary accent */
-  --vox-gold:             #B45309;
-  --vox-gold-soft:        rgba(180, 83, 9, 0.10);
+  --vox-gold: #B45309;
+  --vox-gold-soft: rgba(180, 83, 9, 0.10);
 
   /* Framework accents (closed set) */
-  --vox-fw-expositivo:    #166534;
-  --vox-fw-textual:       #0D7C7C;
-  --vox-fw-narrativo:     #6D28D9;
-  --vox-fw-tematico:      #B45309;
-  --vox-fw-topico:        #BE123C;
-  --vox-fw-livre:         #475569;
+  --vox-fw-expositivo: #166534;
+  --vox-fw-textual: #0D7C7C;
+  --vox-fw-narrativo: #6D28D9;
+  --vox-fw-tematico: #B45309;
+  --vox-fw-topico: #BE123C;
+  --vox-fw-livre: #475569;
 
   /* State */
-  --vox-destructive:      #E11D48;
-  --vox-success:          #10B981;
-  --vox-info:             #0D7C7C;
+  --vox-destructive: #E11D48;
+  --vox-success: #10B981;
+  --vox-info: #0D7C7C;
 
   /* Typography families (next/font CSS variables) */
-  --vox-font-display:     var(--font-fraunces), "Cormorant Garamond", Georgia, serif;
-  --vox-font-ui:          var(--font-geist), ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --vox-font-mono:        var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  --vox-font-display: var(--font-fraunces), "Cormorant Garamond", Georgia, serif;
+  --vox-font-ui: var(--font-geist), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --vox-font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
 
   /* Type scale */
-  --vox-text-xs:          11px;
-  --vox-text-sm:          12.5px;
-  --vox-text-base:        14px;
-  --vox-text-md:          15px;
-  --vox-text-lg:          17px;
-  --vox-text-xl:          19px;
-  --vox-text-2xl:         22px;
-  --vox-text-3xl:         26px;
-  --vox-text-4xl:         32px;
-  --vox-text-5xl:         36px;
+  --vox-text-xs: 11px;
+  --vox-text-sm: 12.5px;
+  --vox-text-base: 14px;
+  --vox-text-md: 15px;
+  --vox-text-lg: 17px;
+  --vox-text-xl: 19px;
+  --vox-text-2xl: 22px;
+  --vox-text-3xl: 26px;
+  --vox-text-4xl: 32px;
+  --vox-text-5xl: 36px;
 
-  --vox-eyebrow-size:     11px;
+  --vox-eyebrow-size: 11px;
   --vox-eyebrow-tracking: 0.12em;
 
   /* Spacing (4px grid) */
-  --vox-space-1:  4px;
-  --vox-space-2:  8px;
-  --vox-space-3:  12px;
-  --vox-space-4:  16px;
-  --vox-space-5:  20px;
-  --vox-space-6:  24px;
-  --vox-space-7:  28px;
-  --vox-space-8:  32px;
+  --vox-space-1: 4px;
+  --vox-space-2: 8px;
+  --vox-space-3: 12px;
+  --vox-space-4: 16px;
+  --vox-space-5: 20px;
+  --vox-space-6: 24px;
+  --vox-space-7: 28px;
+  --vox-space-8: 32px;
   --vox-space-10: 40px;
   --vox-space-12: 48px;
   --vox-space-16: 64px;
 
   /* Radii */
-  --vox-r-badge:          4px;
-  --vox-r-input:          8px;
-  --vox-r-card:           12px;
-  --vox-r-pill:           999px;
+  --vox-r-badge: 4px;
+  --vox-r-input: 8px;
+  --vox-r-card: 12px;
+  --vox-r-pill: 999px;
 
   /* Shadows (green undertone) */
-  --vox-shadow-card:        0 1px 0 rgba(22,101,52,0.04), 0 4px 24px rgba(22,101,52,0.06);
-  --vox-shadow-card-hover:  0 2px 0 rgba(22,101,52,0.05), 0 12px 32px rgba(22,101,52,0.10);
-  --vox-shadow-overlay:     0 24px 64px rgba(22,40,30,0.16), 0 2px 8px rgba(22,40,30,0.08);
+  --vox-shadow-card: 0 1px 0 rgba(22, 101, 52, 0.04), 0 4px 24px rgba(22, 101, 52, 0.06);
+  --vox-shadow-card-hover: 0 2px 0 rgba(22, 101, 52, 0.05), 0 12px 32px rgba(22, 101, 52, 0.10);
+  --vox-shadow-overlay: 0 24px 64px rgba(22, 40, 30, 0.16), 0 2px 8px rgba(22, 40, 30, 0.08);
 
   /* Motion */
-  --vox-ease:       cubic-bezier(.2, .7, .2, 1);
-  --vox-dur-fast:   120ms;
-  --vox-dur:        200ms;
-  --vox-dur-slow:   320ms;
+  --vox-ease: cubic-bezier(.2, .7, .2, 1);
+  --vox-dur-fast: 120ms;
+  --vox-dur: 200ms;
+  --vox-dur-slow: 320ms;
 }
 
 /* =========================================================================
    shadcn/ui color mapping → VOX tokens
    ========================================================================= */
 :root {
-  --background:          var(--vox-bg);
-  --foreground:          var(--vox-ink);
-  --card:                var(--vox-surface);
-  --card-foreground:     var(--vox-ink);
-  --popover:             var(--vox-surface);
-  --popover-foreground:  var(--vox-ink);
-  --primary:             var(--vox-forest);
-  --primary-foreground:  #ffffff;
-  --secondary:           var(--vox-surface-deep);
+  --background: var(--vox-bg);
+  --foreground: var(--vox-ink);
+  --card: var(--vox-surface);
+  --card-foreground: var(--vox-ink);
+  --popover: var(--vox-surface);
+  --popover-foreground: var(--vox-ink);
+  --primary: var(--vox-forest);
+  --primary-foreground: #ffffff;
+  --secondary: var(--vox-surface-deep);
   --secondary-foreground: var(--vox-ink);
-  --muted:               var(--vox-surface-deep);
-  --muted-foreground:    var(--vox-muted);
-  --accent:              var(--vox-forest-soft);
-  --accent-foreground:   var(--vox-forest);
-  --destructive:         var(--vox-destructive);
-  --border:              var(--vox-whisper);
-  --input:               var(--vox-whisper-strong);
-  --ring:                var(--vox-forest);
-  --radius:              var(--vox-r-card);
+  --muted: var(--vox-surface-deep);
+  --muted-foreground: var(--vox-muted);
+  --accent: var(--vox-forest-soft);
+  --accent-foreground: var(--vox-forest);
+  --destructive: var(--vox-destructive);
+  --border: var(--vox-whisper);
+  --input: var(--vox-whisper-strong);
+  --ring: var(--vox-forest);
+  --radius: var(--vox-r-card);
 
   /* shadcn chart slots mapped to framework colors */
   --chart-1: var(--vox-forest);
@@ -138,49 +138,49 @@
   --chart-5: var(--vox-fw-topico);
 
   /* Sidebar slots */
-  --sidebar:                     var(--vox-surface-elev);
-  --sidebar-foreground:          var(--vox-ink);
-  --sidebar-primary:             var(--vox-forest);
-  --sidebar-primary-foreground:  #ffffff;
-  --sidebar-accent:              var(--vox-forest-soft);
-  --sidebar-accent-foreground:   var(--vox-forest);
-  --sidebar-border:              var(--vox-whisper);
-  --sidebar-ring:                var(--vox-forest);
+  --sidebar: var(--vox-surface-elev);
+  --sidebar-foreground: var(--vox-ink);
+  --sidebar-primary: var(--vox-forest);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--vox-forest-soft);
+  --sidebar-accent-foreground: var(--vox-forest);
+  --sidebar-border: var(--vox-whisper);
+  --sidebar-ring: var(--vox-forest);
 }
 
 /* Stage = Modo Apresentação (escuro). Reusa o slot `.dark` do shadcn. */
 .stage,
 .dark {
-  --background:          var(--vox-stage-bg);
-  --foreground:          #F1EDE7;
-  --card:                #11171B;
-  --card-foreground:     #F1EDE7;
-  --popover:             #11171B;
-  --popover-foreground:  #F1EDE7;
-  --primary:             var(--vox-forest-mid);
-  --primary-foreground:  #ffffff;
-  --secondary:           #1A2126;
+  --background: var(--vox-stage-bg);
+  --foreground: #F1EDE7;
+  --card: #11171B;
+  --card-foreground: #F1EDE7;
+  --popover: #11171B;
+  --popover-foreground: #F1EDE7;
+  --primary: var(--vox-forest-mid);
+  --primary-foreground: #ffffff;
+  --secondary: #1A2126;
   --secondary-foreground: #F1EDE7;
-  --muted:               #1A2126;
-  --muted-foreground:    #94A3A0;
-  --accent:              rgba(22,101,52,0.18);
-  --accent-foreground:   #F1EDE7;
-  --destructive:         var(--vox-destructive);
-  --border:              rgba(255,255,255,0.08);
-  --input:               rgba(255,255,255,0.12);
-  --ring:                var(--vox-forest-mid);
-  --sidebar:                     #0E1411;
-  --sidebar-foreground:          #F1EDE7;
-  --sidebar-primary:             var(--vox-forest-mid);
-  --sidebar-primary-foreground:  #ffffff;
-  --sidebar-accent:              rgba(22,101,52,0.18);
-  --sidebar-accent-foreground:   #F1EDE7;
-  --sidebar-border:              rgba(255,255,255,0.08);
-  --sidebar-ring:                var(--vox-forest-mid);
+  --muted: #1A2126;
+  --muted-foreground: #94A3A0;
+  --accent: rgba(22, 101, 52, 0.18);
+  --accent-foreground: #F1EDE7;
+  --destructive: var(--vox-destructive);
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.12);
+  --ring: var(--vox-forest-mid);
+  --sidebar: #0E1411;
+  --sidebar-foreground: #F1EDE7;
+  --sidebar-primary: var(--vox-forest-mid);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(22, 101, 52, 0.18);
+  --sidebar-accent-foreground: #F1EDE7;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: var(--vox-forest-mid);
 }
 
 /* =========================================================================
-   Tailwind theme — expose tokens as utilities
+   Tailwind theme, expose tokens as utilities
    ========================================================================= */
 @theme inline {
   --color-background: var(--background);
@@ -260,13 +260,15 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   html {
     @apply font-sans;
   }
+
   body {
     background:
-      radial-gradient(ellipse at top, rgba(180,140,60,0.025), transparent 60%),
-      radial-gradient(ellipse at bottom right, rgba(22,101,52,0.018), transparent 55%),
+      radial-gradient(ellipse at top, rgba(180, 140, 60, 0.025), transparent 60%),
+      radial-gradient(ellipse at bottom right, rgba(22, 101, 52, 0.018), transparent 55%),
       var(--background);
     color: var(--foreground);
     font-size: var(--vox-text-base);
@@ -274,6 +276,7 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
+
   ::selection {
     background: var(--vox-forest-tint);
     color: var(--vox-ink);
@@ -295,6 +298,7 @@
     font-feature-settings: "ss01", "ss02";
     margin: 0;
   }
+
   .vox-h2 {
     font-family: var(--vox-font-display);
     font-weight: 600;
@@ -306,6 +310,7 @@
     font-feature-settings: "ss01", "ss02";
     margin: 0;
   }
+
   .vox-h3 {
     font-family: var(--vox-font-display);
     font-weight: 600;
@@ -315,6 +320,7 @@
     color: var(--vox-ink);
     margin: 0;
   }
+
   .vox-body {
     font-family: var(--vox-font-ui);
     font-size: var(--vox-text-md);
@@ -322,6 +328,7 @@
     color: var(--vox-prose);
     text-wrap: pretty;
   }
+
   .vox-eyebrow {
     font-family: var(--vox-font-ui);
     font-weight: 500;
@@ -330,10 +337,12 @@
     text-transform: uppercase;
     color: var(--vox-prose);
   }
+
   .vox-mono {
     font-family: var(--vox-font-mono);
     font-feature-settings: "tnum";
   }
+
   .vox-scripture {
     font-family: var(--vox-font-display);
     font-style: italic;
@@ -341,6 +350,7 @@
     line-height: 1.7;
     color: var(--vox-ink);
   }
+
   .vox-ref {
     font-family: var(--vox-font-mono);
     color: var(--vox-gold);
@@ -349,7 +359,7 @@
   }
 
   /* =====================================================================
-     Editor TipTap (ProseMirror) — formatação rica para itens do esboço.
+     Editor TipTap (ProseMirror), formatação rica para itens do esboço.
      ===================================================================== */
   .vox-prose-editor .ProseMirror {
     outline: none;
@@ -359,12 +369,15 @@
     line-height: 1.7;
     color: var(--vox-ink);
   }
+
   .vox-prose-editor .ProseMirror p {
     margin: 0 0 0.5em 0;
   }
+
   .vox-prose-editor .ProseMirror p:last-child {
     margin-bottom: 0;
   }
+
   .vox-prose-editor .ProseMirror p.is-editor-empty:first-child::before {
     content: attr(data-placeholder);
     color: var(--vox-muted);
@@ -372,22 +385,27 @@
     pointer-events: none;
     height: 0;
   }
+
   .vox-prose-editor .ProseMirror strong {
     font-weight: 600;
     color: var(--vox-ink);
   }
+
   .vox-prose-editor .ProseMirror em {
     font-style: italic;
   }
+
   .vox-prose-editor .ProseMirror s {
     text-decoration: line-through;
     color: var(--vox-muted);
   }
+
   .vox-prose-editor .ProseMirror u {
     text-decoration: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 2px;
   }
+
   .vox-prose-editor .ProseMirror h2 {
     font-family: var(--vox-font-display);
     font-weight: 600;
@@ -397,6 +415,7 @@
     margin: 0.6em 0 0.3em 0;
     color: var(--vox-ink);
   }
+
   .vox-prose-editor .ProseMirror blockquote {
     border-left: 3px solid var(--vox-gold);
     padding-left: 12px;
@@ -405,23 +424,28 @@
     font-style: italic;
     color: var(--vox-ink);
   }
+
   .vox-prose-editor .ProseMirror ul,
   .vox-prose-editor .ProseMirror ol {
     padding-left: 1.4em;
     margin: 0.4em 0;
   }
+
   .vox-prose-editor .ProseMirror ul li {
     list-style: disc;
   }
+
   .vox-prose-editor .ProseMirror ol li {
     list-style: decimal;
   }
+
   .vox-prose-editor .ProseMirror a {
     color: var(--vox-forest);
     text-decoration: underline;
     text-underline-offset: 2px;
   }
-  /* Variante para "Texto Bíblico" — sempre fraunces itálico, com o tom gold */
+
+  /* Variante para "Texto Bíblico", sempre fraunces itálico, com o tom gold */
   .vox-prose-editor.is-scripture .ProseMirror,
   .vox-prose-editor.is-scripture .ProseMirror p {
     font-family: var(--vox-font-display);
@@ -431,34 +455,46 @@
 
   /* =====================================================================
      Conteúdo renderizado em modos de apresentação / leitura.
-     Os filhos herdam font/cor/tamanho do container — assim os mesmos
+     Os filhos herdam font/cor/tamanho do container, assim os mesmos
      itens funcionam em teleprompter, slides e popups.
      ===================================================================== */
-  .vox-present-content > *:first-child { margin-top: 0; }
-  .vox-present-content > *:last-child { margin-bottom: 0; }
+  .vox-present-content>*:first-child {
+    margin-top: 0;
+  }
+
+  .vox-present-content>*:last-child {
+    margin-bottom: 0;
+  }
+
   .vox-present-content p {
     margin: 0 0 0.6em 0;
     font: inherit;
     color: inherit;
   }
+
   .vox-present-content p:last-child {
     margin-bottom: 0;
   }
+
   .vox-present-content strong {
     font-weight: 700;
     color: inherit;
   }
+
   .vox-present-content em {
     font-style: italic;
   }
+
   .vox-present-content u {
     text-decoration: underline;
     text-underline-offset: 2px;
   }
+
   .vox-present-content s {
     text-decoration: line-through;
     opacity: 0.7;
   }
+
   .vox-present-content h2 {
     font-family: var(--vox-font-display);
     font-weight: 600;
@@ -467,6 +503,7 @@
     margin: 0.5em 0 0.3em 0;
     color: inherit;
   }
+
   .vox-present-content blockquote {
     border-left: 3px solid var(--vox-gold);
     padding-left: 0.8em;
@@ -475,16 +512,25 @@
     font-style: italic;
     color: inherit;
   }
+
   .vox-present-content blockquote p {
     margin: 0 0 0.3em 0;
   }
+
   .vox-present-content ul,
   .vox-present-content ol {
     padding-left: 1.4em;
     margin: 0.4em 0;
   }
-  .vox-present-content ul li { list-style: disc; }
-  .vox-present-content ol li { list-style: decimal; }
+
+  .vox-present-content ul li {
+    list-style: disc;
+  }
+
+  .vox-present-content ol li {
+    list-style: decimal;
+  }
+
   .vox-present-content a {
     color: inherit;
     text-decoration: underline;

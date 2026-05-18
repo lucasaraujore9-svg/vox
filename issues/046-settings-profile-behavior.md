@@ -1,4 +1,4 @@
-# Issue 046 — Configurações de Perfil: Behavior
+# Issue 046, Configurações de Perfil: Behavior
 
 **Status:** [ ] PENDENTE
 **Tipo:** behavior
@@ -16,11 +16,11 @@ e toggle de IA. A senha é gerenciada pelo Supabase Auth.
 
 ## Componentes Envolvidos
 
-- `src/app/(app)/settings/page.tsx` — Server Component carrega perfil
-- `src/lib/supabase/actions/profile.ts` — Server Actions de perfil
-- `src/components/settings/ProfileForm.tsx` — formulário conectado
-- `src/components/settings/AvatarUpload.tsx` — upload real para Supabase Storage
-- `src/components/settings/PreferencesForm.tsx` — preferências conectadas
+- `src/app/(app)/settings/page.tsx`, Server Component carrega perfil
+- `src/lib/supabase/actions/profile.ts`, Server Actions de perfil
+- `src/components/settings/ProfileForm.tsx`, formulário conectado
+- `src/components/settings/AvatarUpload.tsx`, upload real para Supabase Storage
+- `src/components/settings/PreferencesForm.tsx`, preferências conectadas
 
 ## Comportamentos
 
@@ -37,7 +37,7 @@ e toggle de IA. A senha é gerenciada pelo Supabase Auth.
 ### Upload de avatar
 - Bucket: `avatars` (criar migration separada ou junto de profiles)
 - Estrutura: `avatars/{user_id}/avatar.{ext}`
-- Aceita: JPG, PNG, WebP — máx 2MB
+- Aceita: JPG, PNG, WebP, máx 2MB
 - Após upload: `UPDATE profiles SET avatar_url = publicUrl`
 - Exibe preview imediato após seleção (antes de salvar)
 
@@ -50,7 +50,7 @@ e toggle de IA. A senha é gerenciada pelo Supabase Auth.
 ### Alterar senha
 - Server Action que chama `supabase.auth.updateUser({ password: newPassword })`
 - Validação: senha atual (verificar via re-autenticação), nova senha >= 8 chars, confirmação igual
-- Não armazenar senhas — apenas repassar ao Supabase Auth
+- Não armazenar senhas, apenas repassar ao Supabase Auth
 
 ### Deletar conta (zona de perigo)
 - Requer confirmação em duas etapas:

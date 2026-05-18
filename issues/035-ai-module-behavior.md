@@ -1,4 +1,4 @@
-# Issue 035 — Módulo de IA (Opcional por Usuário)
+# Issue 035, Módulo de IA (Opcional por Usuário)
 
 **Status:** [ ] PENDENTE
 **Tipo:** behavior
@@ -11,15 +11,15 @@
 ## O Que Fazer
 
 Implementar o assistente de IA para estruturação de sermões.
-O módulo é completamente opcional — ativado/desativado em `/settings`.
+O módulo é completamente opcional, ativado/desativado em `/settings`.
 
 ## Componentes Envolvidos
 
-- `src/components/editor/AIAssistant.tsx` — Painel lateral de IA
-- `src/app/api/ai/suggest/route.ts` — Route Handler para OpenAI
-- `src/lib/ai/prompts.ts` — Prompts por framework homilético
-- `src/hooks/useAI.ts` — Hook de estado e chamadas de IA
-- `src/app/(app)/settings/page.tsx` — Toggle de ativação
+- `src/components/editor/AIAssistant.tsx`, Painel lateral de IA
+- `src/app/api/ai/suggest/route.ts`, Route Handler para OpenAI
+- `src/lib/ai/prompts.ts`, Prompts por framework homilético
+- `src/hooks/useAI.ts`, Hook de estado e chamadas de IA
+- `src/app/(app)/settings/page.tsx`, Toggle de ativação
 
 ## Comportamentos
 
@@ -35,7 +35,7 @@ O módulo é completamente opcional — ativado/desativado em `/settings`.
 5. IA recebe: framework do sermão + tema + blocos existentes
 6. IA retorna: sugestão de estrutura em JSON (array de blocos)
 7. Usuário pode: aceitar todos / aceitar individualmente / ignorar
-8. Aceitar bloco: insere no editor (não substitui — adiciona como novo bloco)
+8. Aceitar bloco: insere no editor (não substitui, adiciona como novo bloco)
 
 ### Settings
 - Toggle on/off em `/settings` → atualiza `profile.ai_enabled`
@@ -138,7 +138,7 @@ Criar `src/app/api/ai/suggest/route.ts`:
 
 **3. Criar hook useAI**
 Criar `src/hooks/useAI.ts`:
-- `"use client"` — estado: `isOpen`, `isLoading`, `suggestion: AIBlock[] | null`, `error`
+- `"use client"`, estado: `isOpen`, `isLoading`, `suggestion: AIBlock[] | null`, `error`
 - `suggest(framework, topic, existingBlocks)`: POST `/api/ai/suggest` → atualizar `suggestion`
 - `acceptBlock(block)`: chama `editorStore.addBlock` com conteúdo convertido para TipTap JSON
 - `acceptAll()`: aceitar todos os blocos em sequência

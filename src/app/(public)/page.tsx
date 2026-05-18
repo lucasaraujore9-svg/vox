@@ -30,7 +30,7 @@ export default function LandingPage() {
             O manuscrito que respeita o ofício da pregação.
           </h1>
           <p className="vox-body mt-6 max-w-xl">
-            VOX cobre o ciclo completo do sermão — preparação, entrega e arquivo —
+            VOX cobre o ciclo completo do sermão, preparação, entrega e arquivo,
             com frameworks homiléticos como guias dentro do editor. Sem fricção,
             sem distrações, sem marketing evangélico.
           </p>

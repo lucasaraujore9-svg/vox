@@ -1,4 +1,4 @@
-// Issue 001 (proto) + 049 (behavior) — Dashboard.
+// Issue 001 (proto) + 049 (behavior), Dashboard.
 // Em ambiente sem Supabase configurado, cai em mocks para não quebrar o build.
 
 import Link from "next/link";
@@ -50,7 +50,7 @@ async function loadData(): Promise<DashboardData> {
       return {
         total: stats?.total ?? 0,
         drafts: stats?.drafts ?? 0,
-        lastTitle: stats?.lastPreached?.title ?? "—",
+        lastTitle: stats?.lastPreached?.title ?? ",",
         lastDate: stats?.lastPreached?.preached_at ?? null,
         recents,
       };
@@ -62,7 +62,7 @@ async function loadData(): Promise<DashboardData> {
   return {
     total: 0,
     drafts: 0,
-    lastTitle: "—",
+    lastTitle: ",",
     lastDate: null,
     recents: [],
   };
@@ -134,10 +134,10 @@ export default async function DashboardPage() {
             <p className="vox-mono text-xs text-vox-muted mt-2">
               {data.lastDate
                 ? new Date(data.lastDate).toLocaleDateString("pt-BR", {
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric",
-                  })
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                })
                 : "ainda sem registro"}
             </p>
           </CardContent>

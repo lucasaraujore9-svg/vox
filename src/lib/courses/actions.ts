@@ -1,6 +1,6 @@
 "use server";
 
-// Issue 041 — CRUD de cursos + linkagem de aulas.
+// Issue 041, CRUD de cursos + linkagem de aulas.
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";

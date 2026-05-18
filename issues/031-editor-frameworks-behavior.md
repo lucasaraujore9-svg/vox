@@ -1,4 +1,4 @@
-# Issue 031 — Editor com Frameworks Homiléticos
+# Issue 031, Editor com Frameworks Homiléticos
 
 **Status:** [ ] PENDENTE
 **Tipo:** behavior
@@ -16,11 +16,11 @@ sincronização com o campo `content` (JSONB) no Supabase.
 
 ## Componentes Envolvidos
 
-- `src/components/editor/SermonEditor.tsx` — Editor principal (comportamento real)
-- `src/components/editor/SermonBlock.tsx` — Bloco com TipTap real
-- `src/lib/editor/frameworks.ts` — Definição e geração de blocos por framework
-- `src/stores/editorStore.ts` — Estado do editor (Zustand)
-- `src/types/sermon.ts` — Tipos de Bloco e Sermão
+- `src/components/editor/SermonEditor.tsx`, Editor principal (comportamento real)
+- `src/components/editor/SermonBlock.tsx`, Bloco com TipTap real
+- `src/lib/editor/frameworks.ts`, Definição e geração de blocos por framework
+- `src/stores/editorStore.ts`, Estado do editor (Zustand)
+- `src/types/sermon.ts`, Tipos de Bloco e Sermão
 
 ## Comportamentos
 

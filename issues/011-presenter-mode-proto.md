@@ -1,4 +1,4 @@
-# Issue 011 — Modo Apresentador (Duas Janelas) UI Proto
+# Issue 011, Modo Apresentador (Duas Janelas) UI Proto
 
 **Status:** [ ] PENDENTE
 **Tipo:** proto
@@ -10,14 +10,14 @@
 
 ## O Que Fazer
 
-Criar o protótipo visual do **Modo Apresentador** — a versão avançada do modo de apresentação,
+Criar o protótipo visual do **Modo Apresentador**, a versão avançada do modo de apresentação,
 inspirada no PowerPoint Presenter View: uma janela projetada na tela da audiência (slide fullscreen)
 e uma janela de controle visível apenas para o apresentador.
 
 ## Componentes Envolvidos
 
-- `src/components/present/PresentModePresenter.tsx` — painel de controle completo
-- `src/app/(app)/sermons/[id]/present/page.tsx` — adicionar query param `?mode=presenter`
+- `src/components/present/PresentModePresenter.tsx`, painel de controle completo
+- `src/app/(app)/sermons/[id]/present/page.tsx`, adicionar query param `?mode=presenter`
 
 ## Conceito
 
@@ -32,19 +32,19 @@ de controle fica na tela principal do apresentador.
 
 ## Layout do Painel de Controle (direita)
 
-**Background:** `--vox-stage-bg` (`#0B0F0D`) total — modo escuro
+**Background:** `--vox-stage-bg` (`#0B0F0D`) total, modo escuro
 
-### Área 1 — Cabeçalho do controle
+### Área 1, Cabeçalho do controle
 - Título do conteúdo: Geist 13px Muted
 - Contador: "Slide 3 / 12" Geist Mono Forest
 - Timer: "00:12:34" Geist Mono 20px (conta tempo de apresentação)
 
-### Área 2 — Preview do próximo slide
+### Área 2, Preview do próximo slide
 - Label eyebrow Muted: "Próximo slide"
 - Miniatura 16:9 com borda whisper-strong
 - Título/número do próximo slide abaixo
 
-### Área 3 — Comentários do slide atual (NÚCLEO)
+### Área 3, Comentários do slide atual (NÚCLEO)
 - Label eyebrow Forest: "Notas do apresentador"
 - Blocos visuais coloridos (mesma estrutura do editor de esboço):
   - Texto Bíblico, Aplicação, Ponto Principal, Ilustração, Notas pessoais, etc.
@@ -52,15 +52,15 @@ de controle fica na tela principal do apresentador.
   - Fonte maior: Geist 16px, line-height 1.6 para leitura rápida
 - Scroll se o conteúdo ultrapassar a área
 
-### Área 4 — Controles de navegação
+### Área 4, Controles de navegação
 - Botões grandes: `[← Slide Anterior]  [Próximo Slide →]`
 - Geist 14px, borda whisper, padding generoso (toque fácil)
 - Atalhos de teclado exibidos abaixo: "← → ou Espaço" Muted 11px
 
-### Área 5 — Barra inferior
-- `[⊡ Projetar fullscreen]` — abre janela da audiência
-- `[Aa +/-]` — ajusta tamanho da fonte dos comentários
-- `[✕ Encerrar]` — volta para o editor
+### Área 5, Barra inferior
+- `[⊡ Projetar fullscreen]`, abre janela da audiência
+- `[Aa +/-]`, ajusta tamanho da fonte dos comentários
+- `[✕ Encerrar]`, volta para o editor
 
 ---
 
@@ -68,7 +68,7 @@ de controle fica na tela principal do apresentador.
 
 - Slide fullscreen simulado (aspect ratio 16:9)
 - Background preto
-- Sem nenhuma UI — apenas a imagem do slide
+- Sem nenhuma UI, apenas a imagem do slide
 - Borda sutil para indicar "esta é a outra janela" no proto
 
 ---
@@ -82,7 +82,7 @@ de controle fica na tela principal do apresentador.
 - [ ] Botões de navegação renderizando
 - [ ] Barra inferior com ações
 - [ ] Background dark total em ambas as áreas
-- [ ] Responsivo: no mobile, apenas o slide (sem painel — modo simples)
+- [ ] Responsivo: no mobile, apenas o slide (sem painel, modo simples)
 
 ## Notas de Implementação
 
@@ -101,7 +101,7 @@ interface PresentModePresenterProps {
 
 ### Abertura da janela de projeção (behavior, não proto)
 ```typescript
-// Lógica de produção — documentar na issue de behavior (043):
+// Lógica de produção, documentar na issue de behavior (043):
 const projector = window.open(
   `/sermons/${sermonId}/present?mode=projector`,
   'vox-projector',
@@ -119,7 +119,7 @@ channel.postMessage({ type: 'SLIDE_CHANGE', index: currentIndex })
 
 ### Comentários como blocos
 - Os comentários dos slides (tabela `slides.comment`) devem ser JSONB de blocos, não texto simples
-- Isso é uma mudança em relação à issue 024 — atualizar o schema para `comment_blocks jsonb`
+- Isso é uma mudança em relação à issue 024, atualizar o schema para `comment_blocks jsonb`
 
 ## Plano de Implementação
 

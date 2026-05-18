@@ -1,4 +1,4 @@
-# Issue 037 — Seletor de Tipo: Behavior (Dados Reais)
+# Issue 037, Seletor de Tipo: Behavior (Dados Reais)
 
 **Status:** [ ] PENDENTE
 **Tipo:** behavior
@@ -15,9 +15,9 @@ no sermão e roteando o usuário para o fluxo correto (Fluxo A: esboço / Fluxo 
 
 ## Componentes Envolvidos
 
-- `src/app/(app)/sermons/new/page.tsx` — Server Component que cria o sermão e gerencia o wizard
-- `src/components/sermon/TypePicker.tsx` — migrar de proto para behavior
-- `src/hooks/useSermon.ts` — adicionar `createSermon(type)` com Supabase
+- `src/app/(app)/sermons/new/page.tsx`, Server Component que cria o sermão e gerencia o wizard
+- `src/components/sermon/TypePicker.tsx`, migrar de proto para behavior
+- `src/hooks/useSermon.ts`, adicionar `createSermon(type)` com Supabase
 
 ## Comportamentos
 
@@ -28,8 +28,8 @@ no sermão e roteando o usuário para o fluxo correto (Fluxo A: esboço / Fluxo 
    - Cria rascunho no Supabase: `INSERT INTO sermons (user_id, type, title) VALUES (...)`
    - Retorna o `id` do sermão criado
    - Redireciona para:
-     - `type = 'esboço'` → Step 2A (FrameworkPicker) — permanece em `/sermons/new?step=2&id={id}`
-     - `type = 'apresentação'` → Step 2B (SlidesSourcePicker) — permanece em `/sermons/new?step=2b&id={id}`
+     - `type = 'esboço'` → Step 2A (FrameworkPicker), permanece em `/sermons/new?step=2&id={id}`
+     - `type = 'apresentação'` → Step 2B (SlidesSourcePicker), permanece em `/sermons/new?step=2b&id={id}`
 
 ### Validação
 - Não permite avançar sem selecionar tipo (botão desabilitado)
@@ -61,7 +61,7 @@ type = 'apresentação' → /sermons/new?step=2b&id={id}  → SlidesSourcePicker
 ## Notas de Implementação
 
 ```typescript
-// src/hooks/useSermon.ts — adicionar:
+// src/hooks/useSermon.ts, adicionar:
 async function createSermon(type: SermonType, userId: string) {
   const { data, error } = await supabase
     .from('sermons')

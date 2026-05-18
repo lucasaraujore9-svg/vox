@@ -1,4 +1,4 @@
-// Issue 038 — cria um slide vazio para começar uma apresentação manual.
+// Issue 038, cria um slide vazio para começar uma apresentação manual.
 
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";

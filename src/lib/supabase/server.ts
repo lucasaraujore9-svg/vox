@@ -1,4 +1,4 @@
-// Server client — usar em Server Components, Server Actions e Route Handlers.
+// Server client, usar em Server Components, Server Actions e Route Handlers.
 // Lê e escreve cookies via `next/headers` para manter a sessão sincronizada.
 
 import { createServerClient } from "@supabase/ssr";
@@ -29,7 +29,7 @@ export async function createClient() {
   );
 }
 
-// Service role client — apenas para Route Handlers / cron / migrações server-side.
+// Service role client, apenas para Route Handlers / cron / migrações server-side.
 // Nunca exponha SUPABASE_SERVICE_ROLE_KEY no cliente.
 export function createServiceClient() {
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {

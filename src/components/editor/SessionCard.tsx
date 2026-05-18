@@ -107,7 +107,7 @@ export function SessionCard({
 
   return (
     <section className={cn("group relative py-4", !isFirst && "mt-16")}>
-      {/* Barra vertical de cor à esquerda — abraça o conteúdo do section,
+      {/* Barra vertical de cor à esquerda, abraça o conteúdo do section,
          com 16px de respiro topo/baixo (py-4) e 16px de distância até o texto. */}
       <span
         className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full"
@@ -122,7 +122,7 @@ export function SessionCard({
               <span className="vox-mono text-xs text-vox-muted">
                 {String(index + 1).padStart(2, "0")}
               </span>
-              {/* Badge de papel só aparece no hover — a barra colorida à esquerda
+              {/* Badge de papel só aparece no hover, a barra colorida à esquerda
                  já comunica o papel da sessão durante a leitura. */}
               <Badge
                 variant="outline"
@@ -296,9 +296,9 @@ interface SessionItemRowProps {
   /** Dica pedagógica expandida (popover de ajuda). */
   tip?: string;
   bibleVersion?: BibleVersionId;
-  /** Modo folha em branco — sem header de tipo */
+  /** Modo folha em branco, sem header de tipo */
   minimal?: boolean;
-  /** Posição do item na sessão — usado para desabilitar mover quando nas pontas. */
+  /** Posição do item na sessão, usado para desabilitar mover quando nas pontas. */
   isFirstItem?: boolean;
   isLastItem?: boolean;
   onContentChange?: (sessionId: string, itemId: string, content: string) => void;
@@ -373,7 +373,7 @@ function SessionItemRow({
                 >
                   {displayLabel}
                 </p>
-                {/* Chevron — só aparece no hover do item; reduz ruído visual. */}
+                {/* Chevron, só aparece no hover do item; reduz ruído visual. */}
                 <span className="text-vox-muted text-xs opacity-0 group-hover:opacity-100 transition-opacity">
                   ▾
                 </span>
@@ -394,7 +394,7 @@ function SessionItemRow({
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Botão de ajuda — só aparece quando há tip pedagógico (esqueletos
+            {/* Botão de ajuda, só aparece quando há tip pedagógico (esqueletos
                de framework). Iniciante clica e vê a explicação completa. */}
             {tip ? (
               <Popover>

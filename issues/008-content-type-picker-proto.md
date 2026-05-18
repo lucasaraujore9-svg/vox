@@ -1,8 +1,8 @@
-# Issue 008 — Seletor de Tipo de Conteúdo (Sermão / Palestra / Aula) UI Proto
+# Issue 008, Seletor de Tipo de Conteúdo (Sermão / Palestra / Aula) UI Proto
 
 **Status:** [ ] PENDENTE
 **Tipo:** proto
-**Página:** /sermons/new (Step 0 — antes do TypePicker)
+**Página:** /sermons/new (Step 0, antes do TypePicker)
 **Depende de:** 023
 **Prioridade:** P0
 
@@ -17,14 +17,14 @@ Esta tela antecede o TypePicker (006) e o FrameworkPicker (005).
 
 ## Componentes Envolvidos
 
-- `src/components/sermon/ContentTypePicker.tsx` — novo componente
-- `src/app/(app)/sermons/new/page.tsx` — adicionar Step 0
+- `src/components/sermon/ContentTypePicker.tsx`, novo componente
+- `src/app/(app)/sermons/new/page.tsx`, adicionar Step 0
 
-## Comportamentos (proto — apenas visual)
+## Comportamentos (proto, apenas visual)
 
 ### Layout
 - Três cards em linha (desktop) / empilhados (mobile)
-- Menor que os cards do TypePicker — mais compactos, mais opções
+- Menor que os cards do TypePicker, mais compactos, mais opções
 
 **Card Sermão:**
 - Ícone `feather` (manuscrito)

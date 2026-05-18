@@ -1,4 +1,4 @@
-// Issue 012 — Configuração de Cores dos Blocos UI proto.
+// Issue 012, Configuração de Cores dos Blocos UI proto.
 // Behavior real (Context + persistência) em 044.
 
 "use client";

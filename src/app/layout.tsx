@@ -25,7 +25,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "VOX — Palestras e Sermões",
+    default: "VOX, Palestras e Sermões",
     template: "%s · VOX",
   },
   description:
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "pt_BR",
     siteName: "VOX",
-    title: "VOX — Palestras e Sermões",
+    title: "VOX, Palestras e Sermões",
     description:
       "Companheiro silencioso do púlpito. Prepare, pregue e arquive sermões, palestras e aulas.",
     images: [
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "VOX — Palestras e Sermões",
+    title: "VOX, Palestras e Sermões",
     description:
       "Companheiro silencioso do púlpito. Prepare, pregue e arquive sermões, palestras e aulas.",
     images: ["/logo/png/vox-wordmark-1280.png"],

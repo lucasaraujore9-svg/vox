@@ -1,4 +1,4 @@
-# Issue 005 — Auth Pages UI Proto
+# Issue 005, Auth Pages UI Proto
 
 **Status:** [ ] PENDENTE
 **Tipo:** proto
@@ -15,11 +15,11 @@ Formulários visuais sem funcionalidade real de autenticação.
 
 ## Componentes Envolvidos
 
-- `src/app/(auth)/layout.tsx` — Layout de auth (sem sidebar, centrado)
-- `src/app/(auth)/login/page.tsx` — Página de login
-- `src/app/(auth)/register/page.tsx` — Página de cadastro
+- `src/app/(auth)/layout.tsx`, Layout de auth (sem sidebar, centrado)
+- `src/app/(auth)/login/page.tsx`, Página de login
+- `src/app/(auth)/register/page.tsx`, Página de cadastro
 
-## Comportamentos (proto — apenas visual)
+## Comportamentos (proto, apenas visual)
 
 ### Layout de Auth
 - Fundo com gradiente suave ou imagem lateral
@@ -83,7 +83,7 @@ Criar `src/app/(auth)/layout.tsx`:
 
 **2. Criar página de login**
 Criar `src/app/(auth)/login/page.tsx`:
-- `"use client"` — useState: `showPassword`, `isLoading`, `hasError`
+- `"use client"`, useState: `showPassword`, `isLoading`, `hasError`
 - Logo VOX (texto estilizado em Fraunces, --vox-forest)
 - `<Alert variant="destructive">` condicional para erro (toggle por botão no proto)
 - Campos: email, senha com botão olho (toggle `showPassword`)
@@ -99,7 +99,7 @@ Criar `src/components/auth/PasswordStrength.tsx`:
 
 **4. Criar página de cadastro**
 Criar `src/app/(auth)/register/page.tsx`:
-- `"use client"` — useState: `showPassword`, `showConfirm`, `isLoading`, `password`
+- `"use client"`, useState: `showPassword`, `showConfirm`, `isLoading`, `password`
 - Campos: nome, email, denominação (optional), senha + `<PasswordStrength>`, confirmar senha
 - Checkbox "Aceito os termos de uso"
 - Botão "Criar conta" com loading state visual (Loader2 icon + disabled)

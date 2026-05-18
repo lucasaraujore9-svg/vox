@@ -1,4 +1,4 @@
-# Issue 032 — Busca e Filtros no Banco de Sermões
+# Issue 032, Busca e Filtros no Banco de Sermões
 
 **Status:** [ ] PENDENTE
 **Tipo:** behavior
@@ -14,9 +14,9 @@ Implementar busca full-text e filtros combinados na página do banco de sermões
 
 ## Componentes Envolvidos
 
-- `src/app/(app)/sermons/page.tsx` — Aceita searchParams para filtros
-- `src/components/sermon/SermonFilters.tsx` — Filtros com estado real
-- `src/lib/supabase/queries/sermons.ts` — Queries com filtros dinâmicos
+- `src/app/(app)/sermons/page.tsx`, Aceita searchParams para filtros
+- `src/components/sermon/SermonFilters.tsx`, Filtros com estado real
+- `src/lib/supabase/queries/sermons.ts`, Queries com filtros dinâmicos
 
 ## Comportamentos
 
@@ -92,7 +92,7 @@ export async function getSermons(
 
 ### URL state com searchParams
 - Usar `useRouter` + `useSearchParams` para atualizar URL sem reload
-- Página é Server Component — recebe `searchParams` como prop e faz query server-side
+- Página é Server Component, recebe `searchParams` como prop e faz query server-side
 
 ## Plano de Implementação
 
@@ -117,7 +117,7 @@ Editar `src/app/(app)/sermons/page.tsx`:
 
 **3. Atualizar SermonFilters com URL state real**
 Editar `src/components/sermon/SermonFilters.tsx`:
-- `"use client"` — usar `useSearchParams` e `useRouter`
+- `"use client"`, usar `useSearchParams` e `useRouter`
 - Cada mudança de filtro: construir nova URL com `URLSearchParams` → `router.push(newUrl, { scroll: false })`
 - Debounce de 300ms no campo de busca antes de atualizar URL
 - Botão "Limpar filtros": `router.push('/sermons')`

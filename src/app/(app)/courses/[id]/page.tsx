@@ -1,4 +1,4 @@
-// Issue 009 — Curso: Editor UI proto. Behavior em 041.
+// Issue 009, Curso: Editor UI proto. Behavior em 041.
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";

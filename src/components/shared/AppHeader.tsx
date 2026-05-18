@@ -46,7 +46,7 @@ export async function AppHeader() {
         role = profile?.role ?? "pastor";
       }
     } catch {
-      // Supabase não disponível em dev — ignora
+      // Supabase não disponível em dev, ignora
     }
   }
 
@@ -56,73 +56,73 @@ export async function AppHeader() {
     <header className="flex items-center justify-between gap-3 mb-8">
       <MobileNav />
       <div className="flex items-center gap-3 ml-auto">
-      <span
-        className="hidden md:inline-flex items-center gap-1.5 text-xs vox-mono text-vox-muted mr-1"
-        aria-hidden
-      >
-        Buscar Bíblia
-        <kbd
-          className="inline-flex items-center px-1.5 py-0.5 rounded border text-[10px] tracking-wide"
-          style={{ borderColor: "var(--vox-whisper)", color: "var(--vox-prose)" }}
+        <span
+          className="hidden md:inline-flex items-center gap-1.5 text-xs vox-mono text-vox-muted mr-1"
+          aria-hidden
         >
-          ⌘ ⇧ B
-        </kbd>
-      </span>
-      <OfflineBadge />
-      <DropdownMenu>
-        <DropdownMenuTrigger className="outline-none">
-          <Avatar className="size-9 cursor-pointer">
-            <AvatarFallback className="bg-accent text-vox-forest text-xs font-medium">
-              {initialsFromName(displayName, email)}
-            </AvatarFallback>
-          </Avatar>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel>
-            <p className="font-medium">{displayName}</p>
-            {email ? (
-              <p className="text-xs font-normal text-vox-muted vox-mono">
-                {email}
-              </p>
+          Buscar Bíblia
+          <kbd
+            className="inline-flex items-center px-1.5 py-0.5 rounded border text-[10px] tracking-wide"
+            style={{ borderColor: "var(--vox-whisper)", color: "var(--vox-prose)" }}
+          >
+            ⌘ ⇧ B
+          </kbd>
+        </span>
+        <OfflineBadge />
+        <DropdownMenu>
+          <DropdownMenuTrigger className="outline-none">
+            <Avatar className="size-9 cursor-pointer">
+              <AvatarFallback className="bg-accent text-vox-forest text-xs font-medium">
+                {initialsFromName(displayName, email)}
+              </AvatarFallback>
+            </Avatar>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel>
+              <p className="font-medium">{displayName}</p>
+              {email ? (
+                <p className="text-xs font-normal text-vox-muted vox-mono">
+                  {email}
+                </p>
+              ) : null}
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <a href="/settings">Configurações</a>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <a href="/settings/blocks">Cores dos blocos</a>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <a href="/help">Ajuda</a>
+            </DropdownMenuItem>
+            {isAdmin ? (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel className="text-xs vox-mono text-vox-muted">
+                  Administração
+                </DropdownMenuLabel>
+                <DropdownMenuItem asChild>
+                  <a href="/admin/users">Usuários</a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a href="/admin/interests">Interesses</a>
+                </DropdownMenuItem>
+              </>
             ) : null}
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <a href="/settings">Configurações</a>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <a href="/settings/blocks">Cores dos blocos</a>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <a href="/help">Ajuda</a>
-          </DropdownMenuItem>
-          {isAdmin ? (
-            <>
-              <DropdownMenuSeparator />
-              <DropdownMenuLabel className="text-xs vox-mono text-vox-muted">
-                Administração
-              </DropdownMenuLabel>
-              <DropdownMenuItem asChild>
-                <a href="/admin/users">Usuários</a>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <a href="/admin/interests">Interesses</a>
-              </DropdownMenuItem>
-            </>
-          ) : null}
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <form action={logoutAction}>
-              <button
-                type="submit"
-                className="w-full text-left text-vox-destructive"
-              >
-                Sair
-              </button>
-            </form>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <form action={logoutAction}>
+                <button
+                  type="submit"
+                  className="w-full text-left text-vox-destructive"
+                >
+                  Sair
+                </button>
+              </form>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );

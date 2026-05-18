@@ -1,4 +1,4 @@
-// VOX app shell — screen routing + tweaks
+// VOX app shell, screen routing + tweaks
 const { useState, useEffect } = React;
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
@@ -8,15 +8,15 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 }/*EDITMODE-END*/;
 
 const DISPLAY_FONTS = {
-  fraunces:    '"Fraunces", "Cormorant Garamond", Georgia, serif',
-  newsreader:  '"Newsreader", "Source Serif Pro", Georgia, serif',
-  spectral:    '"Spectral", "Source Serif Pro", Georgia, serif',
+  fraunces: '"Fraunces", "Cormorant Garamond", Georgia, serif',
+  newsreader: '"Newsreader", "Source Serif Pro", Georgia, serif',
+  spectral: '"Spectral", "Source Serif Pro", Georgia, serif',
 };
 
 const SCREEN_LABELS = {
   library: "01 Biblioteca",
-  new:     "02 Novo sermão",
-  editor:  "03 Editor",
+  new: "02 Novo sermão",
+  editor: "03 Editor",
   present: "04 Modo Apresentação",
 };
 
@@ -102,8 +102,8 @@ const App = () => {
           flexDirection: "column",
         }}>
           {screen === "library" && <Library setScreen={setScreen} />}
-          {screen === "new"     && <NewSermon setScreen={setScreen} />}
-          {screen === "editor"  && <Editor setScreen={setScreen} />}
+          {screen === "new" && <NewSermon setScreen={setScreen} />}
+          {screen === "editor" && <Editor setScreen={setScreen} />}
         </main>
       </div>
 
@@ -139,8 +139,8 @@ const App = () => {
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           {[
             ["library", "Biblioteca"],
-            ["new",     "Novo sermão"],
-            ["editor",  "Editor"],
+            ["new", "Novo sermão"],
+            ["editor", "Editor"],
             ["present", "Modo Apresentação"],
           ].map(([id, label]) => (
             <button

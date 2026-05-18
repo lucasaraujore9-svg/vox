@@ -1,4 +1,4 @@
-# Issue 010 — Estudo Guiado UI Proto
+# Issue 010, Estudo Guiado UI Proto
 
 **Status:** [ ] PENDENTE
 **Tipo:** proto
@@ -15,17 +15,17 @@ tela de trilhas disponíveis + interface de sessão de estudo + geração de out
 
 ## Componentes Envolvidos
 
-- `src/components/study/StudyModuleCard.tsx` — card de módulo disponível
-- `src/components/study/StudySession.tsx` — interface da sessão ativa
-- `src/components/study/StudyNotes.tsx` — editor de notas (blocos visuais)
-- `src/components/study/StudyProgress.tsx` — progresso no módulo
-- `src/components/study/StudyOutputPicker.tsx` — modal "Gerar conteúdo"
-- `src/app/(app)/study/page.tsx` — tela de trilhas
-- `src/app/(app)/study/[moduleId]/page.tsx` — sessão ativa
+- `src/components/study/StudyModuleCard.tsx`, card de módulo disponível
+- `src/components/study/StudySession.tsx`, interface da sessão ativa
+- `src/components/study/StudyNotes.tsx`, editor de notas (blocos visuais)
+- `src/components/study/StudyProgress.tsx`, progresso no módulo
+- `src/components/study/StudyOutputPicker.tsx`, modal "Gerar conteúdo"
+- `src/app/(app)/study/page.tsx`, tela de trilhas
+- `src/app/(app)/study/[moduleId]/page.tsx`, sessão ativa
 
 ---
 
-## Página /study — Trilhas disponíveis
+## Página /study, Trilhas disponíveis
 
 ### Header
 - Título: "Estudo Guiado" Fraunces 600 28px
@@ -44,29 +44,29 @@ Cada `StudyModuleCard`:
 - Barra de progresso (whisper → Forest) se em andamento
 
 **Módulos mock (6 cards):**
-1. Homilética Essencial — 8 sessões · 12h
-2. Hermenêutica Bíblica — 6 sessões · 9h
-3. Teologia Sistemática Básica — 10 sessões · 15h
-4. Comunicação e Oratória — 5 sessões · 7h
-5. Liderança Pastoral — 6 sessões · 8h
-6. Formação de Discípulos — 8 sessões · 10h
+1. Homilética Essencial, 8 sessões · 12h
+2. Hermenêutica Bíblica, 6 sessões · 9h
+3. Teologia Sistemática Básica, 10 sessões · 15h
+4. Comunicação e Oratória, 5 sessões · 7h
+5. Liderança Pastoral, 6 sessões · 8h
+6. Formação de Discípulos, 8 sessões · 10h
 
 ---
 
-## Página /study/[moduleId] — Sessão Ativa
+## Página /study/[moduleId], Sessão Ativa
 
 ### Layout split-screen
 
-**Painel esquerdo (280px fixo) — Índice do módulo:**
+**Painel esquerdo (280px fixo), Índice do módulo:**
 - Header: nome do módulo eyebrow + progresso "Sessão 3 de 8"
 - Barra de progresso Forest
 - Lista vertical de sessões:
   - Cada item: número + título da sessão
   - Estado: ✓ concluída (Forest) / → atual (bold) / ○ pendente (Muted)
-- Botão "Gerar conteúdo" — Forest Deep, base do painel (aparece ao completar 80%+)
+- Botão "Gerar conteúdo", Forest Deep, base do painel (aparece ao completar 80%+)
 
-**Painel direito (flex 1) — Conteúdo da sessão:**
-- Header: "Sessão 3 — [Título]" Fraunces 600 22px
+**Painel direito (flex 1), Conteúdo da sessão:**
+- Header: "Sessão 3, [Título]" Fraunces 600 22px
 - Corpo da sessão: texto guiado (Geist 15px, line-height 1.7, máx 680px)
   - Pode conter: perguntas de reflexão, textos bíblicos, exercícios
 - Divisor whisper
@@ -82,7 +82,7 @@ Aparece ao clicar "Gerar conteúdo":
 - Descrição: "Escolha o formato. Suas notas serão usadas como base."
 - 4 opções em grid 2×2:
   - Sermão / Palestra / Aula / Curso
-- Botão "Gerar" — cria o rascunho e redireciona para o editor
+- Botão "Gerar", cria o rascunho e redireciona para o editor
 
 ---
 

@@ -63,7 +63,7 @@ export function PresentSlides({
   const goNext = useCallback(() => setIndex((i) => Math.min(i + 1, total - 1)), [total]);
   const goPrev = useCallback(() => setIndex((i) => Math.max(i - 1, 0)), []);
 
-  // BroadcastChannel — sincroniza com janela popup quando ela está aberta
+  // BroadcastChannel, sincroniza com janela popup quando ela está aberta
   useEffect(() => {
     const ch = openChannel(sermonId);
     channelRef.current = ch;
@@ -103,7 +103,7 @@ export function PresentSlides({
         e.preventDefault();
         goPrev();
       } else if (e.key === "Escape") {
-        if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+        if (document.fullscreenElement) document.exitFullscreen().catch(() => { });
       }
     }
     window.addEventListener("keydown", onKey);
@@ -120,7 +120,7 @@ export function PresentSlides({
         // sem suporte
       }
     })();
-    return () => void lock?.release().catch(() => {});
+    return () => void lock?.release().catch(() => { });
   }, []);
 
   function openProjection() {
@@ -353,7 +353,7 @@ function NextSlideBlock({ slide }: { slide: PresentSlide }) {
     >
       <p className="vox-eyebrow opacity-50 text-xs mb-3">Próximo slide</p>
 
-      {/* Thumbnail visual com aspect-video — mesma estética do slide grande */}
+      {/* Thumbnail visual com aspect-video, mesma estética do slide grande */}
       <div
         className="rounded-lg aspect-video overflow-hidden relative"
         style={{

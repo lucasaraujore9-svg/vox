@@ -1,4 +1,4 @@
-# Issue 012 — Configuração de Cores dos Blocos UI Proto
+# Issue 012, Configuração de Cores dos Blocos UI Proto
 
 **Status:** [ ] PENDENTE
 **Tipo:** proto
@@ -16,8 +16,8 @@ O usuário define a paleta personalizada que será aplicada em todo o sistema
 
 ## Componentes Envolvidos
 
-- `src/components/blocks/BlockColorPicker.tsx` — seletor de cor por bloco
-- `src/app/(app)/settings/blocks/page.tsx` — página de configuração
+- `src/components/blocks/BlockColorPicker.tsx`, seletor de cor por bloco
+- `src/app/(app)/settings/blocks/page.tsx`, página de configuração
 
 ## Layout
 
@@ -60,11 +60,11 @@ Para cada tipo:
 14. Notas pessoais
 
 ### Ações globais (rodapé fixo)
-- "Restaurar padrões" — outline, restaura todas as cores para os defaults
-- "Salvar" — Forest Deep, salva as preferências
+- "Restaurar padrões", outline, restaura todas as cores para os defaults
+- "Salvar", Forest Deep, salva as preferências
 
 ### Aviso de consistência
-- Hint acima das ações: "Estas cores são aplicadas em todos os seus conteúdos — sermões, palestras, aulas e notas de estudo."
+- Hint acima das ações: "Estas cores são aplicadas em todos os seus conteúdos, sermões, palestras, aulas e notas de estudo."
 
 ## Critério de Aceite
 
@@ -80,7 +80,7 @@ Para cada tipo:
 ## Notas de Implementação
 
 ```typescript
-// Default colors (source of truth — deve vir de um arquivo de constantes)
+// Default colors (source of truth, deve vir de um arquivo de constantes)
 // src/lib/blocks/defaults.ts
 export const BLOCK_COLOR_DEFAULTS: Record<string, string> = {
   'Texto Bíblico':     '#B45309',
@@ -127,7 +127,7 @@ function isModified(blockType: string): boolean {
 **1. Criar arquivo de defaults**
 Criar `src/lib/blocks/defaults.ts`:
 - Exportar `BLOCK_COLOR_DEFAULTS: Record<string, string>` com os 14 tipos e cores conforme spec
-- Este arquivo é o contrato importado por todo o sistema — não inlinar valores em componentes
+- Este arquivo é o contrato importado por todo o sistema, não inlinar valores em componentes
 
 **2. Criar BlockColorPicker**
 Criar `src/components/blocks/BlockColorPicker.tsx` (`"use client"`):

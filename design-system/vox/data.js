@@ -58,25 +58,25 @@ window.VOX_DATA = (function () {
   };
 
   const BLOCK_TYPES = {
-    "Texto Bíblico":      { color: "var(--gold)",     accent: "rgba(180,83,9,0.10)",  hint: "Cole ou digite a passagem. Será destacada e disponível no Modo Apresentação." },
-    "Introdução":         { color: "var(--forest)",   accent: "var(--forest-soft)",   hint: "Como o sermão começa. Gancho, leitura, oração inicial." },
-    "Contexto":           { color: "var(--fw-livre)", accent: "rgba(71,85,105,0.08)", hint: "Histórico, autor, audiência original, gênero literário." },
-    "Ponto Principal":    { color: "var(--forest)",   accent: "var(--forest-soft)",   hint: "A ideia central que será desenvolvida nesta seção." },
-    "Subponto":           { color: "var(--forest-mid)", accent: "rgba(21,128,61,0.08)", hint: "Desdobramento do ponto principal." },
-    "Ilustração":         { color: "var(--fw-tematico)", accent: "rgba(180,83,9,0.08)", hint: "História, analogia, cena que ilumina a verdade do ponto." },
-    "Aplicação":          { color: "var(--fw-textual)", accent: "rgba(13,124,124,0.08)", hint: "O que esta verdade pede da congregação esta semana?" },
-    "Citação":            { color: "var(--gold)",     accent: "var(--gold-soft)",     hint: "Quote de autor, comentarista ou pai da igreja. Inclua atribuição." },
-    "Pergunta retórica":  { color: "var(--fw-narrativo)", accent: "rgba(109,40,217,0.08)", hint: "Pergunta para suspender o ouvinte. Não exige resposta imediata." },
-    "Conclusão":          { color: "var(--ink)",     accent: "rgba(24,24,27,0.05)",  hint: "Recapitulação, chamado, ponte para a próxima semana." },
-    "Oração":             { color: "var(--fw-livre)", accent: "rgba(71,85,105,0.08)", hint: "Oração de encerramento ou de comissionamento." },
-    "Notas pessoais":     { color: "var(--muted)",   accent: "rgba(156,163,175,0.10)", hint: "Visível apenas para você. Não aparece no Modo Apresentação." },
+    "Texto Bíblico": { color: "var(--gold)", accent: "rgba(180,83,9,0.10)", hint: "Cole ou digite a passagem. Será destacada e disponível no Modo Apresentação." },
+    "Introdução": { color: "var(--forest)", accent: "var(--forest-soft)", hint: "Como o sermão começa. Gancho, leitura, oração inicial." },
+    "Contexto": { color: "var(--fw-livre)", accent: "rgba(71,85,105,0.08)", hint: "Histórico, autor, audiência original, gênero literário." },
+    "Ponto Principal": { color: "var(--forest)", accent: "var(--forest-soft)", hint: "A ideia central que será desenvolvida nesta seção." },
+    "Subponto": { color: "var(--forest-mid)", accent: "rgba(21,128,61,0.08)", hint: "Desdobramento do ponto principal." },
+    "Ilustração": { color: "var(--fw-tematico)", accent: "rgba(180,83,9,0.08)", hint: "História, analogia, cena que ilumina a verdade do ponto." },
+    "Aplicação": { color: "var(--fw-textual)", accent: "rgba(13,124,124,0.08)", hint: "O que esta verdade pede da congregação esta semana?" },
+    "Citação": { color: "var(--gold)", accent: "var(--gold-soft)", hint: "Quote de autor, comentarista ou pai da igreja. Inclua atribuição." },
+    "Pergunta retórica": { color: "var(--fw-narrativo)", accent: "rgba(109,40,217,0.08)", hint: "Pergunta para suspender o ouvinte. Não exige resposta imediata." },
+    "Conclusão": { color: "var(--ink)", accent: "rgba(24,24,27,0.05)", hint: "Recapitulação, chamado, ponte para a próxima semana." },
+    "Oração": { color: "var(--fw-livre)", accent: "rgba(71,85,105,0.08)", hint: "Oração de encerramento ou de comissionamento." },
+    "Notas pessoais": { color: "var(--muted)", accent: "rgba(156,163,175,0.10)", hint: "Visível apenas para você. Não aparece no Modo Apresentação." },
   };
 
   const SERMONS = [
     {
       id: "s1",
       title: "A graça que sustenta",
-      ref: "Romanos 5:1—11",
+      ref: "Romanos 5:1,11",
       framework: "expositivo",
       status: "published",
       updatedAt: "12 de maio · 14:32",
@@ -88,7 +88,7 @@ window.VOX_DATA = (function () {
     {
       id: "s2",
       title: "Ouvir e fazer",
-      ref: "Tiago 1:22—25",
+      ref: "Tiago 1:22,25",
       framework: "expositivo",
       status: "drafting",
       updatedAt: "ontem · 21:08",
@@ -100,7 +100,7 @@ window.VOX_DATA = (function () {
     {
       id: "s3",
       title: "Quem é o meu próximo?",
-      ref: "Lucas 10:25—37",
+      ref: "Lucas 10:25,37",
       framework: "narrativo",
       status: "drafting",
       updatedAt: "9 de maio · 08:15",
@@ -112,7 +112,7 @@ window.VOX_DATA = (function () {
     {
       id: "s4",
       title: "O peso da glória",
-      ref: "2 Coríntios 4:16—18",
+      ref: "2 Coríntios 4:16,18",
       framework: "textual",
       status: "published",
       updatedAt: "5 de maio · 19:40",
@@ -123,7 +123,7 @@ window.VOX_DATA = (function () {
     {
       id: "s5",
       title: "Quando a oração demora",
-      ref: "Lucas 18:1—8",
+      ref: "Lucas 18:1,8",
       framework: "tematico",
       status: "drafting",
       updatedAt: "3 de maio · 11:22",
@@ -135,7 +135,7 @@ window.VOX_DATA = (function () {
     {
       id: "s6",
       title: "O fruto que permanece",
-      ref: "Gálatas 5:22—23",
+      ref: "Gálatas 5:22,23",
       framework: "topico",
       status: "published",
       updatedAt: "28 de abril",
@@ -158,7 +158,7 @@ window.VOX_DATA = (function () {
     {
       id: "s8",
       title: "O bom pastor",
-      ref: "João 10:1—18",
+      ref: "João 10:1,18",
       framework: "narrativo",
       status: "published",
       updatedAt: "21 de abril",
@@ -168,11 +168,11 @@ window.VOX_DATA = (function () {
     },
   ];
 
-  // Editor preview document — a working draft of "Ouvir e fazer"
+  // Editor preview document, a working draft of "Ouvir e fazer"
   const EDITOR_DOC = {
     sermonId: "s2",
     title: "Ouvir e fazer",
-    ref: "Tiago 1:22—25",
+    ref: "Tiago 1:22,25",
     framework: "expositivo",
     lastSavedAgo: "salvo há 12 segundos",
     blocks: [
@@ -181,19 +181,19 @@ window.VOX_DATA = (function () {
         type: "Texto Bíblico",
         content:
           "Sede cumpridores da palavra e não somente ouvintes, enganando-vos a vós mesmos. Porque, se alguém é ouvinte da palavra e não cumpridor, é semelhante ao homem que contempla ao espelho o seu rosto natural; porque se contempla a si mesmo, e vai-se, e logo se esquece de como era. Aquele, porém, que atenta bem para a lei perfeita da liberdade, e nisso persevera, não sendo ouvinte esquecido, mas fazedor da obra, este tal será bem-aventurado no seu feito.",
-        meta: "Almeida Corrigida Fiel · v. 22—25",
+        meta: "Almeida Corrigida Fiel · v. 22,25",
       },
       {
         id: "b2",
         type: "Introdução",
         content:
-          "Tiago escreve a uma igreja dispersa, cansada e tentada a confundir frequência ao culto com fidelidade ao Senhor. A imagem que ele escolhe — o espelho — é doméstica, conhecida de todos: olhar e esquecer. Há um modo de ouvir a Palavra que não muda nada.",
+          "Tiago escreve a uma igreja dispersa, cansada e tentada a confundir frequência ao culto com fidelidade ao Senhor. A imagem que ele escolhe, o espelho, é doméstica, conhecida de todos: olhar e esquecer. Há um modo de ouvir a Palavra que não muda nada.",
       },
       {
         id: "b3",
         type: "Contexto",
         content:
-          "A carta de Tiago é, em boa medida, um eco do Sermão do Monte. Em 1:19—21 ele acaba de tratar da prontidão para ouvir e da rejeição de toda imundícia. O verso 22 inicia a aplicação prática: ouvir sem fazer é forma sutil de autoengano.",
+          "A carta de Tiago é, em boa medida, um eco do Sermão do Monte. Em 1:19,21 ele acaba de tratar da prontidão para ouvir e da rejeição de toda imundícia. O verso 22 inicia a aplicação prática: ouvir sem fazer é forma sutil de autoengano.",
       },
       {
         id: "b4",
@@ -205,7 +205,7 @@ window.VOX_DATA = (function () {
         id: "b5",
         type: "Subponto",
         content:
-          "Tiago usa três verbos sobre o homem do espelho: contempla, vai-se, esquece. O problema não é a curta atenção — é a vida que segue sem alteração.",
+          "Tiago usa três verbos sobre o homem do espelho: contempla, vai-se, esquece. O problema não é a curta atenção, é a vida que segue sem alteração.",
       },
       {
         id: "b6",
@@ -229,13 +229,13 @@ window.VOX_DATA = (function () {
         id: "b9",
         type: "Oração",
         content: "",
-        placeholder: "Oração breve de comissionamento — pedir vida que escuta e responde.",
+        placeholder: "Oração breve de comissionamento, pedir vida que escuta e responde.",
       },
       {
         id: "b10",
         type: "Notas pessoais",
         content:
-          "Conferir nuance no original: ποιητής λόγου, fazedor da palavra — não apenas alguém que age, mas alguém de quem a Palavra brota como fruto. Possível ponte com Mt 7:24—27.",
+          "Conferir nuance no original: ποιητής λόγου, fazedor da palavra, não apenas alguém que age, mas alguém de quem a Palavra brota como fruto. Possível ponte com Mt 7:24,27.",
       },
     ],
   };

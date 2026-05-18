@@ -1,4 +1,4 @@
-// Presentation mode — dark stage view for live preaching
+// Presentation mode, dark stage view for live preaching
 const Presentation = ({ setScreen }) => {
   const doc = window.VOX_DATA.EDITOR_DOC;
   // Only show visible-on-stage blocks (skip Notas pessoais)
@@ -124,7 +124,7 @@ const Presentation = ({ setScreen }) => {
         gridTemplateColumns: "1fr 320px",
         minHeight: 0,
       }}>
-        {/* Center — current block */}
+        {/* Center, current block */}
         <main style={{
           padding: "56px 80px 32px",
           overflow: "auto",
@@ -200,7 +200,7 @@ const Presentation = ({ setScreen }) => {
             }}>
               <VoxIcon name="bookmark" className="icon-sm" style={{ marginTop: 3, flexShrink: 0 }} />
               <span>
-                Lembrar de Maria (oração da semana passada) — convidar congregação a anotar uma frase do sermão antes de sair.
+                Lembrar de Maria (oração da semana passada), convidar congregação a anotar uma frase do sermão antes de sair.
               </span>
             </aside>
           )}
@@ -270,7 +270,7 @@ const Presentation = ({ setScreen }) => {
           </div>
         </main>
 
-        {/* Right rail — up next + meta */}
+        {/* Right rail, up next + meta */}
         <aside style={{
           padding: "56px 28px 28px",
           borderLeft: "1px solid rgba(255,255,255,0.06)",

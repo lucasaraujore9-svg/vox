@@ -1,4 +1,4 @@
-// Dados dos frameworks homiléticos — fonte da verdade até issue 048 trazer real do banco.
+// Dados dos frameworks homiléticos, fonte da verdade até issue 048 trazer real do banco.
 // Mantém paridade com design-system/vox/data.js → VOX_DATA.FRAMEWORKS.
 
 export type FrameworkId =
@@ -39,7 +39,7 @@ export const VOX_FRAMEWORKS: readonly Framework[] = [
     name: "Textual",
     tagline: "Um texto, uma mensagem",
     description:
-      "Um único trecho bíblico — geralmente uma sentença ou parágrafo — destrinchado e aplicado.",
+      "Um único trecho bíblico, geralmente uma sentença ou parágrafo, destrinchado e aplicado.",
     outline: [
       "Texto Bíblico",
       "Introdução",

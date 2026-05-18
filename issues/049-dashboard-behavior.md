@@ -1,4 +1,4 @@
-# Issue 049 — Dashboard: Behavior (Dados Reais)
+# Issue 049, Dashboard: Behavior (Dados Reais)
 
 **Status:** [ ] PENDENTE
 **Tipo:** behavior
@@ -16,11 +16,11 @@ e ações rápidas conectadas ao sistema.
 
 ## Componentes Envolvidos
 
-- `src/app/(app)/dashboard/page.tsx` — Server Component com queries paralelas
-- `src/components/dashboard/StatsCard.tsx` — cards de estatística (dados reais)
-- `src/components/dashboard/RecentContent.tsx` — lista de conteúdos recentes
-- `src/components/dashboard/QuickActions.tsx` — ações rápidas contextuais
-- `src/lib/supabase/queries/dashboard.ts` — queries otimizadas do dashboard
+- `src/app/(app)/dashboard/page.tsx`, Server Component com queries paralelas
+- `src/components/dashboard/StatsCard.tsx`, cards de estatística (dados reais)
+- `src/components/dashboard/RecentContent.tsx`, lista de conteúdos recentes
+- `src/components/dashboard/QuickActions.tsx`, ações rápidas contextuais
+- `src/lib/supabase/queries/dashboard.ts`, queries otimizadas do dashboard
 
 ## Comportamentos
 
@@ -33,7 +33,7 @@ const [stats, recentContent, activeSeries] = await Promise.all([
 ])
 ```
 
-### StatsCards — dados reais
+### StatsCards, dados reais
 - **Total de conteúdos:** `SELECT COUNT(*) FROM sermons WHERE user_id = ? AND deleted_at IS NULL`
 - **Último pregado:** `SELECT preached_at FROM sermons WHERE user_id = ? AND preached_at IS NOT NULL ORDER BY preached_at DESC LIMIT 1`
 - **Em preparação:** `SELECT COUNT(*) WHERE status = 'rascunho'`
@@ -68,7 +68,7 @@ const [stats, recentContent, activeSeries] = await Promise.all([
   - "Criar primeiro sermão" (Forest Deep)
   - "Explorar frameworks" (outline)
   - "Começar um estudo" (outline)
-- Sem mostrar cards de stats zerados — iria desanimar o usuário
+- Sem mostrar cards de stats zerados, iria desanimar o usuário
 
 ## Critério de Aceite
 

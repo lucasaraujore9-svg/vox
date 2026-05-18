@@ -1,4 +1,4 @@
-// Monograma V (quadrado) — pra avatares, ícones de menu, app icon embutido.
+// Monograma V (quadrado), pra avatares, ícones de menu, app icon embutido.
 // Variantes:
 //   - "forest"      → fundo verde forest (padrão sobre claro)
 //   - "parchment"   → fundo bege (sobre verde / dark)

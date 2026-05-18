@@ -1,6 +1,6 @@
 "use client";
 
-// Issue 030/031 — Hook genérico de auto-save com debounce.
+// Issue 030/031, Hook genérico de auto-save com debounce.
 // Offline-first: SEMPRE escreve no IndexedDB antes de tentar o remoto, para que
 // nenhuma edição se perca se a página recarregar (SW, refresh, navegação) antes
 // do round-trip ao Supabase. Em caso de sucesso remoto, marca como sincronizado.
@@ -36,12 +36,12 @@ export function useAutoSave<T>({ value, save, fallbackId, delay = 1500 }: AutoSa
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(async () => {
       setStatus("saving");
-      // 1) Sempre escreve no IDB primeiro — defesa contra reload/SW/crash
+      // 1) Sempre escreve no IDB primeiro, defesa contra reload/SW/crash
       //    antes do round-trip ao Supabase concluir.
       try {
         await savePending(fallbackId, value as Record<string, unknown>);
       } catch {
-        // IDB indisponível (private mode? quota?) — segue tentando remoto.
+        // IDB indisponível (private mode? quota?), segue tentando remoto.
       }
       // 2) Tenta o remoto. Se ok, marca o IDB como sincronizado.
       try {
@@ -50,7 +50,7 @@ export function useAutoSave<T>({ value, save, fallbackId, delay = 1500 }: AutoSa
         try {
           await markSynced(fallbackId);
         } catch {
-          // ok — sync limpa depois
+          // ok, sync limpa depois
         }
         setStatus("saved");
       } catch {

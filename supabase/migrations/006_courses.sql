@@ -1,4 +1,4 @@
--- Migration 006 — courses
+-- Migration 006, courses
 -- Issue 025 · cursos = container de aulas com ementa, objetivos e carga horária
 
 create table if not exists public.courses (

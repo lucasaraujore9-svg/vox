@@ -1,5 +1,5 @@
 // Queries usadas pela área /admin. Server-side only (Server Components).
-// Checa admin via current_user_is_admin() — sem isso retorna lista vazia.
+// Checa admin via current_user_is_admin(), sem isso retorna lista vazia.
 
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 
@@ -118,7 +118,7 @@ export async function listInterests(
   return data ?? [];
 }
 
-/** Conta interesses pendentes — usado pra badge na sidebar/menu. */
+/** Conta interesses pendentes, usado pra badge na sidebar/menu. */
 export async function pendingInterestCount(): Promise<number> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return 0;
   const supabase = await createClient();

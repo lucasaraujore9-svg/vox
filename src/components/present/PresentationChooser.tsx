@@ -10,7 +10,7 @@ interface PresentationChooserProps {
   sermonId: string;
   /** Título do sermão pra exibir no header */
   title: string;
-  /** type do sermão — pra ajustar copy ("slides" vs "blocos") */
+  /** type do sermão, pra ajustar copy ("slides" vs "blocos") */
   isSlides: boolean;
 }
 

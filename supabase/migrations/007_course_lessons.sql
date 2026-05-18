@@ -1,4 +1,4 @@
--- Migration 007 — course_lessons
+-- Migration 007, course_lessons
 -- Issue 025 · linka aulas (sermons content_type='aula') aos cursos com ordem
 
 create table if not exists public.course_lessons (

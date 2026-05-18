@@ -13,7 +13,7 @@ export interface SermonFilters {
   sort?: "recent" | "oldest" | "title" | "preached";
   limit?: number;
   offset?: number;
-  /** Default "active" — exclui arquivados. "archived" mostra só arquivados. "all" mostra ambos. */
+  /** Default "active", exclui arquivados. "archived" mostra só arquivados. "all" mostra ambos. */
   archived?: "active" | "archived" | "all";
 }
 
@@ -34,7 +34,7 @@ export async function listSermons(filters: SermonFilters = {}) {
   }
 
   if (filters.search) {
-    // FTS column é search_vector — usar websearch_to_tsquery para busca natural
+    // FTS column é search_vector, usar websearch_to_tsquery para busca natural
     query = query.textSearch("search_vector", filters.search, {
       type: "websearch",
       config: "portuguese",

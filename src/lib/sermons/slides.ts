@@ -1,4 +1,4 @@
-// Queries de slides — leitura server-side da tabela `slides`.
+// Queries de slides, leitura server-side da tabela `slides`.
 // Tolera comment_items legados (string ou null) via parseSermonContent.
 
 import { createClient } from "@/lib/supabase/server";

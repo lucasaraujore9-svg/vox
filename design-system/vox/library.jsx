@@ -1,4 +1,4 @@
-// Library — main dashboard listing sermons with soft stats
+// Library, main dashboard listing sermons with soft stats
 const Library = ({ setScreen }) => {
   const [filter, setFilter] = React.useState("all");
   const [query, setQuery] = React.useState("");
@@ -44,8 +44,8 @@ const Library = ({ setScreen }) => {
             maxWidth: 540,
           }}>
             Você tem <span style={{ color: "var(--forest)", fontWeight: 500 }}>2 manuscritos
-            em andamento</span> e prega <em style={{ fontFamily: "var(--font-display)" }}>“A graça
-            que sustenta”</em> neste domingo.
+              em andamento</span> e prega <em style={{ fontFamily: "var(--font-display)" }}>“A graça
+                que sustenta”</em> neste domingo.
           </p>
         </div>
 
@@ -61,10 +61,10 @@ const Library = ({ setScreen }) => {
         </div>
       </header>
 
-      {/* Stats row — soft */}
+      {/* Stats row, soft */}
       <SoftStats />
 
-      {/* Up next — pinned card */}
+      {/* Up next, pinned card */}
       <UpNext setScreen={setScreen} />
 
       {/* Filter bar */}
@@ -76,17 +76,17 @@ const Library = ({ setScreen }) => {
         margin: "32px 0 16px",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-          <FilterChip label="Todos"        active={filter==="all"} onClick={()=>setFilter("all")} count={sermons.length} />
-          <FilterChip label="Em rascunho"  active={filter==="drafting"} onClick={()=>setFilter("drafting")} count={sermons.filter(s=>s.status!=="published").length} />
-          <FilterChip label="Pregados"     active={filter==="published"} onClick={()=>setFilter("published")} count={sermons.filter(s=>s.status==="published").length} />
+          <FilterChip label="Todos" active={filter === "all"} onClick={() => setFilter("all")} count={sermons.length} />
+          <FilterChip label="Em rascunho" active={filter === "drafting"} onClick={() => setFilter("drafting")} count={sermons.filter(s => s.status !== "published").length} />
+          <FilterChip label="Pregados" active={filter === "published"} onClick={() => setFilter("published")} count={sermons.filter(s => s.status === "published").length} />
           <span style={{ width: 1, height: 18, background: "var(--whisper-strong)", margin: "0 4px" }} />
           {Object.values(window.VOX_DATA.FRAMEWORKS).map(fw => (
             <FilterChip
               key={fw.id}
               label={fw.name}
               dot={fw.color}
-              active={filter===fw.id}
-              onClick={()=>setFilter(filter===fw.id ? "all" : fw.id)}
+              active={filter === fw.id}
+              onClick={() => setFilter(filter === fw.id ? "all" : fw.id)}
             />
           ))}
         </div>
@@ -154,7 +154,7 @@ const SoftStats = () => (
 );
 
 const StreakCard = () => {
-  const days = [1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1]; // last 22 days, semi-realistic
+  const days = [1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1]; // last 22 days, semi-realistic
   return (
     <div className="card" style={{ padding: 22, display: "flex", flexDirection: "column", gap: 14 }}>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
@@ -233,7 +233,7 @@ const UpNext = ({ setScreen }) => (
         letterSpacing: "-0.01em",
       }}>A graça que sustenta</h2>
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 8 }}>
-        <span className="mono" style={{ color: "var(--gold)", fontSize: 12 }}>Romanos 5:1—11</span>
+        <span className="mono" style={{ color: "var(--gold)", fontSize: 12 }}>Romanos 5:1,11</span>
         <span style={{ color: "var(--whisper-strong)" }}>·</span>
         <span style={{ color: "var(--prose)", fontSize: 13 }}>2.840 palavras · ~38 min</span>
         <span style={{ color: "var(--whisper-strong)" }}>·</span>

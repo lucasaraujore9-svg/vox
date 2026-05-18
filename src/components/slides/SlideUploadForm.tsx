@@ -1,4 +1,4 @@
-// Issue 038 — Upload de slides (PDF) ou link Google Slides.
+// Issue 038, Upload de slides (PDF) ou link Google Slides.
 // Conecta com /api/sermons/slides/upload.
 
 "use client";
@@ -50,7 +50,7 @@ export function SlideUploadForm({ sermonId }: { sermonId: string }) {
         }
         router.refresh();
       } else {
-        // manual — cria slide vazio
+        // manual, cria slide vazio
         const res = await fetch(`/api/sermons/slides/manual?sermonId=${sermonId}`, {
           method: "POST",
         });

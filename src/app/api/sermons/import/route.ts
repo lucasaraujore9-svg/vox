@@ -1,6 +1,6 @@
-// Issue 034 — Importação de conteúdo (.docx ou texto).
+// Issue 034, Importação de conteúdo (.docx ou texto).
 // Recebe FormData com `file` (opcional) ou `text` + metadados.
-// Gera SermonContent ({ sessions: [...] }) — mesma estrutura que o editor lê/escreve.
+// Gera SermonContent ({ sessions: [...] }), mesma estrutura que o editor lê/escreve.
 
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";

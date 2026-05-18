@@ -1,4 +1,4 @@
-# Issue 024 — Supabase Storage (Bucket de Slides)
+# Issue 024, Supabase Storage (Bucket de Slides)
 
 **Status:** [ ] PENDENTE
 **Tipo:** infra
@@ -15,10 +15,10 @@ e criar o Route Handler de upload que processa PDF/PPT em imagens WebP.
 
 ## Componentes Envolvidos
 
-- `supabase/migrations/004_slides.sql` — tabela slides + migration type
-- `supabase/migrations/005_storage.sql` — bucket + policies
-- `src/app/api/sermons/slides/upload/route.ts` — Route Handler de upload
-- `src/lib/supabase/storage.ts` — helpers de Storage
+- `supabase/migrations/004_slides.sql`, tabela slides + migration type
+- `supabase/migrations/005_storage.sql`, bucket + policies
+- `src/app/api/sermons/slides/upload/route.ts`, Route Handler de upload
+- `src/lib/supabase/storage.ts`, helpers de Storage
 
 ## Comportamentos
 
@@ -167,10 +167,10 @@ export async function POST(request: Request) {
 ### Packages necessários
 ```bash
 npm install sharp pdf2pic
-# pdf2pic usa graphicsmagick — instalado no ambiente da Vercel
+# pdf2pic usa graphicsmagick, instalado no ambiente da Vercel
 ```
 
-### Atenção — PPT/PPTX
+### Atenção, PPT/PPTX
 - Conversão de PPT no servidor requer LibreOffice ou uma API externa (Cloudmersive, ConvertAPI)
 - Para o MVP: aceitar apenas PDF + mostrar mensagem clara para PPT ("exporte como PDF")
 - Fase 2: integrar serviço de conversão

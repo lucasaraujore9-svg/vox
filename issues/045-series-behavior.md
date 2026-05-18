@@ -1,4 +1,4 @@
-# Issue 045 — Séries de Sermões: Behavior (CRUD Completo)
+# Issue 045, Séries de Sermões: Behavior (CRUD Completo)
 
 **Status:** [ ] PENDENTE
 **Tipo:** behavior
@@ -15,10 +15,10 @@ associação de sermões a uma série, e filtro por série no banco de sermões.
 
 ## Componentes Envolvidos
 
-- `src/app/(app)/series/page.tsx` — Server Component com dados reais
-- `src/lib/supabase/actions/series.ts` — Server Actions de CRUD
-- `src/hooks/useSeries.ts` — hook client-side para mutations
-- `src/components/sermon/SeriesSelector.tsx` — conectado ao Supabase
+- `src/app/(app)/series/page.tsx`, Server Component com dados reais
+- `src/lib/supabase/actions/series.ts`, Server Actions de CRUD
+- `src/hooks/useSeries.ts`, hook client-side para mutations
+- `src/components/sermon/SeriesSelector.tsx`, conectado ao Supabase
 
 ## Comportamentos
 
@@ -37,7 +37,7 @@ associação de sermões a uma série, e filtro por série no banco de sermões.
 - SeriesForm abre pré-preenchido com dados existentes
 
 ### Excluir série
-- `UPDATE series SET deleted_at = NOW()` (soft delete — NÃO deletar fisicamente)
+- `UPDATE series SET deleted_at = NOW()` (soft delete, NÃO deletar fisicamente)
 - Sermões vinculados: `UPDATE sermons SET series_id = NULL WHERE series_id = ?`
 - Confirmação via `ConfirmDialog` antes de executar
 - Optimistic update: remove da lista imediatamente
@@ -48,7 +48,7 @@ associação de sermões a uma série, e filtro por série no banco de sermões.
 - "+ Nova série": abre `SeriesForm` inline dentro do dropdown, após salvar seleciona automaticamente a nova série
 
 ### Filtro por série no banco de sermões
-- `SermonFilters` já tem campo de série — conectar ao query real
+- `SermonFilters` já tem campo de série, conectar ao query real
 - `SELECT * FROM sermons WHERE series_id = ? AND user_id = ? AND deleted_at IS NULL`
 
 ## Critério de Aceite

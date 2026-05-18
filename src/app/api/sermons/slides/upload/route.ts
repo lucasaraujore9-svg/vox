@@ -1,4 +1,4 @@
-// Route Handler — upload de PDF e conversão server-side em slides WebP.
+// Route Handler, upload de PDF e conversão server-side em slides WebP.
 // Issue 024 · ~50MB max, output 1280x720, salva no bucket sermon-slides.
 
 import { NextResponse, type NextRequest } from "next/server";
@@ -18,7 +18,7 @@ const queryParamsSchema = z.object({
 });
 
 async function pdfToWebpBuffers(pdfBytes: ArrayBuffer): Promise<Buffer[]> {
-  // pdfjs-dist precisa de canvas no Node — usa o reaper que vem com pdfjs-dist >= 4
+  // pdfjs-dist precisa de canvas no Node, usa o reaper que vem com pdfjs-dist >= 4
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
   const sharp = (await import("sharp")).default;
 

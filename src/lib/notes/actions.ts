@@ -191,7 +191,7 @@ export async function promoteNoteToSermonAction(
     return { ok: false, error: insertError?.message ?? "Erro ao promover" };
   }
 
-  // Arquiva a nota — não apaga, fica disponível em Arquivados
+  // Arquiva a nota, não apaga, fica disponível em Arquivados
   await auth.supabase
     .from("notes")
     .update({ archived_at: new Date().toISOString() })

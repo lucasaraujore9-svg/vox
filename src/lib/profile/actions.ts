@@ -1,6 +1,6 @@
 "use server";
 
-// Issue 046 — Atualiza perfil + preferências + módulo IA + senha.
+// Issue 046, Atualiza perfil + preferências + módulo IA + senha.
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";

@@ -92,7 +92,7 @@ export function AudienceView({
         // sem suporte
       }
     })();
-    return () => void lock?.release().catch(() => {});
+    return () => void lock?.release().catch(() => { });
   }, []);
 
   async function enterFullscreen() {
@@ -171,7 +171,7 @@ function SlideRender({ slide }: { slide: SlideItem }) {
       />
     );
   }
-  // Slide sem imagem — mostra o primeiro item visível do comentário em destaque
+  // Slide sem imagem, mostra o primeiro item visível do comentário em destaque
   const sessions = slide.comment_items?.sessions ?? [];
   const firstItem = sessions
     .flatMap((s) => s.items)

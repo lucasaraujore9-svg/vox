@@ -1,4 +1,4 @@
-# /review — Revisar Implementação
+# /review, Revisar Implementação
 
 ## O que este comando faz
 Revisa o código implementado contra os critérios de aceite da issue.
@@ -33,7 +33,7 @@ Revisa o código implementado contra os critérios de aceite da issue.
 ## Formato de saída
 
 ```markdown
-## Review — Issue NNN: [Título]
+## Review, Issue NNN: [Título]
 
 ### ✅ Aprovado
 - Critério X: implementado corretamente

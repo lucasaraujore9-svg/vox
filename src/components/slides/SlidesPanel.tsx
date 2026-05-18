@@ -1,4 +1,4 @@
-// Painel de slides reformulado — densidade visual maior, menos espaço desperdiçado.
+// Painel de slides reformulado, densidade visual maior, menos espaço desperdiçado.
 // Layout: rail compacto de thumbs (200px) + área principal com header "Slide N"
 // embutido em uma barra fina + SermonEditor (manuscrito) ocupando o resto.
 

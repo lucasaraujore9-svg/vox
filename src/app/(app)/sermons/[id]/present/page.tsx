@@ -52,11 +52,11 @@ export default async function PresentPage({ params, searchParams }: PageProps) {
     : [];
   const slides = isSlides
     ? slidesRaw.map((s) => ({
-        id: s.id,
-        order: s.order,
-        image_url: s.image_url,
-        comment_items: s.comment_items,
-      }))
+      id: s.id,
+      order: s.order,
+      image_url: s.image_url,
+      comment_items: s.comment_items,
+    }))
     : undefined;
   const sessions = !isSlides
     ? parseSermonContent(row.content, sermon.framework).sessions
@@ -110,7 +110,7 @@ export default async function PresentPage({ params, searchParams }: PageProps) {
     );
   }
 
-  // 4. Simples — só a projeção (slides) ou o teleprompter (esboço)
+  // 4. Simples, só a projeção (slides) ou o teleprompter (esboço)
   if (isSlides && slides) {
     return (
       <SlideProjection

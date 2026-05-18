@@ -5,7 +5,7 @@
 //   - tipografia: title display, eyebrow mono, prose ui
 //   - formatação inline (negrito, itálico, sublinhado) preservada
 //   - blockquote, listas e quebras
-// TXT continua simples — fluxo plano.
+// TXT continua simples, fluxo plano.
 
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
@@ -63,7 +63,7 @@ function toPlainText(
     lines.push(`═══ ${session.title} ═══`);
     lines.push("");
     for (const item of session.items) {
-      lines.push(`— ${blockLabel(item)} —`);
+      lines.push(`, ${blockLabel(item)},`);
       const paras = htmlToParas(item.content);
       for (const p of paras) {
         lines.push(paraToPlainText(p));
@@ -143,7 +143,7 @@ async function buildDocx(
 
   const children: InstanceType<typeof Paragraph>[] = [];
 
-  // Cabeçalho do manuscrito — título em destaque, ref bíblica em mono itálico.
+  // Cabeçalho do manuscrito, título em destaque, ref bíblica em mono itálico.
   children.push(
     new Paragraph({
       heading: HeadingLevel.TITLE,
@@ -197,7 +197,7 @@ async function buildDocx(
       );
     }
 
-    // Título da sessão com barra colorida à esquerda — emula a barra vertical
+    // Título da sessão com barra colorida à esquerda, emula a barra vertical
     // do editor. No DOCX a barra vira borda esquerda do parágrafo.
     children.push(
       new Paragraph({
@@ -223,7 +223,7 @@ async function buildDocx(
 
     for (const item of session.items) {
       const color = blockColor(item.type).replace("#", "");
-      // Eyebrow — DOT + label colorido, em letra menor.
+      // Eyebrow, DOT + label colorido, em letra menor.
       children.push(
         new Paragraph({
           children: [
@@ -358,7 +358,7 @@ async function buildPdf(
 
     for (const run of runs) {
       doc.setFont("helvetica", fontStyle(run));
-      // Sublinhado real fica complicado em jsPDF — usa text decoration via linha
+      // Sublinhado real fica complicado em jsPDF, usa text decoration via linha
       // depois de medir. Aqui pulamos sublinhado pra simplificar; bold/italic
       // são o que mais ajuda na fidelidade.
       const segments = run.text.split("\n");

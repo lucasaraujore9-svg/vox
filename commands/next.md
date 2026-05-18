@@ -1,4 +1,4 @@
-# /next — Próxima Issue a Trabalhar
+# /next, Próxima Issue a Trabalhar
 
 ## O que este comando faz
 Analisa o estado atual e recomenda a próxima issue com maior impacto.
@@ -11,9 +11,9 @@ Analisa o estado atual e recomenda a próxima issue com maior impacto.
    - Quais têm dependências satisfeitas
    - Qual a prioridade (P0 > P1 > P2)
 3. Aplique a lógica de ordenação:
-   - **Primeiro:** issues infra (020-029) desbloqueadas — o resto depende delas
-   - **Segundo:** issues proto (001-019) P0 — validam UX antes do behavior
-   - **Terceiro:** issues behavior (030-049) — conectam UIs a dados reais
+   - **Primeiro:** issues infra (020-029) desbloqueadas, o resto depende delas
+   - **Segundo:** issues proto (001-019) P0, validam UX antes do behavior
+   - **Terceiro:** issues behavior (030-049), conectam UIs a dados reais
    - **Último:** issues de integration (050+)
 
 ## Formato de saída
@@ -21,7 +21,7 @@ Analisa o estado atual e recomenda a próxima issue com maior impacto.
 ```markdown
 ## Próxima Issue Recomendada
 
-**Issue:** 021 — Autenticação Supabase Auth
+**Issue:** 021, Autenticação Supabase Auth
 **Tipo:** infra
 **Por quê agora:** Issue 020 (schema) foi concluída. Auth é pré-requisito para todas as issues de behavior.
 **Depende de:** 020 ✅
