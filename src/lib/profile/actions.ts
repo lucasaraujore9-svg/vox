@@ -1,24 +1,32 @@
 "use server";
 
 // Issue 046, Atualiza perfil + preferências + módulo IA + senha.
+// Cada aba de /settings tem sua própria action pra patch parcial e
+// mensagens de erro localizadas.
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
-const profileSchema = z.object({
-  name: z.string().trim().min(2, "Nome muito curto"),
-  denomination: z.string().trim().nullable().optional(),
-  bible_version: z.enum(["ARC", "ARA", "NVI", "NAA", "NVT"]),
-  ai_enabled: z.boolean(),
-});
-
 export type ActionResult = { ok: boolean; error?: string };
 
-export async function updateProfileAction(
-  input: z.input<typeof profileSchema>
+// === Perfil (Nome + Denominação) ===
+
+const profileBasicSchema = z.object({
+  name: z.string().trim().min(2, "Nome muito curto").max(160),
+  denomination: z
+    .string()
+    .trim()
+    .max(160)
+    .transform((v) => (v.length === 0 ? null : v))
+    .nullable()
+    .optional(),
+});
+
+export async function updateProfileBasicAction(
+  input: z.input<typeof profileBasicSchema>
 ): Promise<ActionResult> {
-  const parsed = profileSchema.safeParse(input);
+  const parsed = profileBasicSchema.safeParse(input);
   if (!parsed.success) {
     return { ok: false, error: parsed.error.issues[0]?.message };
   }
@@ -33,8 +41,6 @@ export async function updateProfileAction(
     .update({
       name: parsed.data.name,
       denomination: parsed.data.denomination ?? null,
-      bible_version: parsed.data.bible_version,
-      ai_enabled: parsed.data.ai_enabled,
     })
     .eq("id", user.id);
   if (error) return { ok: false, error: error.message };
@@ -42,6 +48,65 @@ export async function updateProfileAction(
   revalidatePath("/", "layout");
   return { ok: true };
 }
+
+// === Preferências (Tradução padrão da bíblia) ===
+
+const preferencesSchema = z.object({
+  bible_version: z.enum(["ARC", "ARA", "NVI", "NAA", "NVT"]),
+});
+
+export async function updatePreferencesAction(
+  input: z.input<typeof preferencesSchema>
+): Promise<ActionResult> {
+  const parsed = preferencesSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message };
+  }
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Não autenticado" };
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ bible_version: parsed.data.bible_version })
+    .eq("id", user.id);
+  if (error) return { ok: false, error: error.message };
+  revalidatePath("/settings");
+  return { ok: true };
+}
+
+// === IA (toggle ai_enabled) ===
+
+const aiSchema = z.object({
+  ai_enabled: z.boolean(),
+});
+
+export async function updateAISettingsAction(
+  input: z.input<typeof aiSchema>
+): Promise<ActionResult> {
+  const parsed = aiSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message };
+  }
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Não autenticado" };
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ ai_enabled: parsed.data.ai_enabled })
+    .eq("id", user.id);
+  if (error) return { ok: false, error: error.message };
+  revalidatePath("/settings");
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+// === Senha ===
 
 const passwordSchema = z
   .object({
@@ -68,16 +133,15 @@ export async function updatePasswordAction(
   return { ok: true };
 }
 
+// === Excluir conta (soft delete dos sermões + signOut) ===
+
 export async function deleteAccountAction(): Promise<ActionResult> {
-  // Soft delete simbólico (cliente comum não pode dropar a conta auth.users).
-  // Em prod: chama Route Handler que usa service role para auth.admin.deleteUser.
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Não autenticado" };
 
-  // Marca todos os sermões como deletados
   await supabase
     .from("sermons")
     .update({ deleted_at: new Date().toISOString() })

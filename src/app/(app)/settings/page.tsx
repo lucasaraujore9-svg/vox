@@ -1,20 +1,8 @@
-// Issue 014, Configurações de Perfil (proto).
-// Tabs: Perfil · Preferências · IA · Blocos · Conta
-// Behavior real entra em 046.
+// Issue 046, Configurações conectadas ao backend.
+// Tabs: Perfil · Preferências · IA · Modelos · Blocos · Conta
 
 import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import {
   Card,
   CardContent,
@@ -23,18 +11,81 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { FrameworksGrid } from "@/components/sermon/FrameworksGrid";
+import { SettingsProfileForm } from "@/components/settings/SettingsProfileForm";
+import { SettingsPreferencesForm } from "@/components/settings/SettingsPreferencesForm";
+import { SettingsAIForm } from "@/components/settings/SettingsAIForm";
+import { SettingsPasswordForm } from "@/components/settings/SettingsPasswordForm";
+import { SettingsDeleteAccount } from "@/components/settings/SettingsDeleteAccount";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata = { title: "Configurações" };
 
-export default function SettingsPage() {
+type BibleVersion = "ARC" | "ARA" | "NVI" | "NAA" | "NVT";
+
+interface ProfileData {
+  name: string;
+  denomination: string | null;
+  bible_version: BibleVersion;
+  ai_enabled: boolean;
+  email: string;
+}
+
+async function loadProfile(): Promise<ProfileData | null> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return null;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data } = await supabase
+    .from("profiles")
+    .select("name, denomination, bible_version, ai_enabled")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (!data) return null;
+
+  return {
+    name: data.name ?? "",
+    denomination: data.denomination,
+    bible_version: (data.bible_version as BibleVersion) ?? "ARC",
+    ai_enabled: data.ai_enabled ?? false,
+    email: user.email ?? "",
+  };
+}
+
+export default async function SettingsPage() {
+  const profile = await loadProfile();
+
+  if (!profile) {
+    return (
+      <div className="max-w-3xl space-y-6">
+        <header>
+          <p className="vox-eyebrow">Conta · Preferências</p>
+          <h1 className="vox-h1 mt-3">Configurações</h1>
+        </header>
+        <Card>
+          <CardHeader>
+            <CardTitle>Não foi possível carregar seu perfil</CardTitle>
+            <CardDescription>
+              Verifique se você está autenticado e tente recarregar a página.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-3xl space-y-10">
       <header>
         <p className="vox-eyebrow">Conta · Preferências</p>
         <h1 className="vox-h1 mt-3">Configurações</h1>
         <p className="vox-body mt-3">
-          Ajuste seu perfil, escolha sua tradução padrão, ative o módulo de IA e
-          configure as cores dos blocos.
+          Ajuste seu perfil, escolha sua tradução padrão, ative o módulo de IA
+          e configure as cores dos blocos.
         </p>
       </header>
 
@@ -49,107 +100,19 @@ export default function SettingsPage() {
         </TabsList>
 
         <TabsContent value="profile" className="space-y-5">
-          <Card>
-            <CardHeader>
-              <CardTitle>Informações pessoais</CardTitle>
-              <CardDescription>Como você aparece no VOX.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-5">
-              <div className="space-y-2">
-                <Label htmlFor="name">Nome</Label>
-                <Input id="name" name="name" placeholder="Pr. Lucas" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="denomination">Denominação ou organização</Label>
-                <Input
-                  id="denomination"
-                  name="denomination"
-                  placeholder="Igreja, ministério..."
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" name="email" type="email" disabled value="você@email.com" />
-                <p className="text-xs text-vox-muted">
-                  Email não pode ser alterado por aqui. Entre em contato pelo suporte.
-                </p>
-              </div>
-              <div className="flex justify-end">
-                <Button type="submit">Salvar alterações</Button>
-              </div>
-            </CardContent>
-          </Card>
+          <SettingsProfileForm
+            initialName={profile.name}
+            initialDenomination={profile.denomination}
+            email={profile.email}
+          />
         </TabsContent>
 
         <TabsContent value="preferences" className="space-y-5">
-          <Card>
-            <CardHeader>
-              <CardTitle>Bíblia</CardTitle>
-              <CardDescription>
-                Tradução padrão usada no editor e nas buscas.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-5">
-              <div className="space-y-2 max-w-md">
-                <Label htmlFor="bible_version">Tradução padrão</Label>
-                <Select defaultValue="ARC">
-                  <SelectTrigger id="bible_version">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ARC">ARC, Almeida Revista e Corrigida</SelectItem>
-                    <SelectItem value="ARA">ARA, Almeida Revista e Atualizada</SelectItem>
-                    <SelectItem value="NVI">NVI, Nova Versão Internacional</SelectItem>
-                    <SelectItem value="NAA">NAA, Nova Almeida Atualizada</SelectItem>
-                    <SelectItem value="NVT">NVT, Nova Versão Transformadora</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex justify-end">
-                <Button type="submit">Salvar</Button>
-              </div>
-            </CardContent>
-          </Card>
+          <SettingsPreferencesForm initialVersion={profile.bible_version} />
         </TabsContent>
 
         <TabsContent value="ai" className="space-y-5">
-          <Card>
-            <CardHeader>
-              <CardTitle>Assistente de IA</CardTitle>
-              <CardDescription>
-                Sugestão de estrutura, ilustrações e referências bíblicas,
-                opcional e desligado por padrão.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-start justify-between gap-6">
-                <div className="flex-1">
-                  <Label htmlFor="ai-toggle" className="font-medium cursor-pointer">
-                    Ativar assistente
-                  </Label>
-                  <p className="text-sm text-vox-prose mt-1">
-                    Quando ativo, um botão &ldquo;Assistente&rdquo; aparece no editor.
-                    Suas notas nunca são enviadas para treinamento.
-                  </p>
-                </div>
-                <Switch id="ai-toggle" />
-              </div>
-              <div
-                className="rounded-lg border p-4 text-sm text-vox-prose"
-                style={{
-                  background: "var(--vox-surface-deep)",
-                  borderColor: "var(--vox-whisper)",
-                }}
-              >
-                <p className="font-medium text-vox-ink mb-1">Política de privacidade</p>
-                <p>
-                  O conteúdo do sermão é enviado apenas no momento do pedido e
-                  descartado depois. Nenhum manuscrito é armazenado ou usado para
-                  treinar modelos.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          <SettingsAIForm initialEnabled={profile.ai_enabled} />
         </TabsContent>
 
         <TabsContent value="frameworks" className="space-y-5">
@@ -157,8 +120,8 @@ export default function SettingsPage() {
             <p className="vox-eyebrow">Biblioteca</p>
             <h2 className="vox-h2 mt-2 text-2xl">Modelos homiléticos</h2>
             <p className="vox-body mt-3 max-w-2xl">
-              Seis estruturas testadas no púlpito. Cada uma é uma postura,
-              não uma fórmula. Escolha conforme o texto, a congregação e o momento.
+              Seis estruturas testadas no púlpito. Cada uma é uma postura, não
+              uma fórmula. Escolha conforme o texto, a congregação e o momento.
             </p>
           </div>
           <FrameworksGrid />
@@ -188,46 +151,8 @@ export default function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="account" className="space-y-5">
-          <Card>
-            <CardHeader>
-              <CardTitle>Senha</CardTitle>
-              <CardDescription>Atualize sua senha de acesso.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-5">
-              <div className="space-y-2 max-w-md">
-                <Label htmlFor="current_password">Senha atual</Label>
-                <Input id="current_password" type="password" />
-              </div>
-              <div className="space-y-2 max-w-md">
-                <Label htmlFor="new_password">Nova senha</Label>
-                <Input
-                  id="new_password"
-                  type="password"
-                  placeholder="Mínimo 8 caracteres"
-                />
-              </div>
-              <div className="flex justify-end">
-                <Button type="submit">Atualizar senha</Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card style={{ borderColor: "rgba(225,29,72,0.3)" }}>
-            <CardHeader>
-              <CardTitle style={{ color: "var(--vox-destructive)" }}>
-                Excluir conta
-              </CardTitle>
-              <CardDescription>
-                Esta ação é irreversível. Seus sermões serão arquivados por 30 dias
-                e depois removidos.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="destructive" type="button">
-                Excluir minha conta
-              </Button>
-            </CardContent>
-          </Card>
+          <SettingsPasswordForm />
+          <SettingsDeleteAccount />
         </TabsContent>
       </Tabs>
     </div>
