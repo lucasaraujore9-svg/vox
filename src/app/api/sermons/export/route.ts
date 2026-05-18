@@ -334,6 +334,9 @@ async function buildPdf(
   }
 
   // Renderiza uma sequência de runs com word-wrap manual, preservando estilos.
+  // Convenção: y entra como "topo do próximo bloco" e sai como "fim da última
+  // linha". Internamente avança até a baseline antes do primeiro draw — antes
+  // estava desenhando a primeira linha em y, sobrepondo ao eyebrow de cima.
   function drawRuns(
     runs: Run[],
     fontSize: number,
@@ -348,13 +351,26 @@ async function buildPdf(
     doc.setFontSize(fontSize);
     let x = baseX;
     const lineHeight = fontSize * lineGap;
+    // Distância aproximada do topo da line-box até a baseline (helvetica).
+    const ascent = fontSize * 0.85;
+
+    ensureSpace(lineHeight);
+    y += ascent;
 
     function newline() {
       y += lineHeight;
       x = baseX;
-      ensureSpace(lineHeight);
+      // Quebra de página dentro do parágrafo: precisamos reposicionar y na
+      // baseline da nova página, não no topo, senão o ascender sai da margem.
+      if (y + (lineHeight - ascent) > pageHeight - margin) {
+        if (currentSessionColor) {
+          drawSessionBar(currentSessionStartY, y - 4, currentSessionColor);
+        }
+        doc.addPage();
+        y = margin + ascent;
+        currentSessionStartY = margin;
+      }
     }
-    ensureSpace(lineHeight);
 
     for (const run of runs) {
       doc.setFont("helvetica", fontStyle(run));
@@ -386,7 +402,8 @@ async function buildPdf(
         }
       }
     }
-    y += lineHeight;
+    // Sai posicionado no "fim da line-box" da última linha.
+    y += lineHeight - ascent;
   }
 
   function drawParas(paras: Para[]) {
@@ -414,7 +431,7 @@ async function buildPdf(
           );
           const [qr, qg, qb] = hexToRgb(VOX_HEX.gold);
           doc.setFillColor(qr, qg, qb);
-          doc.rect(contentLeft + 4, startY - 8, 2, y - startY + 4, "F");
+          doc.rect(contentLeft + 4, startY, 2, Math.max(2, y - startY - 4), "F");
           y += 4;
           break;
         }
