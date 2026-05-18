@@ -19,7 +19,8 @@ export function getOpenAI(): OpenAI {
 
 // Fallback hard-coded caso o registro singleton ainda não exista.
 // O super admin sobrescreve isso pelo /admin/ai.
-export const DEFAULT_MODEL = "gpt-4o";
+// Lista alinhada com OpenAI pricing de mai/2026.
+export const DEFAULT_MODEL = "gpt-5.4-mini";
 
 export interface ModelPrice {
   /** USD por 1M de tokens de entrada */
@@ -35,11 +36,20 @@ export interface AISettings {
 }
 
 const DEFAULT_PRICES: Record<string, ModelPrice> = {
-  "gpt-4o": { input: 2.5, output: 10 },
-  "gpt-4o-mini": { input: 0.15, output: 0.6 },
-  "gpt-4-turbo": { input: 10, output: 30 },
+  "gpt-5.5": { input: 5, output: 30 },
+  "gpt-5.5-pro": { input: 30, output: 180 },
+  "gpt-5.4": { input: 2.5, output: 15 },
+  "gpt-5.4-mini": { input: 0.75, output: 4.5 },
+  "gpt-5.4-nano": { input: 0.2, output: 1.25 },
+  "gpt-5": { input: 1.25, output: 10 },
+  "gpt-5-mini": { input: 0.25, output: 2 },
   "gpt-4.1": { input: 2, output: 8 },
   "gpt-4.1-mini": { input: 0.4, output: 1.6 },
+  "gpt-4.1-nano": { input: 0.1, output: 0.4 },
+  "gpt-4o-mini": { input: 0.15, output: 0.6 },
+  o3: { input: 2, output: 8 },
+  "o3-pro": { input: 20, output: 80 },
+  "o4-mini": { input: 1.1, output: 4.4 },
 };
 
 const DEFAULT_AI_SETTINGS: AISettings = {

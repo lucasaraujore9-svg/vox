@@ -113,17 +113,15 @@ export async function POST(request: NextRequest) {
   try {
     const settings = await loadAISettings();
     const openai = getOpenAI();
-    const completion = await openai.chat.completions.create({
+    const response = await openai.responses.create({
       model: settings.active_model,
-      messages: [
-        { role: "system", content: system },
-        { role: "user", content: userPrompt },
-      ],
-      response_format: { type: "json_object" },
+      instructions: system,
+      input: userPrompt,
+      text: { format: { type: "json_object" } },
       temperature: 0.7,
     });
 
-    const content = completion.choices[0]?.message.content;
+    const content = response.output_text;
     if (!content) {
       return NextResponse.json({ error: "Resposta vazia" }, { status: 502 });
     }

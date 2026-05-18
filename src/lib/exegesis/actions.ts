@@ -94,26 +94,21 @@ export async function createExegesisAction(
 
   try {
     const openai = getOpenAI();
-    const completion = await openai.chat.completions.create({
+    const response = await openai.responses.create({
       model: settings.active_model,
-      messages: [
-        { role: "system", content: EXEGESIS_SYSTEM_PROMPT },
-        {
-          role: "user",
-          content: buildExegesisUserPrompt(
-            parsed.data.passage,
-            parsed.data.version
-          ),
-        },
-      ],
+      instructions: EXEGESIS_SYSTEM_PROMPT,
+      input: buildExegesisUserPrompt(
+        parsed.data.passage,
+        parsed.data.version
+      ),
       temperature: 0.5,
     });
 
-    const content = completion.choices[0]?.message.content;
+    const content = response.output_text;
     if (!content) return { ok: false, error: "Resposta vazia da IA" };
 
-    const tokensIn = completion.usage?.prompt_tokens ?? 0;
-    const tokensOut = completion.usage?.completion_tokens ?? 0;
+    const tokensIn = response.usage?.input_tokens ?? 0;
+    const tokensOut = response.usage?.output_tokens ?? 0;
     const costUsd = computeCostUsd(
       settings.active_model,
       tokensIn,
