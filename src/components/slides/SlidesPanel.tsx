@@ -240,7 +240,7 @@ function SlideHeaderBar({
           </span>
         </div>
         <p className="vox-body text-sm text-vox-prose mt-1.5">
-          Manuscrito estruturado · siga o framework como num esboço.
+          Manuscrito estruturado · siga o modelo como num esboço.
         </p>
       </div>
 

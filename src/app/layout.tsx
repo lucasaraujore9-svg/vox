@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     template: "%s · VOX",
   },
   description:
-    "Companheiro silencioso do púlpito. Prepare, pregue e arquive sermões, palestras e aulas com frameworks homiléticos.",
+    "Companheiro silencioso do púlpito. Prepare, pregue e arquive sermões, palestras e aulas com modelos homiléticos.",
   applicationName: "VOX",
   authors: [{ name: "VOX" }],
   manifest: "/manifest.json",

@@ -102,7 +102,7 @@ function FiltersContent({ filters, series }: Props) {
       </div>
 
       <div>
-        <p className="vox-eyebrow mb-3">Framework</p>
+        <p className="vox-eyebrow mb-3">Modelo</p>
         <div className="flex flex-wrap gap-2">
           {VOX_FRAMEWORKS.map((fw) => {
             const active = filters.framework === fw.id;

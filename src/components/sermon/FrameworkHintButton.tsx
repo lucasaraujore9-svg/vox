@@ -17,7 +17,7 @@ export function FrameworkHintButton({ framework }: { framework: FrameworkId }) {
         className="w-full justify-start"
         onClick={() => setOpen(true)}
       >
-        Dica do framework
+        Dica do modelo
       </Button>
       <FrameworkHintDialog framework={framework} open={open} onOpenChange={setOpen} />
     </>

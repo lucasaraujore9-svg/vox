@@ -237,7 +237,7 @@ export function VersionsDialog({
                 />
               </div>
               <p className="text-xs text-vox-muted">
-                A versão captura o estado atual do título, framework, referência bíblica e
+                A versão captura o estado atual do título, modelo, referência bíblica e
                 conteúdo. Auto-saves silenciosos não criam versão, só este botão.
               </p>
             </div>

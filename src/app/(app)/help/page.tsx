@@ -33,7 +33,7 @@ const SECTIONS: Section[] = [
         a: (
           <p>
             VOX é uma ferramenta pastoral pra preparar, entregar e arquivar
-            sermões, palestras e aulas. O diferencial são os frameworks
+            sermões, palestras e aulas. O diferencial são os modelos
             homiléticos, templates guiados que ajudam você a estruturar a
             comunicação sem ter que partir do zero.
           </p>
@@ -46,7 +46,7 @@ const SECTIONS: Section[] = [
             Vá em <Link href="/sermons" className="text-vox-forest underline-offset-4 hover:underline">Esboços</Link>{" "}
             e clique em <strong>Novo</strong>. Escolha o tipo de conteúdo
             (sermão, palestra ou aula), o formato (esboço ou apresentação) e
-            um framework homilético. O editor abre pronto pra você começar.
+            um modelo homilético. O editor abre pronto pra você começar.
           </p>
         ),
       },
@@ -125,10 +125,10 @@ const SECTIONS: Section[] = [
   },
   {
     id: "frameworks",
-    title: "Frameworks",
+    title: "Modelos",
     items: [
       {
-        q: "O que são frameworks homiléticos?",
+        q: "O que são modelos homiléticos?",
         a: (
           <p>
             São modelos consagrados de estrutura de pregação: Expositivo,
@@ -136,27 +136,27 @@ const SECTIONS: Section[] = [
             uma sequência de blocos e dicas pra você não esquecer movimentos
             importantes. Veja{" "}
             <Link href="/settings/frameworks" className="text-vox-forest underline-offset-4 hover:underline">
-              Configurações → Frameworks
+              Configurações → Modelos
             </Link>{" "}
             pra ler o que cada um propõe.
           </p>
         ),
       },
       {
-        q: "Posso mudar o framework depois de começar?",
+        q: "Posso mudar o modelo depois de começar?",
         a: (
           <p>
             Pode. Abra o menu de ações (...) no topo do editor e escolha
-            <em> Trocar framework</em>. O conteúdo dos blocos é preservado,
+            <em> Trocar modelo</em>. O conteúdo dos blocos é preservado,
             apenas os rótulos e dicas mudam.
           </p>
         ),
       },
       {
-        q: "E se eu quiser pregar sem framework?",
+        q: "E se eu quiser pregar sem modelo?",
         a: (
           <p>
-            Use o framework <strong>Livre</strong>. Ele oferece os blocos
+            Use o modelo <strong>Livre</strong>. Ele oferece os blocos
             disponíveis sem prescrever uma sequência. Útil pra mensagens
             curtas, devocionais ou quando você já tem estrutura própria.
           </p>

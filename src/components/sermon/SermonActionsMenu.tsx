@@ -155,7 +155,7 @@ export function SermonActionsMenu({
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => setHintOpen(true)}>
             <Lightbulb className="size-4 mr-2" />
-            Dica do framework
+            Dica do modelo
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />

@@ -102,7 +102,7 @@ export default function ImportPage() {
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="framework">Framework (estrutura sugerida)</Label>
+          <Label htmlFor="framework">Modelo (estrutura sugerida)</Label>
           <select
             id="framework"
             name="framework"

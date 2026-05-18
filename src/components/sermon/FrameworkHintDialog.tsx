@@ -74,7 +74,7 @@ export function FrameworkHintDialog({
               style={{ background: accent }}
             />
             <p className="vox-eyebrow" style={{ color: accent }}>
-              Framework
+              Modelo
             </p>
           </div>
           <DialogTitle
@@ -130,7 +130,7 @@ export function FrameworkHintDialog({
               onCheckedChange={(v) => setDontShow(v === true)}
             />
             <Label htmlFor="dont-show" className="text-sm font-normal text-vox-prose">
-              Não mostrar mais para este framework
+              Não mostrar mais para este modelo
             </Label>
           </div>
           <Button onClick={handleClose}>Entendi</Button>

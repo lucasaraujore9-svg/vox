@@ -73,7 +73,7 @@ export function MetadataDialog({
           <Row label="Tipo">{CONTENT_TYPE_LABEL[sermon.content_type]}</Row>
           <Row label="Formato">{TYPE_LABEL[sermon.type]}</Row>
           <Row label="Status">{STATUS_LABEL[sermon.status]}</Row>
-          <Row label="Framework">
+          <Row label="Modelo">
             <span className="inline-flex items-center gap-2">
               <span
                 className="inline-block size-1.5 rounded-full"

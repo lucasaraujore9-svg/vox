@@ -21,7 +21,7 @@ export default function AuthLayout({
             Manuscritos cuidadosos. Pregação sem fricção.
           </h2>
           <p className="vox-body mt-5">
-            Prepare em frameworks homiléticos, pregue em modo apresentação,
+            Prepare em modelos homiléticos, pregue em modo apresentação,
             arquive cada sermão para a memória do ministério.
           </p>
         </div>

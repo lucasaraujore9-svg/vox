@@ -43,7 +43,7 @@ export default function SettingsPage() {
           <TabsTrigger value="profile">Perfil</TabsTrigger>
           <TabsTrigger value="preferences">Preferências</TabsTrigger>
           <TabsTrigger value="ai">IA</TabsTrigger>
-          <TabsTrigger value="frameworks">Frameworks</TabsTrigger>
+          <TabsTrigger value="frameworks">Modelos</TabsTrigger>
           <TabsTrigger value="blocks">Blocos</TabsTrigger>
           <TabsTrigger value="account">Conta</TabsTrigger>
         </TabsList>
@@ -155,7 +155,7 @@ export default function SettingsPage() {
         <TabsContent value="frameworks" className="space-y-5">
           <div>
             <p className="vox-eyebrow">Biblioteca</p>
-            <h2 className="vox-h2 mt-2 text-2xl">Frameworks homiléticos</h2>
+            <h2 className="vox-h2 mt-2 text-2xl">Modelos homiléticos</h2>
             <p className="vox-body mt-3 max-w-2xl">
               Seis estruturas testadas no púlpito. Cada uma é uma postura,
               não uma fórmula. Escolha conforme o texto, a congregação e o momento.

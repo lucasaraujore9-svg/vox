@@ -5,7 +5,7 @@ import { VOX_FRAMEWORKS } from "@/lib/mocks/frameworks";
 import { VoxWordmark } from "@/components/brand/VoxWordmark";
 
 export const metadata = {
-  title: "Frameworks Homiléticos",
+  title: "Modelos Homiléticos",
   description: "Seis estruturas de pregação. Uma para cada postura no púlpito.",
 };
 
@@ -35,7 +35,7 @@ export default function FrameworksPage() {
 
       <section className="max-w-6xl mx-auto mt-16">
         <p className="vox-eyebrow">Biblioteca</p>
-        <h1 className="vox-h1 mt-3">Frameworks homiléticos</h1>
+        <h1 className="vox-h1 mt-3">Modelos homiléticos</h1>
         <p className="vox-body mt-5 max-w-2xl">
           Seis estruturas testadas no púlpito. Cada uma é uma postura, não uma fórmula.
           Escolha conforme o texto, a congregação e o momento.
@@ -90,7 +90,7 @@ export default function FrameworksPage() {
                   className="text-sm font-medium hover:underline underline-offset-4"
                   style={{ color: accent }}
                 >
-                  Usar este framework →
+                  Usar este modelo →
                 </Link>
               </div>
             </article>

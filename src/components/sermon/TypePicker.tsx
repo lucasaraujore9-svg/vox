@@ -22,14 +22,14 @@ const OPTIONS: readonly TypeOption[] = [
     label: "Folha em branco",
     tagline: "Escrita corrida",
     description:
-      "Página em branco, sem framework e sem blocos. Escreva como num editor de texto comum. Pode inserir tópicos se quiser estruturar depois.",
+      "Página em branco, sem modelo e sem blocos. Escreva como num editor de texto comum. Pode inserir tópicos se quiser estruturar depois.",
   },
   {
     id: "esboço",
     label: "Esboço guia",
     tagline: "Manuscrito por blocos",
     description:
-      "Escreva o sermão em blocos estruturados por um framework homilético: texto bíblico, contexto, pontos, aplicação.",
+      "Escreva o sermão em blocos estruturados por um modelo homilético: texto bíblico, contexto, pontos, aplicação.",
   },
   {
     id: "apresentação",
