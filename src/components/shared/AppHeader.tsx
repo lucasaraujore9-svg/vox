@@ -108,6 +108,9 @@ export async function AppHeader() {
                 <DropdownMenuItem asChild>
                   <a href="/admin/interests">Interesses</a>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a href="/admin/ai">IA</a>
+                </DropdownMenuItem>
               </>
             ) : null}
             <DropdownMenuSeparator />

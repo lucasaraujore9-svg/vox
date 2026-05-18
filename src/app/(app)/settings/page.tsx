@@ -27,6 +27,7 @@ interface ProfileData {
   denomination: string | null;
   bible_version: BibleVersion;
   ai_enabled: boolean;
+  plan: "manuscrito" | "concilio";
   email: string;
 }
 
@@ -41,7 +42,7 @@ async function loadProfile(): Promise<ProfileData | null> {
 
   const { data } = await supabase
     .from("profiles")
-    .select("name, denomination, bible_version, ai_enabled")
+    .select("name, denomination, bible_version, ai_enabled, plan")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -52,6 +53,7 @@ async function loadProfile(): Promise<ProfileData | null> {
     denomination: data.denomination,
     bible_version: (data.bible_version as BibleVersion) ?? "ARC",
     ai_enabled: data.ai_enabled ?? false,
+    plan: (data.plan as "manuscrito" | "concilio") ?? "manuscrito",
     email: user.email ?? "",
   };
 }
@@ -112,7 +114,10 @@ export default async function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="ai" className="space-y-5">
-          <SettingsAIForm initialEnabled={profile.ai_enabled} />
+          <SettingsAIForm
+            initialEnabled={profile.ai_enabled}
+            initialPlan={profile.plan}
+          />
         </TabsContent>
 
         <TabsContent value="frameworks" className="space-y-5">

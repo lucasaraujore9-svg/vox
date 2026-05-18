@@ -5,7 +5,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { getOpenAI, AI_MODEL } from "@/lib/ai/client";
+import { getOpenAI, loadAISettings } from "@/lib/ai/client";
 import { SUGGEST_SYSTEM_PROMPTS } from "@/lib/ai/prompts";
 
 export const runtime = "nodejs";
@@ -111,9 +111,10 @@ export async function POST(request: NextRequest) {
     .join("\n");
 
   try {
+    const settings = await loadAISettings();
     const openai = getOpenAI();
     const completion = await openai.chat.completions.create({
-      model: AI_MODEL,
+      model: settings.active_model,
       messages: [
         { role: "system", content: system },
         { role: "user", content: userPrompt },

@@ -96,9 +96,61 @@ export async function updateAISettingsAction(
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Não autenticado" };
 
+  // Gate: só pode ativar a IA quem está no plano Concílio
+  if (parsed.data.ai_enabled) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("plan")
+      .eq("id", user.id)
+      .maybeSingle();
+    if (profile?.plan !== "concilio") {
+      return {
+        ok: false,
+        error: "O assistente de IA faz parte do plano Concílio.",
+      };
+    }
+  }
+
   const { error } = await supabase
     .from("profiles")
     .update({ ai_enabled: parsed.data.ai_enabled })
+    .eq("id", user.id);
+  if (error) return { ok: false, error: error.message };
+  revalidatePath("/settings");
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+// === Plano ===
+
+const planSchema = z.object({
+  plan: z.enum(["manuscrito", "concilio"]),
+});
+
+export async function updatePlanAction(
+  input: z.input<typeof planSchema>
+): Promise<ActionResult> {
+  const parsed = planSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message };
+  }
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Não autenticado" };
+
+  // Se o usuário voltar pra manuscrito, desliga a IA automaticamente
+  const updates: { plan: string; ai_enabled?: boolean } = {
+    plan: parsed.data.plan,
+  };
+  if (parsed.data.plan === "manuscrito") {
+    updates.ai_enabled = false;
+  }
+
+  const { error } = await supabase
+    .from("profiles")
+    .update(updates)
     .eq("id", user.id);
   if (error) return { ok: false, error: error.message };
   revalidatePath("/settings");

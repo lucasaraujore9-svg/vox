@@ -190,6 +190,7 @@ export type Database = {
           denomination: string | null
           id: string
           name: string
+          plan: string
           role: string
           updated_at: string
         }
@@ -201,6 +202,7 @@ export type Database = {
           denomination?: string | null
           id: string
           name?: string
+          plan?: string
           role?: string
           updated_at?: string
         }
@@ -212,8 +214,81 @@ export type Database = {
           denomination?: string | null
           id?: string
           name?: string
+          plan?: string
           role?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      exegeses: {
+        Row: {
+          content: string
+          cost_usd: number
+          created_at: string
+          id: string
+          model: string
+          passage: string
+          sermon_id: string | null
+          tokens_in: number
+          tokens_out: number
+          updated_at: string
+          user_id: string
+          version: string
+        }
+        Insert: {
+          content: string
+          cost_usd?: number
+          created_at?: string
+          id?: string
+          model: string
+          passage: string
+          sermon_id?: string | null
+          tokens_in?: number
+          tokens_out?: number
+          updated_at?: string
+          user_id: string
+          version?: string
+        }
+        Update: {
+          content?: string
+          cost_usd?: number
+          created_at?: string
+          id?: string
+          model?: string
+          passage?: string
+          sermon_id?: string | null
+          tokens_in?: number
+          tokens_out?: number
+          updated_at?: string
+          user_id?: string
+          version?: string
+        }
+        Relationships: []
+      }
+      ai_settings: {
+        Row: {
+          active_model: string
+          id: number
+          model_prices: Json
+          monthly_user_cap_usd: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          active_model?: string
+          id?: number
+          model_prices?: Json
+          monthly_user_cap_usd?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          active_model?: string
+          id?: number
+          model_prices?: Json
+          monthly_user_cap_usd?: number
+          updated_at?: string
+          updated_by?: string | null
         }
         Relationships: []
       }

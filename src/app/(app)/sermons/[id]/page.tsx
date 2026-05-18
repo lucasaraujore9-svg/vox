@@ -13,11 +13,14 @@ import { VersionsDialog } from "@/components/editor/VersionsDialog";
 import { EngagementsSection } from "@/components/sermon/EngagementsSection";
 import { SermonActionsMenu } from "@/components/sermon/SermonActionsMenu";
 import { BibleSidePanel } from "@/components/bible/BibleSidePanel";
+import { ExegesisSidePanel } from "@/components/sermon/ExegesisSidePanel";
 import { getSermon } from "@/lib/sermons/queries";
 import { parseSermonContent } from "@/lib/sermons/sessions";
 import { listSlidesForSermon } from "@/lib/sermons/slides";
 import { listEngagements } from "@/lib/sermons/engagements";
 import { listSermonVersions } from "@/lib/sermons/versions";
+import { listExegesesForSermon } from "@/lib/exegesis/queries";
+import { createClient } from "@/lib/supabase/server";
 import { VOX_FRAMEWORKS, type FrameworkId } from "@/lib/mocks/frameworks";
 import type { ContentType, SermonStatus, SermonType } from "@/types/database";
 
@@ -87,6 +90,37 @@ export default async function SermonEditorPage({ params }: PageProps) {
       ? await listSlidesForSermon(sermon.id, sermon.framework)
       : [];
 
+  // Carrega o profile pra saber plano + flag de IA, e as exegeses já feitas
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { data: profileRow } = user
+    ? await supabase
+        .from("profiles")
+        .select("plan, ai_enabled, bible_version")
+        .eq("id", user.id)
+        .maybeSingle()
+    : { data: null };
+  const plan: "manuscrito" | "concilio" =
+    profileRow?.plan === "concilio" ? "concilio" : "manuscrito";
+  const aiEnabled = Boolean(profileRow?.ai_enabled);
+  const bibleVersion = (profileRow?.bible_version ?? "ARC") as
+    | "ARC"
+    | "ARA"
+    | "NVI"
+    | "NAA"
+    | "NVT";
+  const exegeses = await listExegesesForSermon(sermon.id);
+  const exegesisItems = exegeses.map((e) => ({
+    id: e.id,
+    passage: e.passage,
+    version: e.version,
+    content: e.content,
+    created_at: e.created_at,
+    model: e.model,
+  }));
+
   const isBlank = sermon.framework === "livre";
 
   return (
@@ -146,6 +180,14 @@ export default async function SermonEditorPage({ params }: PageProps) {
               }
             />
             <BibleSidePanel defaultReference={sermon.bible_ref} />
+            <ExegesisSidePanel
+              sermonId={sermon.id}
+              defaultVersion={bibleVersion}
+              defaultPassage={sermon.bible_ref}
+              initialExegeses={exegesisItems}
+              plan={plan}
+              aiEnabled={aiEnabled}
+            />
             <Button asChild variant="outline" size="sm">
               <Link href={`/sermons/${sermon.id}/present`}>Apresentar</Link>
             </Button>
