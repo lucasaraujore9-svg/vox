@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { VOX_FRAMEWORKS } from "@/lib/mocks/frameworks";
 import { VoxWordmark } from "@/components/brand/VoxWordmark";
 import { RegisterForm } from "@/components/auth/RegisterForm";
+import { InteractiveEditorDemo } from "@/components/shared/InteractiveEditorDemo";
+import { PresenterDemo } from "@/components/shared/PresenterDemo";
 
 export const metadata = {
   title: "VOX, organiza a semana de quem prega",
@@ -19,8 +20,8 @@ export default function LandingPage() {
       <SiteHeader />
       <Hero />
       <Demo />
+      <Apresentador />
       <SuaSemana />
-      <Modelos />
       <Preco />
       <SiteFooter />
     </main>
@@ -149,145 +150,101 @@ function Demo() {
           className="vox-h2 mt-3 max-w-2xl"
           style={{ fontSize: "clamp(28px, 3.6vw, 36px)" }}
         >
-          Você abre. Escolhe um modelo. A estrutura aparece. Você preenche.
+          Escolha um modelo. A estrutura aparece. Você preenche.
         </h2>
         <p className="vox-body mt-5 max-w-xl text-base">
-          Sem página em branco. Sem perder versículo no meio do texto. Sem
-          colar de outro app.
+          São seis modelos para postura de pregação. Clique nos botões abaixo
+          para experimentar agora.
         </p>
 
-        <div
-          className="mt-12 rounded-2xl overflow-hidden"
-          style={{
-            background: "var(--vox-surface)",
-            border: "1px solid var(--vox-whisper)",
-            boxShadow: "var(--vox-shadow-card)",
-          }}
+        <div className="mt-12">
+          <InteractiveEditorDemo />
+        </div>
+
+        <p className="vox-mono mt-6 text-[10px] uppercase tracking-wider text-vox-muted">
+          Demo navegável · troque o modelo, clique nos blocos
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function Apresentador() {
+  return (
+    <section className="px-6 sm:px-8 py-24">
+      <div className="max-w-5xl mx-auto">
+        <p className="vox-eyebrow">No domingo, duas telas</p>
+        <h2
+          className="vox-h2 mt-3 max-w-2xl"
+          style={{ fontSize: "clamp(28px, 3.6vw, 36px)" }}
         >
-          <EditorMock />
+          O slide pra igreja. O esboço pra você.
+        </h2>
+        <p className="vox-body mt-5 max-w-2xl text-base">
+          A congregação vê só o slide, limpo, sem distrações. No seu notebook
+          aparece o próximo slide, o cronômetro e suas notas em blocos
+          coloridos. Funciona pra sermão, palestra ou aula com slides.
+        </p>
+
+        <div className="mt-12">
+          <PresenterDemo />
+        </div>
+
+        <div className="mt-10 grid sm:grid-cols-3 gap-5">
+          <ModoCard
+            etiqueta="Modo 1"
+            nome="Apresentador"
+            desc="Duas telas. Slide pra audiência, painel de controle pra você."
+            destaque
+          />
+          <ModoCard
+            etiqueta="Modo 2"
+            nome="Teleprompter"
+            desc="Manuscrito em fonte grande, fundo escuro. Você lê sem parecer colado em papel."
+          />
+          <ModoCard
+            etiqueta="Modo 3"
+            nome="Slide simples"
+            desc="Slide fullscreen sem UI. Avança com clique, teclado ou controle."
+          />
         </div>
       </div>
     </section>
   );
 }
 
-function EditorMock() {
-  return (
-    <div className="grid sm:grid-cols-[180px_1fr]">
-      <aside
-        className="p-5 hidden sm:flex flex-col gap-1.5"
-        style={{
-          background: "var(--vox-surface-deep)",
-          borderRight: "1px solid var(--vox-whisper)",
-        }}
-      >
-        <p className="vox-eyebrow mb-2">Modelo</p>
-        <p
-          className="vox-mono text-[11px] uppercase tracking-wider px-2 py-1.5 rounded-md"
-          style={{
-            background: "var(--vox-forest-soft)",
-            color: "var(--vox-forest)",
-          }}
-        >
-          Expositivo
-        </p>
-        <div className="mt-5 space-y-1.5">
-          <MockNavItem color="var(--vox-gold)" label="Texto bíblico" active />
-          <MockNavItem color="var(--vox-forest)" label="Contexto" />
-          <MockNavItem color="var(--vox-forest)" label="Ponto principal" />
-          <MockNavItem color="#0D7C7C" label="Aplicação" />
-          <MockNavItem color="var(--vox-ink)" label="Conclusão" />
-        </div>
-      </aside>
-
-      <div className="p-7 sm:p-10">
-        <div className="flex items-center justify-between mb-1">
-          <p className="vox-eyebrow">Texto bíblico</p>
-          <span className="vox-mono text-[10px] text-vox-muted">
-            salvo há 12s
-          </span>
-        </div>
-        <p className="vox-scripture mt-4 text-lg sm:text-xl">
-          &ldquo;Justificados, pois, pela fé, temos paz com Deus por meio do
-          nosso Senhor Jesus Cristo&rdquo;
-        </p>
-        <p className="vox-ref mt-2">Romanos 5:1,11</p>
-
-        <div
-          className="mt-8 pt-7"
-          style={{ borderTop: "1px solid var(--vox-whisper)" }}
-        >
-          <p className="vox-eyebrow mb-3">Ponto principal</p>
-          <p className="text-vox-prose text-[15px] leading-relaxed">
-            A paz com Deus não é resultado do nosso esforço, mas fruto da
-            justificação pela fé. Paulo conecta a fé não a uma sensação
-            passageira, mas a uma{" "}
-            <span
-              className="px-1.5 py-0.5 rounded"
-              style={{
-                background: "var(--vox-forest-soft)",
-                color: "var(--vox-forest)",
-                fontWeight: 500,
-              }}
-            >
-              posição declarada por Deus
-            </span>
-            …
-          </p>
-        </div>
-
-        <div
-          className="mt-7 pt-5 flex items-center justify-between"
-          style={{ borderTop: "1px solid var(--vox-whisper)" }}
-        >
-          <span className="vox-mono text-[10px] text-vox-muted">
-            1.247 palavras · 14 min
-          </span>
-          <span
-            className="vox-mono text-[10px] px-2 py-1 rounded-full"
-            style={{
-              background: "var(--vox-forest-soft)",
-              color: "var(--vox-forest)",
-            }}
-          >
-            pronto para o púlpito
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function MockNavItem({
-  color,
-  label,
-  active,
+function ModoCard({
+  etiqueta,
+  nome,
+  desc,
+  destaque,
 }: {
-  color: string;
-  label: string;
-  active?: boolean;
+  etiqueta: string;
+  nome: string;
+  desc: string;
+  destaque?: boolean;
 }) {
   return (
-    <div
-      className="flex items-center gap-2 text-xs px-2 py-1.5 rounded-md"
+    <article
+      className="rounded-xl p-5"
       style={{
-        background: active ? "var(--vox-surface)" : "transparent",
-        border: active ? "1px solid var(--vox-whisper)" : "1px solid transparent",
+        background: destaque ? "var(--vox-forest-soft)" : "var(--vox-surface)",
+        border: destaque
+          ? "1px solid var(--vox-forest-tint)"
+          : "1px solid var(--vox-whisper)",
       }}
     >
-      <span
-        className="size-1.5 rounded-full shrink-0"
-        style={{ background: color }}
-      />
-      <span
+      <p
+        className="vox-mono text-[10px] uppercase tracking-wider"
         style={{
-          color: active ? "var(--vox-ink)" : "var(--vox-prose)",
-          fontWeight: active ? 500 : 400,
+          color: destaque ? "var(--vox-forest)" : "var(--vox-muted)",
         }}
       >
-        {label}
-      </span>
-    </div>
+        {etiqueta}
+      </p>
+      <h3 className="vox-h3 mt-2 text-base">{nome}</h3>
+      <p className="mt-2 text-sm text-vox-prose leading-relaxed">{desc}</p>
+    </article>
   );
 }
 
@@ -368,80 +325,6 @@ function SuaSemana() {
             </li>
           ))}
         </ol>
-      </div>
-    </section>
-  );
-}
-
-function Modelos() {
-  const destaques = VOX_FRAMEWORKS.filter((fw) =>
-    ["expositivo", "narrativo", "topico"].includes(fw.id)
-  );
-
-  return (
-    <section
-      className="px-6 sm:px-8 py-24"
-      style={{
-        background: "var(--vox-surface-deep)",
-        borderTop: "1px solid var(--vox-whisper)",
-        borderBottom: "1px solid var(--vox-whisper)",
-      }}
-    >
-      <div className="max-w-5xl mx-auto">
-        <p className="vox-eyebrow">Modelos de pregação</p>
-        <h2
-          className="vox-h2 mt-3 max-w-2xl"
-          style={{ fontSize: "clamp(28px, 3.6vw, 36px)" }}
-        >
-          Você não precisa ter cursado homilética.
-        </h2>
-        <p className="vox-body mt-5 max-w-xl text-base">
-          Cada modelo abre com a estrutura pronta, os blocos certos na ordem
-          certa. Você escolhe um e só preenche.
-        </p>
-
-        <div className="mt-14 grid md:grid-cols-3 gap-5">
-          {destaques.map((fw) => (
-            <article
-              key={fw.id}
-              className="rounded-xl p-6 flex flex-col"
-              style={{
-                background: "var(--vox-surface)",
-                border: "1px solid var(--vox-whisper)",
-                boxShadow: "var(--vox-shadow-card)",
-              }}
-            >
-              <div className="flex items-center gap-2">
-                <span
-                  className="inline-block size-2 rounded-full"
-                  style={{ background: `var(--vox-fw-${fw.id})` }}
-                />
-                <p
-                  className="vox-eyebrow"
-                  style={{ color: `var(--vox-fw-${fw.id})` }}
-                >
-                  {fw.name}
-                </p>
-              </div>
-              <p className="mt-3 vox-h3 text-lg leading-tight">{fw.tagline}</p>
-              <p className="mt-3 text-sm text-vox-prose leading-relaxed flex-1">
-                {fw.description}
-              </p>
-            </article>
-          ))}
-        </div>
-
-        <p className="mt-10 text-sm text-vox-prose">
-          Existem outros três modelos (textual, temático e livre).{" "}
-          <Link
-            href="/templates"
-            className="underline-offset-4 hover:underline"
-            style={{ color: "var(--vox-forest)" }}
-          >
-            Ver os seis
-          </Link>
-          .
-        </p>
       </div>
     </section>
   );
