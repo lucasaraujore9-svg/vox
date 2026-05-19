@@ -297,7 +297,9 @@ export function ExegesisSidePanel({
                 <p className="text-[11px] text-vox-muted leading-relaxed">
                   Análise técnica do capítulo em 14 seções, partindo dos
                   originais (hebraico/grego). Primeira geração leva ~30s;
-                  consultas seguintes são instantâneas.
+                  consultas seguintes são instantâneas. Material de apoio
+                  ao estudo — vale conferir referências nas suas fontes
+                  antes de pregar.
                 </p>
               </div>
             ) : null}

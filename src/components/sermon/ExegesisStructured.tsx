@@ -232,6 +232,8 @@ export function ExegesisStructured({ content }: Props) {
           <Unavailable />
         )}
       </Section>
+
+      <ExegesisFootnote />
     </div>
   );
 }
@@ -353,5 +355,34 @@ function LexicalCard({ term }: { term: LexicalEntry }) {
         <strong className="text-vox-ink">Nuance.</strong> {term.nuance}
       </p>
     </li>
+  );
+}
+
+/**
+ * Letras miúdas no rodapé da exegese.
+ * Tom editorial-ministerial: orienta a conferência sem soar como aviso
+ * defensivo ou disclaimer legal. Companheiro silencioso, não juiz.
+ */
+function ExegesisFootnote() {
+  return (
+    <footer
+      className="mt-5 pt-4"
+      style={{ borderTop: "1px solid var(--vox-whisper)" }}
+    >
+      <p
+        className="vox-mono text-[10px] uppercase tracking-wider"
+        style={{ color: "var(--vox-muted)" }}
+      >
+        Notas de estudo
+      </p>
+      <p
+        className="mt-2 text-[12px] leading-relaxed"
+        style={{ color: "var(--vox-muted)" }}
+      >
+        Este material é um ponto de partida para sua preparação. Antes de
+        levar ao púlpito, vale conferir referências, citações e datas em
+        suas fontes habituais — comentários, léxicos e a própria Escritura.
+      </p>
+    </footer>
   );
 }
