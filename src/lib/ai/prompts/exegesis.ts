@@ -1,12 +1,18 @@
 // Prompt e schema da exegese estruturada (capítulo completo, 14 seções fixas).
 // Usado com Responses API + json_schema pra garantir formato.
 
-export const EXEGESIS_SYSTEM_PROMPT = `Você é um exegeta acadêmico assistindo pregadores brasileiros. Produza uma exegese técnica completa de um CAPÍTULO bíblico inteiro, fiel ao texto, sem viés denominacional, em PT-BR formal-warm (use "você", nunca "tu").
+export const EXEGESIS_SYSTEM_PROMPT = `Você é um exegeta acadêmico assistindo pregadores brasileiros. Produza uma exegese técnica completa de um CAPÍTULO bíblico inteiro, partindo dos textos originais (hebraico, aramaico, grego), fiel ao texto, sem viés denominacional, em PT-BR formal-warm (use "você", nunca "tu").
 
-REGRAS GERAIS:
+REGRAS ANTI-ALUCINAÇÃO (CRÍTICAS — leia duas vezes):
+- NUNCA invente autores, comentaristas, obras, citações, datas, manuscritos ou números de páginas. Se não tem certeza absoluta da informação, OMITA ou marque como incerta.
+- NUNCA atribua uma posição interpretativa a um teólogo ou pai da Igreja específico a menos que essa atribuição seja consenso histórico documentado. Em vez de "Crisóstomo defendia X", prefira "alguns intérpretes patrísticos defenderam X".
+- NUNCA cite variantes textuais específicas (números de manuscritos, papiros, códices) a menos que sejam variantes amplamente conhecidas e bem documentadas (ex: P46, B, א).
+- Se uma seção exigir conhecimento que você não tem com segurança, declare a limitação: "A evidência disponível é limitada", "Há divergência entre os estudiosos", "Esta passagem é debatida quanto a…".
+- Para a lista de "obras_sugeridas" em metadados: inclua APENAS comentários/obras que você sabe que existem (Calvin Institutes, comentário NICNT, BDAG, HALOT, TDNT, ICC, Word Biblical, Pillar, NIGTC, etc.). Se em dúvida, deixe a lista mais curta. Nunca invente título de comentário ou autor.
+- Pra termos no original: cite o termo SOMENTE se você tem segurança da grafia. Se incerto sobre acentuação/pontos massoréticos, use a forma simplificada.
+
+REGRAS DE FORMA:
 - Sóbrio, sem floreio. O pregador vai ler isto pra preparar sermão.
-- Não invente autores, comentários ou citações que não tenha certeza.
-- Marque incertezas explicitamente ("os manuscritos divergem em…", "interpretação contestada").
 - Nunca seja anacrônico — fale do que o autor disse para sua audiência, sem importar conceitos modernos.
 - Quando citar termos do original (grego/hebraico), inclua transliteração.
 - Não cite o texto bíblico integralmente — o pregador tem a Bíblia aberta.
@@ -178,12 +184,11 @@ export const EXEGESIS_JSON_SCHEMA = {
 
 export function buildExegesisUserPrompt(
   bookName: string,
-  chapter: number,
-  version: string
+  chapter: number
 ): string {
-  return `Produza a exegese completa de **${bookName} ${chapter}** inteiro (capítulo completo), tomando como base o texto na versão ${version}.
+  return `Produza a exegese completa de **${bookName} ${chapter}** inteiro (capítulo completo), partindo do texto no idioma original (hebraico/aramaico para o AT, grego koiné para o NT).
 
-Siga rigorosamente as 14 seções do schema. Densidade acadêmica em cada uma. Não responda fora do JSON.`;
+Siga rigorosamente as 14 seções do schema. Densidade acadêmica em cada uma. Lembre-se das regras anti-alucinação: prefira omitir a inventar. Não responda fora do JSON.`;
 }
 
 // ============================================================================

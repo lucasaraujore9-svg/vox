@@ -25,13 +25,17 @@ import {
 } from "@/lib/ai/prompts/exegesis";
 import { normalizeChapter } from "@/lib/exegesis/normalize";
 
+// Versão é constante: a exegese parte dos originais. A coluna na tabela
+// fica como 'ORIGINAL' pra preservar a UNIQUE constraint e permitir, no
+// futuro, regenerar uma exegese tradução-específica se houver demanda.
+const EXEGESIS_VERSION = "ORIGINAL" as const;
+
 const createSchema = z.object({
   passage: z
     .string()
     .trim()
     .min(2, "Informe livro e capítulo")
     .max(200, "Passagem muito longa"),
-  version: z.enum(["ARC", "ARA", "NVI", "NAA", "NVT"]),
   sermon_id: z.string().uuid().optional().nullable(),
 });
 
@@ -93,7 +97,7 @@ export async function createExegesisAction(
     .select("id")
     .eq("book_abbrev", book.abbrev)
     .eq("chapter", chapter)
-    .eq("version", parsed.data.version)
+    .eq("version", EXEGESIS_VERSION)
     .maybeSingle();
 
   if (cached) {
@@ -147,14 +151,16 @@ export async function createExegesisAction(
     const response = await openai.responses.create({
       model: settings.active_model,
       instructions: EXEGESIS_SYSTEM_PROMPT,
-      input: buildExegesisUserPrompt(book.name, chapter, parsed.data.version),
+      input: buildExegesisUserPrompt(book.name, chapter),
       text: {
         format: {
           type: "json_schema",
           ...EXEGESIS_JSON_SCHEMA,
         },
       },
-      temperature: 0.3,
+      // Temperatura baixa pra reduzir alucinação. Cuidado: 0 pode levar
+      // a repetições; 0.2 é um equilíbrio razoável.
+      temperature: 0.2,
     });
 
     const raw = response.output_text;
@@ -182,7 +188,7 @@ export async function createExegesisAction(
         book_abbrev: book.abbrev,
         book_name: book.name,
         chapter,
-        version: parsed.data.version,
+        version: EXEGESIS_VERSION,
         content: contentJson as never,
         model: settings.active_model,
         tokens_in: tokensIn,
@@ -200,7 +206,7 @@ export async function createExegesisAction(
         .select("id")
         .eq("book_abbrev", book.abbrev)
         .eq("chapter", chapter)
-        .eq("version", parsed.data.version)
+        .eq("version", EXEGESIS_VERSION)
         .maybeSingle();
       if (!retry) return { ok: false, error: error.message };
       if (parsed.data.sermon_id) {

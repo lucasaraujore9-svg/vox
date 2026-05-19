@@ -34,5 +34,20 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  return { response, user };
+  // Se a conta foi desativada com sessão em uso, força logout aqui pra a request
+  // chegar no middleware raiz já como não-autenticada (cai no redirect pra /login).
+  let deactivated = false;
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("is_active")
+      .eq("id", user.id)
+      .maybeSingle();
+    if (profile && profile.is_active === false) {
+      await supabase.auth.signOut();
+      deactivated = true;
+    }
+  }
+
+  return { response, user: deactivated ? null : user, deactivated };
 }

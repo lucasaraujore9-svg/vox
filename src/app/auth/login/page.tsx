@@ -1,9 +1,17 @@
 import Link from "next/link";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export const metadata = { title: "Entrar" };
 
-export default function LoginPage() {
+interface LoginPageProps {
+  searchParams: Promise<{ reason?: string }>;
+}
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const { reason } = await searchParams;
+  const deactivated = reason === "deactivated";
+
   return (
     <div>
       <p className="vox-eyebrow">VOX · Entrada</p>
@@ -11,6 +19,14 @@ export default function LoginPage() {
       <p className="vox-body mt-3">
         Acesse seu banco de sermões, palestras e aulas.
       </p>
+
+      {deactivated ? (
+        <Alert variant="destructive" className="mt-6">
+          <AlertDescription>
+            Sua conta foi desativada. Entre em contato com um administrador.
+          </AlertDescription>
+        </Alert>
+      ) : null}
 
       <LoginForm className="mt-8" />
 

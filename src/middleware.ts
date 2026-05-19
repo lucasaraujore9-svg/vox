@@ -23,7 +23,15 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const { response, user } = await updateSession(request);
+  const { response, user, deactivated } = await updateSession(request);
+
+  // Conta desativada com sessão em uso → manda pra login com aviso.
+  if (deactivated && !isPublicPath(pathname)) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/login";
+    url.searchParams.set("reason", "deactivated");
+    return NextResponse.redirect(url);
+  }
 
   // Já logado tentando acessar login/register → manda para dashboard
   if (user && (pathname === "/auth/login" || pathname === "/auth/register")) {

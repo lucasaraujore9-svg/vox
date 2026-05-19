@@ -140,6 +140,84 @@ export async function updateUserRoleAction(
   return { ok: true };
 }
 
+export async function updateUserPlanAction(
+  userId: string,
+  plan: "manuscrito" | "concilio"
+): Promise<{ ok: boolean; error?: string }> {
+  const adminCheck = await assertAdmin();
+  if (!adminCheck.ok) return adminCheck;
+
+  if (plan !== "manuscrito" && plan !== "concilio") {
+    return { ok: false, error: "Plano inválido" };
+  }
+
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return { ok: false, error: "Configuração do servidor incompleta" };
+  }
+
+  // Quem volta pra manuscrito perde IA automaticamente (mesma regra do user-self).
+  const updates: { plan: string; ai_enabled?: boolean } = { plan };
+  if (plan === "manuscrito") updates.ai_enabled = false;
+
+  const service = createServiceClient();
+  const { error } = await service
+    .from("profiles")
+    .update(updates)
+    .eq("id", userId);
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath("/admin/users");
+  revalidatePath(`/admin/users/${userId}`);
+  return { ok: true };
+}
+
+export async function setUserActiveAction(
+  userId: string,
+  active: boolean
+): Promise<{ ok: boolean; error?: string }> {
+  const adminCheck = await assertAdmin();
+  if (!adminCheck.ok) return adminCheck;
+
+  if (adminCheck.userId === userId && !active) {
+    return { ok: false, error: "Você não pode desativar a si mesmo." };
+  }
+
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    return { ok: false, error: "Configuração do servidor incompleta" };
+  }
+
+  const service = createServiceClient();
+  const { error } = await service
+    .from("profiles")
+    .update({ is_active: active })
+    .eq("id", userId);
+  if (error) return { ok: false, error: error.message };
+
+  // Quando desativa, força logout em todas as sessões ativas.
+  if (!active) {
+    try {
+      await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/admin/users/${userId}/logout`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+            apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ scope: "global" }),
+        }
+      );
+    } catch {
+      // Sessão será invalidada no próximo middleware check de qualquer forma.
+    }
+  }
+
+  revalidatePath("/admin/users");
+  revalidatePath(`/admin/users/${userId}`);
+  return { ok: true };
+}
+
 export async function deleteUserAction(
   userId: string
 ): Promise<{ ok: boolean; error?: string }> {

@@ -1,10 +1,13 @@
 "use client";
 
 // Painel lateral de exegeses no editor de sermão.
-// Granularidade: capítulo inteiro (versículos não entram).
-// Cache global: se a exegese de Romanos 5 já existe, vincula direto.
+// - Granularidade: capítulo inteiro (versículos não entram)
+// - Cache global compartilhado
+// - Sempre parte dos originais (versão na tabela é fixa 'ORIGINAL')
+// - Escuta vox:open-exegesis disparado pelo BubbleMenu do editor
+//   para abrir automaticamente com livro + capítulo pré-preenchidos
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -33,24 +36,17 @@ import {
 import { BIBLE_BOOK_LIST } from "@/lib/exegesis/normalize";
 import type { ExegesisContent } from "@/lib/ai/prompts/exegesis";
 
-type BibleVersion = "ARC" | "ARA" | "NVI" | "NAA" | "NVT";
-
 export interface ExegesisListItem {
   id: string;
   book_abbrev: string;
   book_name: string;
   chapter: number;
   canonical: string;
-  version: string;
   content: ExegesisContent;
-  created_at: string;
-  linked_at: string;
-  model: string;
 }
 
 interface Props {
   sermonId: string;
-  defaultVersion: BibleVersion;
   initialExegeses: ExegesisListItem[];
   plan: "manuscrito" | "concilio";
   aiEnabled: boolean;
@@ -59,24 +55,19 @@ interface Props {
   defaultChapter?: number;
 }
 
-function formatRelative(iso: string): string {
-  const date = new Date(iso);
-  const diff = Date.now() - date.getTime();
-  const min = Math.round(diff / 60_000);
-  if (min < 60) return `há ${min} min`;
-  const hr = Math.round(min / 60);
-  if (hr < 24) return `há ${hr} h`;
-  const d = Math.round(hr / 24);
-  if (d < 30) return `há ${d} d`;
-  return date.toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "short",
-  });
+/**
+ * Detalhes do evento que o BubbleMenu do editor dispara pra abrir
+ * o painel já preenchido.
+ */
+export interface OpenExegesisEventDetail {
+  bookAbbrev: string;
+  chapter: number;
 }
+
+export const OPEN_EXEGESIS_EVENT = "vox:open-exegesis";
 
 export function ExegesisSidePanel({
   sermonId,
-  defaultVersion,
   initialExegeses,
   plan,
   aiEnabled,
@@ -92,7 +83,6 @@ export function ExegesisSidePanel({
   const [chapter, setChapter] = useState<string>(
     defaultChapter ? String(defaultChapter) : "1"
   );
-  const [version, setVersion] = useState<BibleVersion>(defaultVersion);
   const [expandedId, setExpandedId] = useState<string | null>(
     initialExegeses[0]?.id ?? null
   );
@@ -103,6 +93,20 @@ export function ExegesisSidePanel({
     [bookAbbrev]
   );
   const canUse = plan === "concilio" && aiEnabled;
+
+  // Escuta o evento do BubbleMenu pra abrir já preenchido
+  useEffect(() => {
+    function onOpen(e: Event) {
+      const detail = (e as CustomEvent<OpenExegesisEventDetail>).detail;
+      if (!detail) return;
+      setBookAbbrev(detail.bookAbbrev);
+      setChapter(String(detail.chapter));
+      setShowForm(true);
+      setOpen(true);
+    }
+    window.addEventListener(OPEN_EXEGESIS_EVENT, onOpen);
+    return () => window.removeEventListener(OPEN_EXEGESIS_EVENT, onOpen);
+  }, []);
 
   function generate() {
     if (!canUse) return;
@@ -125,7 +129,6 @@ export function ExegesisSidePanel({
     startTransition(async () => {
       const result = await createExegesisAction({
         passage,
-        version,
         sermon_id: sermonId,
       });
       if (result.ok) {
@@ -156,7 +159,6 @@ export function ExegesisSidePanel({
     });
   }
 
-  // Agrupa livros por testamento pra o select
   const oldTestament = useMemo(
     () => BIBLE_BOOK_LIST.filter((b) => b.testament === "VT"),
     []
@@ -259,25 +261,6 @@ export function ExegesisSidePanel({
                     {selectedBook.name} tem {selectedBook.chapters} capítulos
                   </p>
                 ) : null}
-                <div className="space-y-2">
-                  <Label htmlFor="ex-version">Versão da Bíblia</Label>
-                  <Select
-                    value={version}
-                    onValueChange={(v) => setVersion(v as BibleVersion)}
-                    disabled={pending}
-                  >
-                    <SelectTrigger id="ex-version">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ARC">ARC</SelectItem>
-                      <SelectItem value="ARA">ARA</SelectItem>
-                      <SelectItem value="NVI">NVI</SelectItem>
-                      <SelectItem value="NAA">NAA</SelectItem>
-                      <SelectItem value="NVT">NVT</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
                 <Button
                   className="w-full"
                   onClick={generate}
@@ -286,11 +269,9 @@ export function ExegesisSidePanel({
                   {pending ? "Gerando…" : "Gerar exegese"}
                 </Button>
                 <p className="text-[11px] text-vox-muted leading-relaxed">
-                  Análise técnica do capítulo em 14 seções: perícope, contexto,
-                  gênero, estrutura, gramática, léxico, intertextualidade,
-                  teologia, história da interpretação, síntese e aplicação.
-                  Primeira geração leva ~30s; consultas seguintes são
-                  instantâneas.
+                  Análise técnica do capítulo em 14 seções, partindo dos
+                  originais (hebraico/grego). Primeira geração leva ~30s;
+                  consultas seguintes são instantâneas.
                 </p>
               </div>
             ) : null}
@@ -326,18 +307,12 @@ export function ExegesisSidePanel({
                       onClick={() => setExpandedId(isOpen ? null : ex.id)}
                       className="w-full text-left px-6 py-4 hover:bg-[var(--vox-surface-deep)] transition-colors flex items-start justify-between gap-3"
                     >
-                      <div className="min-w-0 flex-1">
-                        <p
-                          className="vox-ref text-[15px]"
-                          style={{ color: "var(--vox-gold)" }}
-                        >
-                          {ex.canonical}
-                        </p>
-                        <p className="vox-mono text-[10px] uppercase tracking-wider text-vox-muted mt-1">
-                          {ex.version} · gerada {formatRelative(ex.created_at)}{" "}
-                          · {ex.model}
-                        </p>
-                      </div>
+                      <p
+                        className="vox-ref text-[15px]"
+                        style={{ color: "var(--vox-gold)" }}
+                      >
+                        {ex.canonical}
+                      </p>
                       <span
                         aria-hidden
                         className="vox-mono text-xl shrink-0 transition-transform"

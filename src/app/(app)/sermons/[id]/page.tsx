@@ -99,19 +99,13 @@ export default async function SermonEditorPage({ params }: PageProps) {
   const { data: profileRow } = user
     ? await supabase
         .from("profiles")
-        .select("plan, ai_enabled, bible_version")
+        .select("plan, ai_enabled")
         .eq("id", user.id)
         .maybeSingle()
     : { data: null };
   const plan: "manuscrito" | "concilio" =
     profileRow?.plan === "concilio" ? "concilio" : "manuscrito";
   const aiEnabled = Boolean(profileRow?.ai_enabled);
-  const bibleVersion = (profileRow?.bible_version ?? "ARC") as
-    | "ARC"
-    | "ARA"
-    | "NVI"
-    | "NAA"
-    | "NVT";
   const exegeses = await listExegesesForSermon(sermon.id);
 
   // Sugere livro+capítulo a partir do bible_ref do sermão (se houver)
@@ -185,7 +179,6 @@ export default async function SermonEditorPage({ params }: PageProps) {
             <BibleSidePanel defaultReference={sermon.bible_ref} />
             <ExegesisSidePanel
               sermonId={sermon.id}
-              defaultVersion={bibleVersion}
               defaultBookAbbrev={suggested?.book_abbrev}
               defaultChapter={suggested?.chapter}
               initialExegeses={exegeses}

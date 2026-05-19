@@ -22,10 +22,15 @@ import {
   BookMarked,
   Highlighter,
   Palette,
+  Telescope,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { findFirstReference } from "@/lib/bible/parser";
 import type { BibleVersionId } from "@/lib/bible/versions";
+import {
+  OPEN_EXEGESIS_EVENT,
+  type OpenExegesisEventDetail,
+} from "@/components/sermon/ExegesisSidePanel";
 import {
   Popover,
   PopoverContent,
@@ -86,6 +91,33 @@ export function BubbleToolbar({
       return;
     }
     editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+  }
+
+  /**
+   * Detecta ref no texto selecionado e abre o painel lateral de exegeses
+   * com livro + capítulo pré-preenchidos. Versículos são ignorados (a
+   * exegese é sempre por capítulo).
+   */
+  function openExegesisForSelection() {
+    if (!editor) return;
+    const { from, to } = editor.state.selection;
+    const selectedText = editor.state.doc.textBetween(from, to, " ");
+    const ref = findFirstReference(selectedText);
+    if (!ref) {
+      toast.error("Referência bíblica não reconhecida", {
+        description:
+          "Selecione algo como 'Eclesiastes 3', 'Romanos 5:1-11' ou 'Sl 23'.",
+      });
+      return;
+    }
+    const detail: OpenExegesisEventDetail = {
+      bookAbbrev: ref.book.abbrev,
+      chapter: ref.chapter,
+    };
+    window.dispatchEvent(
+      new CustomEvent<OpenExegesisEventDetail>(OPEN_EXEGESIS_EVENT, { detail })
+    );
+    toast.success(`Abrindo exegese de ${ref.book.name} ${ref.chapter}`);
   }
 
   /** Detecta ref no texto selecionado, busca versículo, insere blockquote. */
@@ -251,6 +283,13 @@ export function BubbleToolbar({
           }
         >
           <BookMarked className="size-3.5" />
+        </ToolbarButton>
+
+        <ToolbarButton
+          onClick={fire(openExegesisForSelection)}
+          label="Fazer exegese do capítulo (selecione uma referência)"
+        >
+          <Telescope className="size-3.5" />
         </ToolbarButton>
       </div>
     </BubbleMenu>

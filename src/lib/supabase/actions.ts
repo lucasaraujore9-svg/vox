@@ -74,11 +74,29 @@ export async function loginAction(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword(parsed.data);
+  const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) {
     const friendly =
       FRIENDLY_AUTH_ERRORS[error.code ?? ""] ?? "Email ou senha incorretos";
     return { ok: false, error: friendly };
+  }
+
+  // Bloqueia login se admin desativou a conta. Faz signOut imediato pra não
+  // deixar cookie de sessão pendurado.
+  if (data.user?.id) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("is_active")
+      .eq("id", data.user.id)
+      .maybeSingle();
+    if (profile && profile.is_active === false) {
+      await supabase.auth.signOut();
+      return {
+        ok: false,
+        error:
+          "Sua conta está desativada. Entre em contato com um administrador.",
+      };
+    }
   }
 
   revalidatePath("/", "layout");
