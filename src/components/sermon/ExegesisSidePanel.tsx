@@ -31,10 +31,14 @@ import { toast } from "sonner";
 import { ExegesisStructured } from "@/components/sermon/ExegesisStructured";
 import {
   createExegesisAction,
+  retryFailedGroupsAction,
   unlinkExegesisFromSermonAction,
 } from "@/lib/exegesis/actions";
 import { BIBLE_BOOK_LIST } from "@/lib/exegesis/normalize";
-import type { ExegesisContent } from "@/lib/ai/prompts/exegesis";
+import type {
+  ExegesisContent,
+  GroupKey,
+} from "@/lib/ai/prompts/exegesis";
 
 export interface ExegesisListItem {
   id: string;
@@ -43,7 +47,17 @@ export interface ExegesisListItem {
   chapter: number;
   canonical: string;
   content: ExegesisContent;
+  generation_status: "partial" | "complete" | "failed";
+  failed_groups: GroupKey[];
 }
+
+const GROUP_LABEL: Record<GroupKey, string> = {
+  texto: "Perícope · Tradução",
+  contexto: "Contexto · Gênero",
+  forma: "Estrutura · Sintaxe · Léxico",
+  background: "Background · Intertextualidade · Teologia",
+  sintese: "Síntese · Aplicação",
+};
 
 interface Props {
   sermonId: string;
@@ -155,6 +169,18 @@ export function ExegesisSidePanel({
         router.refresh();
       } else {
         toast.error(result.error ?? "Não foi possível remover");
+      }
+    });
+  }
+
+  function retryFailed(id: string) {
+    startTransition(async () => {
+      const result = await retryFailedGroupsAction(id);
+      if (result.ok) {
+        toast.success("Seções regeneradas");
+        router.refresh();
+      } else {
+        toast.error(result.error ?? "Não foi possível regenerar");
       }
     });
   }
@@ -327,6 +353,39 @@ export function ExegesisSidePanel({
                     </button>
                     {isOpen ? (
                       <div className="px-6 pb-6">
+                        {ex.generation_status === "partial" &&
+                        ex.failed_groups.length > 0 ? (
+                          <div
+                            className="mb-4 rounded-lg p-3 text-[12px]"
+                            style={{
+                              background: "var(--vox-gold-soft, #FEF3C7)",
+                              border: "1px solid var(--vox-gold)",
+                              color: "var(--vox-ink)",
+                            }}
+                          >
+                            <p className="font-medium mb-1">
+                              Algumas seções falharam na geração
+                            </p>
+                            <p className="text-vox-prose">
+                              Faltam:{" "}
+                              {ex.failed_groups
+                                .map((g) => GROUP_LABEL[g])
+                                .join(" · ")}
+                              .
+                            </p>
+                            <button
+                              type="button"
+                              onClick={() => retryFailed(ex.id)}
+                              disabled={pending}
+                              className="mt-2 text-xs underline underline-offset-4"
+                              style={{ color: "var(--vox-forest)" }}
+                            >
+                              {pending
+                                ? "Regenerando…"
+                                : "Tentar de novo essas seções"}
+                            </button>
+                          </div>
+                        ) : null}
                         <ExegesisStructured content={ex.content} />
                         <div className="flex justify-end mt-4">
                           <button

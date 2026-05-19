@@ -231,7 +231,9 @@ export type Database = {
           content: Json
           cost_usd: number
           created_at: string
+          failed_groups: string[]
           generated_by: string | null
+          generation_status: string
           id: string
           model: string
           tokens_in: number
@@ -246,7 +248,9 @@ export type Database = {
           content: Json
           cost_usd?: number
           created_at?: string
+          failed_groups?: string[]
           generated_by?: string | null
+          generation_status?: string
           id?: string
           model: string
           tokens_in?: number
@@ -261,7 +265,9 @@ export type Database = {
           content?: Json
           cost_usd?: number
           created_at?: string
+          failed_groups?: string[]
           generated_by?: string | null
+          generation_status?: string
           id?: string
           model?: string
           tokens_in?: number

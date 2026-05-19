@@ -1,8 +1,12 @@
 // Queries de exegese vinculadas a um sermão.
-// Faz JOIN sermon_exegeses → chapter_exegeses, retornando o conteúdo estruturado.
+// JOIN sermon_exegeses → chapter_exegeses, retorna o conteúdo estruturado
+// + status de geração (pra UI saber se está parcial).
 
 import { createClient } from "@/lib/supabase/server";
-import type { ExegesisContent } from "@/lib/ai/prompts/exegesis";
+import type {
+  ExegesisContent,
+  GroupKey,
+} from "@/lib/ai/prompts/exegesis";
 
 export interface ExegesisSummary {
   id: string;
@@ -10,11 +14,9 @@ export interface ExegesisSummary {
   book_name: string;
   chapter: number;
   canonical: string;
-  version: string;
   content: ExegesisContent;
-  created_at: string;
-  linked_at: string;
-  model: string;
+  generation_status: "partial" | "complete" | "failed";
+  failed_groups: GroupKey[];
 }
 
 interface JoinRow {
@@ -25,10 +27,9 @@ interface JoinRow {
     book_abbrev: string;
     book_name: string;
     chapter: number;
-    version: string;
     content: unknown;
-    model: string;
-    created_at: string;
+    generation_status: "partial" | "complete" | "failed";
+    failed_groups: string[];
   } | null;
 }
 
@@ -45,7 +46,7 @@ export async function listExegesesForSermon(
   const { data } = await supabase
     .from("sermon_exegeses")
     .select(
-      "created_at, exegesis_id, chapter_exegeses (id, book_abbrev, book_name, chapter, version, content, model, created_at)"
+      "created_at, exegesis_id, chapter_exegeses (id, book_abbrev, book_name, chapter, content, generation_status, failed_groups)"
     )
     .eq("sermon_id", sermonId)
     .eq("user_id", user.id)
@@ -63,10 +64,8 @@ export async function listExegesesForSermon(
       book_name: r.chapter_exegeses.book_name,
       chapter: r.chapter_exegeses.chapter,
       canonical: `${r.chapter_exegeses.book_name} ${r.chapter_exegeses.chapter}`,
-      version: r.chapter_exegeses.version,
       content: r.chapter_exegeses.content as ExegesisContent,
-      created_at: r.chapter_exegeses.created_at,
-      linked_at: r.created_at,
-      model: r.chapter_exegeses.model,
+      generation_status: r.chapter_exegeses.generation_status,
+      failed_groups: (r.chapter_exegeses.failed_groups ?? []) as GroupKey[],
     }));
 }

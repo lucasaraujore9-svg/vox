@@ -1,6 +1,6 @@
-// Renderiza as 14 seções estruturadas de uma exegese.
-// Cada seção é um <details> colapsável; a primeira (perícope) e a síntese
-// abrem por padrão por serem as mais consultadas.
+// Renderiza as 14 seções de uma exegese. Cada seção pode ser null se
+// a chamada paralela correspondente falhou — UI mostra "Não disponível"
+// nesse caso pra que o pregador saiba o que falta.
 
 import type {
   ExegesisContent,
@@ -15,145 +15,222 @@ export function ExegesisStructured({ content }: Props) {
   return (
     <div className="space-y-3">
       <Section title="1. Perícope" eyebrow="Análise preliminar" open>
-        <Field label="Delimitação">{content.pericope.delimitacao}</Field>
-        <Field label="Marcadores literários">
-          {content.pericope.marcadores_literarios}
-        </Field>
-        <Field label="Crítica textual">
-          {content.pericope.critica_textual}
-        </Field>
-        <Field label="Tradução comentada">
-          {content.pericope.traducao_propria}
-        </Field>
+        {content.pericope ? (
+          <>
+            <Field label="Delimitação">
+              {content.pericope.delimitacao}
+            </Field>
+            <Field label="Marcadores literários">
+              {content.pericope.marcadores_literarios}
+            </Field>
+            <Field label="Crítica textual">
+              {content.pericope.critica_textual}
+            </Field>
+            <Field label="Tradução comentada">
+              {content.pericope.traducao_propria}
+            </Field>
+          </>
+        ) : (
+          <Unavailable />
+        )}
       </Section>
 
       <Section title="2. Contexto" eyebrow="Background">
-        <Field label="Histórico">{content.contexto.historico}</Field>
-        <Field label="Cultural e geográfico">
-          {content.contexto.cultural_geografico}
-        </Field>
-        <Field label="Literário">{content.contexto.literario}</Field>
-        <Field label="Canônico">{content.contexto.canonico}</Field>
+        {content.contexto ? (
+          <>
+            <Field label="Histórico">{content.contexto.historico}</Field>
+            <Field label="Cultural e geográfico">
+              {content.contexto.cultural_geografico}
+            </Field>
+            <Field label="Literário">{content.contexto.literario}</Field>
+            <Field label="Canônico">{content.contexto.canonico}</Field>
+          </>
+        ) : (
+          <Unavailable />
+        )}
       </Section>
 
       <Section title="3. Gênero literário" eyebrow="Hermenêutica do gênero">
-        <Field label="Tipo">{content.genero.tipo}</Field>
-        <Field label="Implicações hermenêuticas">
-          {content.genero.implicacoes_hermeneuticas}
-        </Field>
+        {content.genero ? (
+          <>
+            <Field label="Tipo">{content.genero.tipo}</Field>
+            <Field label="Implicações hermenêuticas">
+              {content.genero.implicacoes_hermeneuticas}
+            </Field>
+          </>
+        ) : (
+          <Unavailable />
+        )}
       </Section>
 
       <Section title="4. Estrutura literária" eyebrow="Análise formal">
-        <Paragraph>{content.literario_estrutural}</Paragraph>
+        {content.literario_estrutural ? (
+          <Paragraph>{content.literario_estrutural}</Paragraph>
+        ) : (
+          <Unavailable />
+        )}
       </Section>
 
       <Section title="5. Análise gramatical e sintática" eyebrow="Originais">
-        <Paragraph>{content.gramatical_sintatico}</Paragraph>
+        {content.gramatical_sintatico ? (
+          <Paragraph>{content.gramatical_sintatico}</Paragraph>
+        ) : (
+          <Unavailable />
+        )}
       </Section>
 
       <Section title="6. Análise lexical" eyebrow="Termos-chave">
-        <ul className="space-y-3 mt-2">
-          {content.lexical.map((term, i) => (
-            <LexicalCard key={i} term={term} />
-          ))}
-        </ul>
+        {content.lexical && content.lexical.length > 0 ? (
+          <ul className="space-y-3 mt-2">
+            {content.lexical.map((term, i) => (
+              <LexicalCard key={i} term={term} />
+            ))}
+          </ul>
+        ) : (
+          <Unavailable />
+        )}
       </Section>
 
       <Section title="7. Histórico-cultural" eyebrow="Background expandido">
-        <Paragraph>{content.historico_cultural}</Paragraph>
+        {content.historico_cultural ? (
+          <Paragraph>{content.historico_cultural}</Paragraph>
+        ) : (
+          <Unavailable />
+        )}
       </Section>
 
       <Section title="8. Intertextualidade" eyebrow="Citações, alusões, ecos">
-        <Paragraph>{content.intertextualidade}</Paragraph>
+        {content.intertextualidade ? (
+          <Paragraph>{content.intertextualidade}</Paragraph>
+        ) : (
+          <Unavailable />
+        )}
       </Section>
 
       <Section title="9. Teologia" eyebrow="Argumento teológico">
-        <Paragraph>{content.teologico}</Paragraph>
+        {content.teologico ? (
+          <Paragraph>{content.teologico}</Paragraph>
+        ) : (
+          <Unavailable />
+        )}
       </Section>
 
-      <Section title="10. História da interpretação" eyebrow="Pais, Reforma, contemporâneos">
-        <Paragraph>{content.historia_interpretacao}</Paragraph>
+      <Section
+        title="10. História da interpretação"
+        eyebrow="Pais, Reforma, contemporâneos"
+      >
+        {content.historia_interpretacao ? (
+          <Paragraph>{content.historia_interpretacao}</Paragraph>
+        ) : (
+          <Unavailable />
+        )}
       </Section>
 
       <Section title="11. Síntese exegética" eyebrow="Big Idea" open>
-        <Field label="Assunto">{content.sintese.assunto}</Field>
-        <Field label="Complemento">{content.sintese.complemento}</Field>
-        <div
-          className="mt-3 rounded-lg p-4"
-          style={{
-            background: "var(--vox-forest-soft)",
-            border: "1px solid var(--vox-forest-tint)",
-          }}
-        >
-          <p
-            className="vox-mono text-[10px] uppercase tracking-wider mb-1"
-            style={{ color: "var(--vox-forest)" }}
-          >
-            Big Idea
-          </p>
-          <p
-            className="vox-body text-[15px] leading-relaxed"
-            style={{ color: "var(--vox-ink)" }}
-          >
-            {content.sintese.big_idea}
-          </p>
-        </div>
+        {content.sintese ? (
+          <>
+            <Field label="Assunto">{content.sintese.assunto}</Field>
+            <Field label="Complemento">{content.sintese.complemento}</Field>
+            <div
+              className="mt-3 rounded-lg p-4"
+              style={{
+                background: "var(--vox-forest-soft)",
+                border: "1px solid var(--vox-forest-tint)",
+              }}
+            >
+              <p
+                className="vox-mono text-[10px] uppercase tracking-wider mb-1"
+                style={{ color: "var(--vox-forest)" }}
+              >
+                Big Idea
+              </p>
+              <p
+                className="vox-body text-[15px] leading-relaxed"
+                style={{ color: "var(--vox-ink)" }}
+              >
+                {content.sintese.big_idea}
+              </p>
+            </div>
+          </>
+        ) : (
+          <Unavailable />
+        )}
       </Section>
 
       <Section title="12. Princípios atemporais" eyebrow="Transculturais">
-        <ul className="space-y-2 list-disc pl-5 marker:text-vox-muted">
-          {content.principios_atemporais.map((p, i) => (
-            <li key={i} className="text-[14px] leading-relaxed text-vox-prose">
-              {p}
-            </li>
-          ))}
-        </ul>
+        {content.principios_atemporais &&
+        content.principios_atemporais.length > 0 ? (
+          <ul className="space-y-2 list-disc pl-5 marker:text-vox-muted">
+            {content.principios_atemporais.map((p, i) => (
+              <li
+                key={i}
+                className="text-[14px] leading-relaxed text-vox-prose"
+              >
+                {p}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <Unavailable />
+        )}
       </Section>
 
       <Section title="13. Aplicação" eyebrow="Do então para o agora">
-        <Field label="Individual">{content.aplicacao.individual}</Field>
-        <Field label="Eclesial">{content.aplicacao.eclesial}</Field>
-        <Field label="Social">{content.aplicacao.social}</Field>
+        {content.aplicacao ? (
+          <>
+            <Field label="Individual">{content.aplicacao.individual}</Field>
+            <Field label="Eclesial">{content.aplicacao.eclesial}</Field>
+            <Field label="Social">{content.aplicacao.social}</Field>
+          </>
+        ) : (
+          <Unavailable />
+        )}
       </Section>
 
       <Section title="14. Metadados" eyebrow="Aparato crítico">
-        <Field label="Escola interpretativa">
-          {content.metadados.escola_interpretativa}
-        </Field>
-        {content.metadados.pressuposicoes.length > 0 ? (
-          <div className="mt-2">
-            <p className="vox-mono text-[10px] uppercase tracking-wider text-vox-muted mb-1">
-              Pressuposições
-            </p>
-            <ul className="space-y-1 list-disc pl-5 marker:text-vox-muted">
-              {content.metadados.pressuposicoes.map((p, i) => (
-                <li
-                  key={i}
-                  className="text-[13px] leading-relaxed text-vox-prose"
-                >
-                  {p}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
-        {content.metadados.obras_sugeridas.length > 0 ? (
-          <div className="mt-3">
-            <p className="vox-mono text-[10px] uppercase tracking-wider text-vox-muted mb-1">
-              Obras sugeridas
-            </p>
-            <ul className="space-y-1 list-disc pl-5 marker:text-vox-muted">
-              {content.metadados.obras_sugeridas.map((o, i) => (
-                <li
-                  key={i}
-                  className="text-[13px] leading-relaxed text-vox-prose"
-                >
-                  {o}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
+        {content.metadados ? (
+          <>
+            <Field label="Escola interpretativa">
+              {content.metadados.escola_interpretativa}
+            </Field>
+            {content.metadados.pressuposicoes.length > 0 ? (
+              <div className="mt-2">
+                <p className="vox-mono text-[10px] uppercase tracking-wider text-vox-muted mb-1">
+                  Pressuposições
+                </p>
+                <ul className="space-y-1 list-disc pl-5 marker:text-vox-muted">
+                  {content.metadados.pressuposicoes.map((p, i) => (
+                    <li
+                      key={i}
+                      className="text-[13px] leading-relaxed text-vox-prose"
+                    >
+                      {p}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+            {content.metadados.obras_sugeridas.length > 0 ? (
+              <div className="mt-3">
+                <p className="vox-mono text-[10px] uppercase tracking-wider text-vox-muted mb-1">
+                  Obras sugeridas
+                </p>
+                <ul className="space-y-1 list-disc pl-5 marker:text-vox-muted">
+                  {content.metadados.obras_sugeridas.map((o, i) => (
+                    <li
+                      key={i}
+                      className="text-[13px] leading-relaxed text-vox-prose"
+                    >
+                      {o}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </>
+        ) : (
+          <Unavailable />
+        )}
       </Section>
     </div>
   );
@@ -181,9 +258,7 @@ function Section({
       }}
       open={open}
     >
-      <summary
-        className="px-4 py-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden flex items-start justify-between gap-3"
-      >
+      <summary className="px-4 py-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p
             className="vox-mono text-[10px] uppercase tracking-wider"
@@ -234,6 +309,14 @@ function Paragraph({ children }: { children: React.ReactNode }) {
   return (
     <p className="text-[13px] leading-relaxed text-vox-prose whitespace-pre-line mt-1">
       {children}
+    </p>
+  );
+}
+
+function Unavailable() {
+  return (
+    <p className="vox-mono text-[11px] uppercase tracking-wider text-vox-muted py-2">
+      Não disponível · esta seção falhou na geração
     </p>
   );
 }
