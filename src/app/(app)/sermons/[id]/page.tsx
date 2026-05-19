@@ -20,6 +20,7 @@ import { listSlidesForSermon } from "@/lib/sermons/slides";
 import { listEngagements } from "@/lib/sermons/engagements";
 import { listSermonVersions } from "@/lib/sermons/versions";
 import { listExegesesForSermon } from "@/lib/exegesis/queries";
+import { normalizeChapter } from "@/lib/exegesis/normalize";
 import { createClient } from "@/lib/supabase/server";
 import { VOX_FRAMEWORKS, type FrameworkId } from "@/lib/mocks/frameworks";
 import type { ContentType, SermonStatus, SermonType } from "@/types/database";
@@ -112,14 +113,16 @@ export default async function SermonEditorPage({ params }: PageProps) {
     | "NAA"
     | "NVT";
   const exegeses = await listExegesesForSermon(sermon.id);
-  const exegesisItems = exegeses.map((e) => ({
-    id: e.id,
-    passage: e.passage,
-    version: e.version,
-    content: e.content,
-    created_at: e.created_at,
-    model: e.model,
-  }));
+
+  // Sugere livro+capítulo a partir do bible_ref do sermão (se houver)
+  const suggested = sermon.bible_ref
+    ? (() => {
+        const norm = normalizeChapter(sermon.bible_ref);
+        return norm.ok
+          ? { book_abbrev: norm.value.book.abbrev, chapter: norm.value.chapter }
+          : null;
+      })()
+    : null;
 
   const isBlank = sermon.framework === "livre";
 
@@ -183,8 +186,9 @@ export default async function SermonEditorPage({ params }: PageProps) {
             <ExegesisSidePanel
               sermonId={sermon.id}
               defaultVersion={bibleVersion}
-              defaultPassage={sermon.bible_ref}
-              initialExegeses={exegesisItems}
+              defaultBookAbbrev={suggested?.book_abbrev}
+              defaultChapter={suggested?.chapter}
+              initialExegeses={exegeses}
               plan={plan}
               aiEnabled={aiEnabled}
             />

@@ -50,10 +50,13 @@ export async function listAIUsage(
     since = d.toISOString();
   }
 
+  // Como agora as exegeses são compartilhadas globalmente, atribuímos
+  // o custo ao usuário que GEROU (generated_by). Cache hits não custam
+  // nada e não entram no relatório.
   let query = supabase
-    .from("exegeses")
+    .from("chapter_exegeses")
     .select(
-      "id, user_id, model, tokens_in, tokens_out, cost_usd, created_at"
+      "id, generated_by, model, tokens_in, tokens_out, cost_usd, created_at"
     );
   if (since) query = query.gte("created_at", since);
 
@@ -79,12 +82,13 @@ export async function listAIUsage(
   let totalCost = 0;
 
   for (const row of list) {
+    if (!row.generated_by) continue; // pula órfãs
     totalIn += row.tokens_in ?? 0;
     totalOut += row.tokens_out ?? 0;
     totalCost += Number(row.cost_usd ?? 0);
 
-    const u = userAgg.get(row.user_id) ?? {
-      user_id: row.user_id,
+    const u = userAgg.get(row.generated_by) ?? {
+      user_id: row.generated_by,
       exegeses_count: 0,
       tokens_in: 0,
       tokens_out: 0,
@@ -98,7 +102,7 @@ export async function listAIUsage(
     if (!u.last_used_at || row.created_at > u.last_used_at) {
       u.last_used_at = row.created_at;
     }
-    userAgg.set(row.user_id, u);
+    userAgg.set(row.generated_by, u);
 
     const m = modelAgg.get(row.model) ?? { count: 0, cost_usd: 0 };
     m.count += 1;

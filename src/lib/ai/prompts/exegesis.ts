@@ -1,40 +1,241 @@
-// Prompt de exegese bíblica estruturada.
-// Resposta em markdown português, dividida em 5 seções fixas pra dar
-// previsibilidade ao usuário e facilitar leitura na sidebar.
+// Prompt e schema da exegese estruturada (capítulo completo, 14 seções fixas).
+// Usado com Responses API + json_schema pra garantir formato.
 
-export const EXEGESIS_SYSTEM_PROMPT = `Você é um auxiliar pastoral especializado em exegese bíblica para pregadores brasileiros. Seu trabalho é produzir uma análise sóbria, fiel ao texto, sem viés denominacional e útil para preparação de sermão.
+export const EXEGESIS_SYSTEM_PROMPT = `Você é um exegeta acadêmico assistindo pregadores brasileiros. Produza uma exegese técnica completa de um CAPÍTULO bíblico inteiro, fiel ao texto, sem viés denominacional, em PT-BR formal-warm (use "você", nunca "tu").
 
-REGRAS DE VOZ:
-- Português brasileiro, registro formal-warm (use "você", nunca "tu")
-- Direto, sem floreio. O pregador tem pouco tempo.
-- Nunca prescreva aplicação específica, ofereça ganchos
-- Não invente referências de autores ou comentaristas
-- Marque incertezas explicitamente quando houver
+REGRAS GERAIS:
+- Sóbrio, sem floreio. O pregador vai ler isto pra preparar sermão.
+- Não invente autores, comentários ou citações que não tenha certeza.
+- Marque incertezas explicitamente ("os manuscritos divergem em…", "interpretação contestada").
+- Nunca seja anacrônico — fale do que o autor disse para sua audiência, sem importar conceitos modernos.
+- Quando citar termos do original (grego/hebraico), inclua transliteração.
+- Não cite o texto bíblico integralmente — o pregador tem a Bíblia aberta.
+- A exegese é ACADÊMICA, não devocional. Aplicação vem na última seção.
 
-ESTRUTURA OBRIGATÓRIA (Markdown em 5 seções fixas, na ordem abaixo):
+Você DEVE produzir um objeto JSON respeitando o schema fornecido com EXATAMENTE estas 14 seções, na ordem:
 
-## Contexto histórico-cultural
-Quem escreveu, para quem, quando, sob que circunstâncias. O cenário do mundo do texto que muda como o pregador o lê. 4-6 linhas.
+1. pericope — delimitação, marcadores literários, crítica textual, tradução comentada
+2. contexto — histórico · cultural-geográfico · literário (3 níveis) · canônico (revelação progressiva)
+3. genero — tipo literário + implicações hermenêuticas
+4. literario_estrutural — quiasmos, paralelismos, palavras-gancho, estrutura
+5. gramatical_sintatico — morfologia, sintaxe, tempos/aspectos verbais nos originais
+6. lexical — 3 a 6 termos-chave (original + transliteração + campo semântico + uso + nuance)
+7. historico_cultural — background ANE / Segundo Templo / greco-romano conforme aplicável
+8. intertextualidade — citações, alusões, ecos, paralelos sinópticos, AT no NT
+9. teologico — teologia do autor, do livro, bíblica (história redentiva), sem impor sistemática
+10. historia_interpretacao — Pais da Igreja, Reforma, contemporâneos; consensos e divergências
+11. sintese — assunto + complemento + Big Idea (Haddon Robinson)
+12. principios_atemporais — 3 a 6 princípios transculturais derivados do texto
+13. aplicacao — individual · eclesial · social
+14. metadados — escola interpretativa, pressuposições declaradas, obras sugeridas
 
-## Gênero literário e estrutura
-Que tipo de texto é (narrativa, profecia, carta, salmo, etc.) e como o trecho está construído internamente. Quais marcadores literários carregam o sentido. 4-6 linhas.
+Cada seção textual deve ter densidade real (mínimo ~400 caracteres). Se uma seção não se aplica (ex: AT puro não tem "AT no NT"), preencha indicando isso explicitamente.`;
 
-## Palavras-chave no original
-2 a 4 termos do grego ou hebraico que mudam a leitura quando entendidos. Para cada um: transliteração, sentido raiz, nuance que se perde na tradução portuguesa. Use itálico para o termo original.
-
-## Argumento teológico central
-A ideia teológica que o autor está construindo. Não o que "o texto significa hoje", mas o que ele significa no argumento do livro. 5-8 linhas.
-
-## Ganchos de aplicação
-3 a 5 perguntas ou tensões que o texto levanta para a vida contemporânea. Não respostas prontas, gatilhos para o pregador desenvolver. Use lista com bullets.
-
-Não adicione introdução nem conclusão fora das 5 seções. Não use "Resumo" ou "Em síntese" no fim. As 5 seções, na ordem, e ponto.`;
+/**
+ * Schema JSON da exegese. Passado para Responses API via response_format=json_schema.
+ * Todas as 14 seções são required pra forçar densidade.
+ */
+export const EXEGESIS_JSON_SCHEMA = {
+  name: "exegesis_chapter",
+  strict: true,
+  schema: {
+    type: "object",
+    additionalProperties: false,
+    properties: {
+      pericope: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          delimitacao: { type: "string" },
+          marcadores_literarios: { type: "string" },
+          critica_textual: { type: "string" },
+          traducao_propria: { type: "string" },
+        },
+        required: [
+          "delimitacao",
+          "marcadores_literarios",
+          "critica_textual",
+          "traducao_propria",
+        ],
+      },
+      contexto: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          historico: { type: "string" },
+          cultural_geografico: { type: "string" },
+          literario: { type: "string" },
+          canonico: { type: "string" },
+        },
+        required: [
+          "historico",
+          "cultural_geografico",
+          "literario",
+          "canonico",
+        ],
+      },
+      genero: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          tipo: { type: "string" },
+          implicacoes_hermeneuticas: { type: "string" },
+        },
+        required: ["tipo", "implicacoes_hermeneuticas"],
+      },
+      literario_estrutural: { type: "string" },
+      gramatical_sintatico: { type: "string" },
+      lexical: {
+        type: "array",
+        items: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            termo_original: { type: "string" },
+            transliteracao: { type: "string" },
+            campo_semantico: { type: "string" },
+            uso_no_autor: { type: "string" },
+            nuance: { type: "string" },
+          },
+          required: [
+            "termo_original",
+            "transliteracao",
+            "campo_semantico",
+            "uso_no_autor",
+            "nuance",
+          ],
+        },
+        minItems: 3,
+      },
+      historico_cultural: { type: "string" },
+      intertextualidade: { type: "string" },
+      teologico: { type: "string" },
+      historia_interpretacao: { type: "string" },
+      sintese: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          assunto: { type: "string" },
+          complemento: { type: "string" },
+          big_idea: { type: "string" },
+        },
+        required: ["assunto", "complemento", "big_idea"],
+      },
+      principios_atemporais: {
+        type: "array",
+        items: { type: "string" },
+        minItems: 3,
+      },
+      aplicacao: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          individual: { type: "string" },
+          eclesial: { type: "string" },
+          social: { type: "string" },
+        },
+        required: ["individual", "eclesial", "social"],
+      },
+      metadados: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          escola_interpretativa: { type: "string" },
+          pressuposicoes: {
+            type: "array",
+            items: { type: "string" },
+          },
+          obras_sugeridas: {
+            type: "array",
+            items: { type: "string" },
+          },
+        },
+        required: [
+          "escola_interpretativa",
+          "pressuposicoes",
+          "obras_sugeridas",
+        ],
+      },
+    },
+    required: [
+      "pericope",
+      "contexto",
+      "genero",
+      "literario_estrutural",
+      "gramatical_sintatico",
+      "lexical",
+      "historico_cultural",
+      "intertextualidade",
+      "teologico",
+      "historia_interpretacao",
+      "sintese",
+      "principios_atemporais",
+      "aplicacao",
+      "metadados",
+    ],
+  },
+} as const;
 
 export function buildExegesisUserPrompt(
-  passage: string,
+  bookName: string,
+  chapter: number,
   version: string
 ): string {
-  return `Faça a exegese de **${passage}** (versão ${version}).
+  return `Produza a exegese completa de **${bookName} ${chapter}** inteiro (capítulo completo), tomando como base o texto na versão ${version}.
 
-Siga rigorosamente as 5 seções da estrutura. Não cite o texto bíblico integralmente, o pregador tem a bíblia aberta ao lado.`;
+Siga rigorosamente as 14 seções do schema. Densidade acadêmica em cada uma. Não responda fora do JSON.`;
+}
+
+// ============================================================================
+// Tipos TypeScript que espelham o schema (pra usar nos componentes)
+// ============================================================================
+
+export interface LexicalEntry {
+  termo_original: string;
+  transliteracao: string;
+  campo_semantico: string;
+  uso_no_autor: string;
+  nuance: string;
+}
+
+export interface ExegesisContent {
+  pericope: {
+    delimitacao: string;
+    marcadores_literarios: string;
+    critica_textual: string;
+    traducao_propria: string;
+  };
+  contexto: {
+    historico: string;
+    cultural_geografico: string;
+    literario: string;
+    canonico: string;
+  };
+  genero: {
+    tipo: string;
+    implicacoes_hermeneuticas: string;
+  };
+  literario_estrutural: string;
+  gramatical_sintatico: string;
+  lexical: LexicalEntry[];
+  historico_cultural: string;
+  intertextualidade: string;
+  teologico: string;
+  historia_interpretacao: string;
+  sintese: {
+    assunto: string;
+    complemento: string;
+    big_idea: string;
+  };
+  principios_atemporais: string[];
+  aplicacao: {
+    individual: string;
+    eclesial: string;
+    social: string;
+  };
+  metadados: {
+    escola_interpretativa: string;
+    pressuposicoes: string[];
+    obras_sugeridas: string[];
+  };
 }

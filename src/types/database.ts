@@ -189,6 +189,7 @@ export type Database = {
           created_at: string
           denomination: string | null
           id: string
+          is_active: boolean
           name: string
           plan: string
           role: string
@@ -201,6 +202,7 @@ export type Database = {
           created_at?: string
           denomination?: string | null
           id: string
+          is_active?: boolean
           name?: string
           plan?: string
           role?: string
@@ -213,6 +215,7 @@ export type Database = {
           created_at?: string
           denomination?: string | null
           id?: string
+          is_active?: boolean
           name?: string
           plan?: string
           role?: string
@@ -220,48 +223,72 @@ export type Database = {
         }
         Relationships: []
       }
-      exegeses: {
+      chapter_exegeses: {
         Row: {
-          content: string
+          book_abbrev: string
+          book_name: string
+          chapter: number
+          content: Json
           cost_usd: number
           created_at: string
+          generated_by: string | null
           id: string
           model: string
-          passage: string
-          sermon_id: string | null
           tokens_in: number
           tokens_out: number
           updated_at: string
-          user_id: string
           version: string
         }
         Insert: {
-          content: string
+          book_abbrev: string
+          book_name: string
+          chapter: number
+          content: Json
           cost_usd?: number
           created_at?: string
+          generated_by?: string | null
           id?: string
           model: string
-          passage: string
-          sermon_id?: string | null
           tokens_in?: number
           tokens_out?: number
           updated_at?: string
-          user_id: string
-          version?: string
+          version: string
         }
         Update: {
-          content?: string
+          book_abbrev?: string
+          book_name?: string
+          chapter?: number
+          content?: Json
           cost_usd?: number
           created_at?: string
+          generated_by?: string | null
           id?: string
           model?: string
-          passage?: string
-          sermon_id?: string | null
           tokens_in?: number
           tokens_out?: number
           updated_at?: string
-          user_id?: string
           version?: string
+        }
+        Relationships: []
+      }
+      sermon_exegeses: {
+        Row: {
+          created_at: string
+          exegesis_id: string
+          sermon_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          exegesis_id: string
+          sermon_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          exegesis_id?: string
+          sermon_id?: string
+          user_id?: string
         }
         Relationships: []
       }

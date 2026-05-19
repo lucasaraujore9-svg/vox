@@ -1,18 +1,35 @@
-// Queries de exegese (Server Components).
-// RLS: usuário lê só as suas; admin lê tudo (pra relatório).
+// Queries de exegese vinculadas a um sermão.
+// Faz JOIN sermon_exegeses → chapter_exegeses, retornando o conteúdo estruturado.
 
 import { createClient } from "@/lib/supabase/server";
+import type { ExegesisContent } from "@/lib/ai/prompts/exegesis";
 
 export interface ExegesisSummary {
   id: string;
-  passage: string;
+  book_abbrev: string;
+  book_name: string;
+  chapter: number;
+  canonical: string;
   version: string;
-  content: string;
+  content: ExegesisContent;
   created_at: string;
+  linked_at: string;
   model: string;
-  tokens_in: number;
-  tokens_out: number;
-  cost_usd: number;
+}
+
+interface JoinRow {
+  created_at: string;
+  exegesis_id: string;
+  chapter_exegeses: {
+    id: string;
+    book_abbrev: string;
+    book_name: string;
+    chapter: number;
+    version: string;
+    content: unknown;
+    model: string;
+    created_at: string;
+  } | null;
 }
 
 export async function listExegesesForSermon(
@@ -26,16 +43,30 @@ export async function listExegesesForSermon(
   if (!user) return [];
 
   const { data } = await supabase
-    .from("exegeses")
+    .from("sermon_exegeses")
     .select(
-      "id, passage, version, content, created_at, model, tokens_in, tokens_out, cost_usd"
+      "created_at, exegesis_id, chapter_exegeses (id, book_abbrev, book_name, chapter, version, content, model, created_at)"
     )
     .eq("sermon_id", sermonId)
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
-  return (data ?? []).map((row) => ({
-    ...row,
-    cost_usd: Number(row.cost_usd ?? 0),
-  }));
+  const rows = (data ?? []) as unknown as JoinRow[];
+
+  return rows
+    .filter((r): r is JoinRow & { chapter_exegeses: NonNullable<JoinRow["chapter_exegeses"]> } =>
+      r.chapter_exegeses !== null
+    )
+    .map((r) => ({
+      id: r.chapter_exegeses.id,
+      book_abbrev: r.chapter_exegeses.book_abbrev,
+      book_name: r.chapter_exegeses.book_name,
+      chapter: r.chapter_exegeses.chapter,
+      canonical: `${r.chapter_exegeses.book_name} ${r.chapter_exegeses.chapter}`,
+      version: r.chapter_exegeses.version,
+      content: r.chapter_exegeses.content as ExegesisContent,
+      created_at: r.chapter_exegeses.created_at,
+      linked_at: r.created_at,
+      model: r.chapter_exegeses.model,
+    }));
 }

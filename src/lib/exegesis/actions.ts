@@ -1,8 +1,14 @@
 "use server";
 
-// Server Actions de exegese.
-// Gate: requer plan='concilio' E ai_enabled=true antes de chamar OpenAI.
-// Cap mensal: respeita ai_settings.monthly_user_cap_usd por usuário.
+// Server Actions de exegese — cache global por capítulo+versão.
+//
+// Fluxo:
+//   1. Normaliza passage → book + chapter (versículos descartados)
+//   2. Tenta cache em chapter_exegeses (book_abbrev, chapter, version)
+//      - HIT  : pula IA. Apenas vincula em sermon_exegeses.
+//      - MISS : chama OpenAI Responses API com json_schema. Grava em
+//               chapter_exegeses, depois vincula em sermon_exegeses.
+//   3. Conta no cap mensal de IA SOMENTE em MISS (cache hit é grátis).
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
@@ -14,14 +20,16 @@ import {
 } from "@/lib/ai/client";
 import {
   EXEGESIS_SYSTEM_PROMPT,
+  EXEGESIS_JSON_SCHEMA,
   buildExegesisUserPrompt,
 } from "@/lib/ai/prompts/exegesis";
+import { normalizeChapter } from "@/lib/exegesis/normalize";
 
 const createSchema = z.object({
   passage: z
     .string()
     .trim()
-    .min(2, "Informe a passagem")
+    .min(2, "Informe livro e capítulo")
     .max(200, "Passagem muito longa"),
   version: z.enum(["ARC", "ARA", "NVI", "NAA", "NVT"]),
   sermon_id: z.string().uuid().optional().nullable(),
@@ -32,6 +40,10 @@ export type CreateExegesisInput = z.input<typeof createSchema>;
 export interface CreateExegesisResult {
   ok: boolean;
   id?: string;
+  /** true se reutilizou cache (sem cobrança de IA). */
+  cache_hit?: boolean;
+  /** Forma canônica "Romanos 5" pra exibir em toast. */
+  canonical?: string;
   error?: string;
 }
 
@@ -42,6 +54,11 @@ export async function createExegesisAction(
   if (!parsed.success) {
     return { ok: false, error: parsed.error.issues[0]?.message };
   }
+
+  // Normaliza pra (book, chapter)
+  const norm = normalizeChapter(parsed.data.passage);
+  if (!norm.ok) return { ok: false, error: norm.message };
+  const { book, chapter, canonical } = norm.value;
 
   const supabase = await createClient();
   const {
@@ -70,17 +87,50 @@ export async function createExegesisAction(
     };
   }
 
+  // === Cache lookup ===
+  const { data: cached } = await supabase
+    .from("chapter_exegeses")
+    .select("id")
+    .eq("book_abbrev", book.abbrev)
+    .eq("chapter", chapter)
+    .eq("version", parsed.data.version)
+    .maybeSingle();
+
+  if (cached) {
+    // Cache hit: vincula ao sermão (idempotente — PK composto)
+    if (parsed.data.sermon_id) {
+      await supabase
+        .from("sermon_exegeses")
+        .upsert(
+          {
+            sermon_id: parsed.data.sermon_id,
+            exegesis_id: cached.id,
+            user_id: user.id,
+          },
+          { onConflict: "sermon_id,exegesis_id" }
+        );
+      revalidatePath(`/sermons/${parsed.data.sermon_id}`);
+    }
+    return {
+      ok: true,
+      id: cached.id,
+      cache_hit: true,
+      canonical,
+    };
+  }
+
+  // === Cache miss: gera via IA ===
   const settings = await loadAISettings();
 
-  // Cap mensal por usuário
+  // Cap mensal por usuário (só conta MISS, hit é grátis)
   if (settings.monthly_user_cap_usd > 0) {
     const startOfMonth = new Date();
     startOfMonth.setUTCDate(1);
     startOfMonth.setUTCHours(0, 0, 0, 0);
     const { data: spent } = await supabase
-      .from("exegeses")
+      .from("chapter_exegeses")
       .select("cost_usd")
-      .eq("user_id", user.id)
+      .eq("generated_by", user.id)
       .gte("created_at", startOfMonth.toISOString());
     const total =
       spent?.reduce((acc, row) => acc + Number(row.cost_usd ?? 0), 0) ?? 0;
@@ -97,15 +147,25 @@ export async function createExegesisAction(
     const response = await openai.responses.create({
       model: settings.active_model,
       instructions: EXEGESIS_SYSTEM_PROMPT,
-      input: buildExegesisUserPrompt(
-        parsed.data.passage,
-        parsed.data.version
-      ),
-      temperature: 0.5,
+      input: buildExegesisUserPrompt(book.name, chapter, parsed.data.version),
+      text: {
+        format: {
+          type: "json_schema",
+          ...EXEGESIS_JSON_SCHEMA,
+        },
+      },
+      temperature: 0.3,
     });
 
-    const content = response.output_text;
-    if (!content) return { ok: false, error: "Resposta vazia da IA" };
+    const raw = response.output_text;
+    if (!raw) return { ok: false, error: "Resposta vazia da IA" };
+
+    let contentJson: unknown;
+    try {
+      contentJson = JSON.parse(raw);
+    } catch {
+      return { ok: false, error: "IA retornou JSON inválido" };
+    }
 
     const tokensIn = response.usage?.input_tokens ?? 0;
     const tokensOut = response.usage?.output_tokens ?? 0;
@@ -117,27 +177,57 @@ export async function createExegesisAction(
     );
 
     const { data: inserted, error } = await supabase
-      .from("exegeses")
+      .from("chapter_exegeses")
       .insert({
-        user_id: user.id,
-        sermon_id: parsed.data.sermon_id ?? null,
-        passage: parsed.data.passage,
+        book_abbrev: book.abbrev,
+        book_name: book.name,
+        chapter,
         version: parsed.data.version,
-        content,
+        content: contentJson as never,
         model: settings.active_model,
         tokens_in: tokensIn,
         tokens_out: tokensOut,
         cost_usd: costUsd,
+        generated_by: user.id,
       })
       .select("id")
       .single();
 
-    if (error) return { ok: false, error: error.message };
+    if (error) {
+      // Pode ter race: outro usuário gerou no mesmo instante. Tenta ler de novo.
+      const { data: retry } = await supabase
+        .from("chapter_exegeses")
+        .select("id")
+        .eq("book_abbrev", book.abbrev)
+        .eq("chapter", chapter)
+        .eq("version", parsed.data.version)
+        .maybeSingle();
+      if (!retry) return { ok: false, error: error.message };
+      if (parsed.data.sermon_id) {
+        await supabase
+          .from("sermon_exegeses")
+          .upsert(
+            {
+              sermon_id: parsed.data.sermon_id,
+              exegesis_id: retry.id,
+              user_id: user.id,
+            },
+            { onConflict: "sermon_id,exegesis_id" }
+          );
+        revalidatePath(`/sermons/${parsed.data.sermon_id}`);
+      }
+      return { ok: true, id: retry.id, cache_hit: true, canonical };
+    }
 
     if (parsed.data.sermon_id) {
+      await supabase.from("sermon_exegeses").insert({
+        sermon_id: parsed.data.sermon_id,
+        exegesis_id: inserted.id,
+        user_id: user.id,
+      });
       revalidatePath(`/sermons/${parsed.data.sermon_id}`);
     }
-    return { ok: true, id: inserted.id };
+    return { ok: true, id: inserted.id, cache_hit: false, canonical };
   } catch (err) {
     return {
       ok: false,
@@ -146,8 +236,10 @@ export async function createExegesisAction(
   }
 }
 
-export async function deleteExegesisAction(
-  id: string
+/** Desvincula uma exegese do sermão (NÃO apaga do catálogo global). */
+export async function unlinkExegesisFromSermonAction(
+  sermon_id: string,
+  exegesis_id: string
 ): Promise<{ ok: boolean; error?: string }> {
   const supabase = await createClient();
   const {
@@ -155,20 +247,14 @@ export async function deleteExegesisAction(
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Não autenticado" };
 
-  const { data: row } = await supabase
-    .from("exegeses")
-    .select("sermon_id")
-    .eq("id", id)
-    .eq("user_id", user.id)
-    .maybeSingle();
-
   const { error } = await supabase
-    .from("exegeses")
+    .from("sermon_exegeses")
     .delete()
-    .eq("id", id)
+    .eq("sermon_id", sermon_id)
+    .eq("exegesis_id", exegesis_id)
     .eq("user_id", user.id);
 
   if (error) return { ok: false, error: error.message };
-  if (row?.sermon_id) revalidatePath(`/sermons/${row.sermon_id}`);
+  revalidatePath(`/sermons/${sermon_id}`);
   return { ok: true };
 }

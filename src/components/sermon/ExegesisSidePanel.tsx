@@ -1,15 +1,10 @@
 "use client";
 
-// Painel lateral de exegeses no editor.
-// Sheet à direita, segue o padrão de BibleSidePanel.
-//
-// Comportamento:
-// - Trigger: botão "Exegeses (n)" na header do sermão
-// - Dentro: lista de cards, cada um expansível pra ver o conteúdo completo
-// - Botão "Nova exegese" abre formulário inline pra gerar via IA
-// - Gate: se o usuário não está no plano Concílio, mostra upgrade prompt
+// Painel lateral de exegeses no editor de sermão.
+// Granularidade: capítulo inteiro (versículos não entram).
+// Cache global: se a exegese de Romanos 5 já existe, vincula direto.
 
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -30,20 +25,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { ExegesisMarkdown } from "@/components/sermon/ExegesisMarkdown";
+import { ExegesisStructured } from "@/components/sermon/ExegesisStructured";
 import {
   createExegesisAction,
-  deleteExegesisAction,
+  unlinkExegesisFromSermonAction,
 } from "@/lib/exegesis/actions";
+import { BIBLE_BOOK_LIST } from "@/lib/exegesis/normalize";
+import type { ExegesisContent } from "@/lib/ai/prompts/exegesis";
 
 type BibleVersion = "ARC" | "ARA" | "NVI" | "NAA" | "NVT";
 
 export interface ExegesisListItem {
   id: string;
-  passage: string;
+  book_abbrev: string;
+  book_name: string;
+  chapter: number;
+  canonical: string;
   version: string;
-  content: string;
+  content: ExegesisContent;
   created_at: string;
+  linked_at: string;
   model: string;
 }
 
@@ -51,10 +52,11 @@ interface Props {
   sermonId: string;
   defaultVersion: BibleVersion;
   initialExegeses: ExegesisListItem[];
-  /** 'concilio' libera geração via IA. 'manuscrito' mostra upgrade prompt. */
   plan: "manuscrito" | "concilio";
   aiEnabled: boolean;
-  defaultPassage?: string;
+  /** Sugestão inicial baseada em sermon.bible_ref. */
+  defaultBookAbbrev?: string;
+  defaultChapter?: number;
 }
 
 function formatRelative(iso: string): string {
@@ -78,36 +80,61 @@ export function ExegesisSidePanel({
   initialExegeses,
   plan,
   aiEnabled,
-  defaultPassage,
+  defaultBookAbbrev,
+  defaultChapter,
 }: Props) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [showForm, setShowForm] = useState(initialExegeses.length === 0);
-  const [passage, setPassage] = useState(defaultPassage ?? "");
+  const [bookAbbrev, setBookAbbrev] = useState<string>(
+    defaultBookAbbrev ?? "rm"
+  );
+  const [chapter, setChapter] = useState<string>(
+    defaultChapter ? String(defaultChapter) : "1"
+  );
   const [version, setVersion] = useState<BibleVersion>(defaultVersion);
   const [expandedId, setExpandedId] = useState<string | null>(
     initialExegeses[0]?.id ?? null
   );
   const [pending, startTransition] = useTransition();
 
+  const selectedBook = useMemo(
+    () => BIBLE_BOOK_LIST.find((b) => b.abbrev === bookAbbrev),
+    [bookAbbrev]
+  );
   const canUse = plan === "concilio" && aiEnabled;
 
   function generate() {
     if (!canUse) return;
-    if (passage.trim().length < 2) {
-      toast.error("Informe a passagem (ex: Romanos 5:1-11)");
+    if (!selectedBook) {
+      toast.error("Selecione um livro");
       return;
     }
+    const chapterNum = Number.parseInt(chapter, 10);
+    if (
+      Number.isNaN(chapterNum) ||
+      chapterNum < 1 ||
+      chapterNum > selectedBook.chapters
+    ) {
+      toast.error(
+        `${selectedBook.name} tem ${selectedBook.chapters} capítulos.`
+      );
+      return;
+    }
+    const passage = `${selectedBook.name} ${chapterNum}`;
     startTransition(async () => {
       const result = await createExegesisAction({
-        passage: passage.trim(),
+        passage,
         version,
         sermon_id: sermonId,
       });
       if (result.ok) {
-        toast.success("Exegese gerada");
+        if (result.cache_hit) {
+          toast.success(`${result.canonical}: exegese existente carregada`);
+        } else {
+          toast.success(`Exegese de ${result.canonical} gerada`);
+        }
         setShowForm(false);
-        setPassage("");
         router.refresh();
       } else {
         toast.error(result.error ?? "Não foi possível gerar");
@@ -116,18 +143,28 @@ export function ExegesisSidePanel({
   }
 
   function remove(id: string) {
-    if (!confirm("Excluir esta exegese?")) return;
+    if (!confirm("Remover esta exegese deste sermão?")) return;
     startTransition(async () => {
-      const result = await deleteExegesisAction(id);
+      const result = await unlinkExegesisFromSermonAction(sermonId, id);
       if (result.ok) {
-        toast.success("Exegese removida");
+        toast.success("Exegese desvinculada");
         if (expandedId === id) setExpandedId(null);
         router.refresh();
       } else {
-        toast.error(result.error ?? "Não foi possível excluir");
+        toast.error(result.error ?? "Não foi possível remover");
       }
     });
   }
+
+  // Agrupa livros por testamento pra o select
+  const oldTestament = useMemo(
+    () => BIBLE_BOOK_LIST.filter((b) => b.testament === "VT"),
+    []
+  );
+  const newTestament = useMemo(
+    () => BIBLE_BOOK_LIST.filter((b) => b.testament === "NT"),
+    []
+  );
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -138,10 +175,13 @@ export function ExegesisSidePanel({
       </SheetTrigger>
       <SheetContent
         side="right"
-        className="w-full sm:max-w-xl gap-0 p-0 flex flex-col"
+        className="w-full sm:max-w-2xl gap-0 p-0 flex flex-col"
         style={{ background: "var(--vox-bg)" }}
       >
-        <SheetHeader className="px-6 py-5 border-b" style={{ borderColor: "var(--vox-whisper)" }}>
+        <SheetHeader
+          className="px-6 py-5 border-b"
+          style={{ borderColor: "var(--vox-whisper)" }}
+        >
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="vox-eyebrow text-[10px]">Estudo do texto</p>
@@ -173,24 +213,60 @@ export function ExegesisSidePanel({
                   borderColor: "var(--vox-whisper)",
                 }}
               >
-                <div className="space-y-2">
-                  <Label htmlFor="exegesis-passage">Passagem</Label>
-                  <Input
-                    id="exegesis-passage"
-                    placeholder="Ex: Romanos 5:1-11"
-                    value={passage}
-                    onChange={(e) => setPassage(e.target.value)}
-                    disabled={pending}
-                  />
+                <div className="grid grid-cols-[1fr_100px] gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="ex-book">Livro</Label>
+                    <Select value={bookAbbrev} onValueChange={setBookAbbrev}>
+                      <SelectTrigger id="ex-book">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <p className="vox-mono text-[10px] uppercase tracking-wider text-vox-muted px-2 py-1.5">
+                          Antigo Testamento
+                        </p>
+                        {oldTestament.map((b) => (
+                          <SelectItem key={b.abbrev} value={b.abbrev}>
+                            {b.name}
+                          </SelectItem>
+                        ))}
+                        <p className="vox-mono text-[10px] uppercase tracking-wider text-vox-muted px-2 py-1.5 mt-1">
+                          Novo Testamento
+                        </p>
+                        {newTestament.map((b) => (
+                          <SelectItem key={b.abbrev} value={b.abbrev}>
+                            {b.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="ex-chapter">Capítulo</Label>
+                    <Input
+                      id="ex-chapter"
+                      type="number"
+                      min={1}
+                      max={selectedBook?.chapters ?? 150}
+                      value={chapter}
+                      onChange={(e) => setChapter(e.target.value)}
+                      className="vox-mono"
+                      disabled={pending}
+                    />
+                  </div>
                 </div>
+                {selectedBook ? (
+                  <p className="vox-mono text-[10px] uppercase tracking-wider text-vox-muted">
+                    {selectedBook.name} tem {selectedBook.chapters} capítulos
+                  </p>
+                ) : null}
                 <div className="space-y-2">
-                  <Label htmlFor="exegesis-version">Versão</Label>
+                  <Label htmlFor="ex-version">Versão da Bíblia</Label>
                   <Select
                     value={version}
                     onValueChange={(v) => setVersion(v as BibleVersion)}
                     disabled={pending}
                   >
-                    <SelectTrigger id="exegesis-version">
+                    <SelectTrigger id="ex-version">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -205,13 +281,16 @@ export function ExegesisSidePanel({
                 <Button
                   className="w-full"
                   onClick={generate}
-                  disabled={pending || passage.trim().length < 2}
+                  disabled={pending || !selectedBook}
                 >
                   {pending ? "Gerando…" : "Gerar exegese"}
                 </Button>
-                <p className="text-[11px] text-vox-muted">
-                  Análise estruturada em 5 seções: contexto, gênero,
-                  palavras-chave, argumento, ganchos. Leva ~15s.
+                <p className="text-[11px] text-vox-muted leading-relaxed">
+                  Análise técnica do capítulo em 14 seções: perícope, contexto,
+                  gênero, estrutura, gramática, léxico, intertextualidade,
+                  teologia, história da interpretação, síntese e aplicação.
+                  Primeira geração leva ~30s; consultas seguintes são
+                  instantâneas.
                 </p>
               </div>
             ) : null}
@@ -219,7 +298,7 @@ export function ExegesisSidePanel({
             {initialExegeses.length === 0 && !showForm ? (
               <div className="p-10 text-center">
                 <p className="vox-body text-sm text-vox-muted">
-                  Nenhuma exegese ainda para este sermão.
+                  Nenhuma exegese vinculada a este sermão.
                 </p>
                 <Button
                   size="sm"
@@ -231,7 +310,10 @@ export function ExegesisSidePanel({
               </div>
             ) : null}
 
-            <ul className="divide-y" style={{ borderColor: "var(--vox-whisper)" }}>
+            <ul
+              className="divide-y"
+              style={{ borderColor: "var(--vox-whisper)" }}
+            >
               {initialExegeses.map((ex) => {
                 const isOpen = expandedId === ex.id;
                 return (
@@ -241,21 +323,19 @@ export function ExegesisSidePanel({
                   >
                     <button
                       type="button"
-                      onClick={() =>
-                        setExpandedId(isOpen ? null : ex.id)
-                      }
+                      onClick={() => setExpandedId(isOpen ? null : ex.id)}
                       className="w-full text-left px-6 py-4 hover:bg-[var(--vox-surface-deep)] transition-colors flex items-start justify-between gap-3"
                     >
                       <div className="min-w-0 flex-1">
                         <p
-                          className="vox-ref text-[14px]"
+                          className="vox-ref text-[15px]"
                           style={{ color: "var(--vox-gold)" }}
                         >
-                          {ex.passage}
+                          {ex.canonical}
                         </p>
                         <p className="vox-mono text-[10px] uppercase tracking-wider text-vox-muted mt-1">
-                          {ex.version} · {formatRelative(ex.created_at)} ·{" "}
-                          {ex.model}
+                          {ex.version} · gerada {formatRelative(ex.created_at)}{" "}
+                          · {ex.model}
                         </p>
                       </div>
                       <span
@@ -272,23 +352,15 @@ export function ExegesisSidePanel({
                     </button>
                     {isOpen ? (
                       <div className="px-6 pb-6">
-                        <div
-                          className="rounded-lg p-4"
-                          style={{
-                            background: "var(--vox-surface)",
-                            border: "1px solid var(--vox-whisper)",
-                          }}
-                        >
-                          <ExegesisMarkdown content={ex.content} />
-                        </div>
-                        <div className="flex justify-end mt-3">
+                        <ExegesisStructured content={ex.content} />
+                        <div className="flex justify-end mt-4">
                           <button
                             type="button"
                             onClick={() => remove(ex.id)}
                             disabled={pending}
                             className="text-xs text-vox-muted hover:text-vox-destructive"
                           >
-                            Excluir
+                            Remover deste sermão
                           </button>
                         </div>
                       </div>
@@ -326,10 +398,10 @@ function UpgradePrompt({
       </div>
       {plan === "manuscrito" ? (
         <>
-          <h3 className="vox-h3 text-lg">Exegese assistida é do Concílio</h3>
+          <h3 className="vox-h3 text-lg">Exegese é do plano Concílio</h3>
           <p className="vox-body text-sm text-vox-muted max-w-sm mx-auto">
-            Análise estruturada de cada texto bíblico que você prega faz parte
-            do plano <strong>Concílio</strong>, com assistente de IA.
+            A análise técnica de cada capítulo que você prega faz parte do
+            plano <strong>Concílio</strong>.
           </p>
           <Button asChild size="sm">
             <Link href="/settings">Mudar plano</Link>
