@@ -28,13 +28,13 @@ import type { UserRole } from "@/types/database";
 import type { AdminUser } from "@/lib/admin/queries";
 
 const ROLE_LABEL: Record<string, string> = {
-  pastor: "Pastor",
+  usuario: "Usuário",
   admin: "Admin",
   super_admin: "Super admin",
 };
 
 const ROLE_COLOR: Record<string, string> = {
-  pastor: "var(--vox-prose)",
+  usuario: "var(--vox-prose)",
   admin: "var(--vox-forest)",
   super_admin: "var(--vox-gold)",
 };
@@ -258,10 +258,10 @@ export function AdminUsersTable({ users }: { users: AdminUser[] }) {
                       Papel
                     </DropdownMenuLabel>
                     <DropdownMenuItem
-                      onSelect={() => handleRoleChange(user.id, "pastor")}
-                      disabled={user.role === "pastor"}
+                      onSelect={() => handleRoleChange(user.id, "usuario")}
+                      disabled={user.role === "usuario"}
                     >
-                      Pastor
+                      Usuário
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onSelect={() => handleRoleChange(user.id, "admin")}

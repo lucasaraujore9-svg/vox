@@ -3,7 +3,7 @@
 // Card de controles do usuário na página /admin/users/[id]:
 //  - Plano (manuscrito × concílio)
 //  - Status (ativo × desativado)
-//  - Papel (pastor, admin, super_admin)
+//  - Papel (usuario, admin, super_admin)
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -121,7 +121,7 @@ export function AdminUserDetailControls({ user }: { user: AdminUser }) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="pastor">Pastor</SelectItem>
+                <SelectItem value="usuario">Usuário</SelectItem>
                 <SelectItem value="admin">Admin</SelectItem>
                 <SelectItem value="super_admin">Super admin</SelectItem>
               </SelectContent>

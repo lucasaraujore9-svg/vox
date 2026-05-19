@@ -83,7 +83,7 @@ export function CreateUserDialog({
   const [name, setName] = useState(prefill?.name ?? "");
   const [denomination, setDenomination] = useState(prefill?.denomination ?? "");
   const [password, setPassword] = useState(() => generatePassword());
-  const [role, setRole] = useState<UserRole>("pastor");
+  const [role, setRole] = useState<UserRole>("usuario");
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [created, setCreated] = useState<{
@@ -97,7 +97,7 @@ export function CreateUserDialog({
       setName(prefill?.name ?? "");
       setDenomination(prefill?.denomination ?? "");
       setPassword(generatePassword());
-      setRole("pastor");
+      setRole("usuario");
       setError(null);
       setCreated(null);
     }
@@ -252,7 +252,7 @@ export function CreateUserDialog({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="pastor">Pastor</SelectItem>
+                    <SelectItem value="usuario">Usuário</SelectItem>
                     <SelectItem value="admin">Admin</SelectItem>
                     <SelectItem value="super_admin">Super admin</SelectItem>
                   </SelectContent>

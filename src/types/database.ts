@@ -864,5 +864,5 @@ export type StudyCategory =
   | "comunicação"
   | "liderança"
   | "discipulado"
-export type UserRole = "pastor" | "admin" | "super_admin"
+export type UserRole = "usuario" | "admin" | "super_admin"
 export type SignupInterestStatus = "pending" | "invited" | "rejected" | "spam"

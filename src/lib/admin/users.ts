@@ -15,7 +15,7 @@ const createUserSchema = z.object({
   name: z.string().trim().min(2, "Nome muito curto").max(160),
   password: z.string().min(8, "Senha precisa de ao menos 8 caracteres"),
   denomination: z.string().trim().max(160).optional(),
-  role: z.enum(["pastor", "admin", "super_admin"]).default("pastor"),
+  role: z.enum(["usuario", "admin", "super_admin"]).default("usuario"),
   /** Se vier de um interesse, atualiza o status pra 'invited' */
   fromInterestId: z.string().uuid().optional(),
 });
@@ -125,7 +125,7 @@ export async function updateUserRoleAction(
     .select("role")
     .eq("id", adminCheck.userId)
     .maybeSingle();
-  if (role !== "pastor" && me?.role !== "super_admin") {
+  if (role !== "usuario" && me?.role !== "super_admin") {
     return { ok: false, error: "Apenas super_admin pode definir admin/super_admin" };
   }
 

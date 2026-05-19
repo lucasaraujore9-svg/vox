@@ -22,7 +22,7 @@ function initialsFromName(name: string | null | undefined, email?: string) {
 export async function AppHeader() {
   let displayName = "Pastor";
   let email = "";
-  let role = "pastor";
+  let role = "usuario";
 
   if (
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -43,7 +43,7 @@ export async function AppHeader() {
         const metaName =
           (user.user_metadata as { name?: string } | null | undefined)?.name ?? "";
         displayName = profile?.name || metaName || email || "Pastor";
-        role = profile?.role ?? "pastor";
+        role = profile?.role ?? "usuario";
       }
     } catch {
       // Supabase não disponível em dev, ignora
