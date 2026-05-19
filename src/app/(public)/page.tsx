@@ -21,6 +21,7 @@ export default function LandingPage() {
       <Hero />
       <Demo />
       <PorQueModelos />
+      <Exegese />
       <Apresentador />
       <SuaSemana />
       <Faq />
@@ -49,6 +50,12 @@ function SiteHeader() {
             className="hidden md:inline px-3 py-1.5 text-vox-prose hover:text-vox-ink transition-colors"
           >
             Modelos
+          </Link>
+          <Link
+            href="#exegese"
+            className="hidden md:inline px-3 py-1.5 text-vox-prose hover:text-vox-ink transition-colors"
+          >
+            Exegese
           </Link>
           <Link
             href="#faq"
@@ -115,7 +122,7 @@ function Hero() {
               Funciona offline no celular, tablet ou computador
             </HeroLi>
             <HeroLi>
-              R$ 19,90/mês durante o lançamento, sem cartão agora
+              A partir de R$ 19,90/mês, sem cartão agora
             </HeroLi>
           </ul>
         </div>
@@ -283,6 +290,125 @@ function PorQueModelos() {
         >
           Você troca o modelo a qualquer momento · seus blocos migram
         </p>
+      </div>
+    </section>
+  );
+}
+
+function Exegese() {
+  const grupos = [
+    {
+      nome: "Texto",
+      desc: "Delimitação da perícope e variantes textuais relevantes do capítulo.",
+    },
+    {
+      nome: "Contexto",
+      desc: "Gênero literário, contexto próximo e posição da passagem dentro do livro.",
+    },
+    {
+      nome: "Forma",
+      desc: "Estrutura literária, análise gramatical-sintática e termos-chave no original.",
+    },
+    {
+      nome: "Background",
+      desc: "Pano de fundo histórico-cultural, intertextualidade e eixo teológico.",
+    },
+    {
+      nome: "Síntese",
+      desc: "História da interpretação, princípios atemporais e ponte de aplicação.",
+    },
+    {
+      nome: "Cache da comunidade",
+      desc: "Cada capítulo é estudado uma única vez. Quando outro pregador o pedir, recebe pronto.",
+    },
+  ] as const;
+
+  return (
+    <section
+      id="exegese"
+      className="px-6 sm:px-8 py-24 scroll-mt-20"
+      style={{
+        background: "var(--vox-surface-deep)",
+        borderTop: "1px solid var(--vox-whisper)",
+        borderBottom: "1px solid var(--vox-whisper)",
+      }}
+    >
+      <div className="max-w-5xl mx-auto">
+        <p className="vox-eyebrow" style={{ color: "var(--vox-forest)" }}>
+          Estudo do texto, não palpite
+        </p>
+        <h2
+          className="vox-h2 mt-3 max-w-2xl"
+          style={{ fontSize: "clamp(28px, 3.6vw, 36px)" }}
+        >
+          A exegese pronta na lateral, enquanto você escreve.
+        </h2>
+        <p className="vox-body mt-5 max-w-2xl text-base">
+          Você digita o capítulo que vai pregar e o VOX traz, na barra
+          lateral do editor, o texto estudado em cinco frentes. Sem precisar
+          abrir cinco livros, cinco abas ou recorrer ao ChatGPT.
+        </p>
+
+        <ul className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
+          {grupos.map((g, i) => (
+            <li key={g.nome}>
+              <div className="flex items-center gap-2.5">
+                <span
+                  aria-hidden
+                  className="vox-mono text-[10px] uppercase tracking-wider"
+                  style={{
+                    color: "var(--vox-forest)",
+                    fontVariantNumeric: "tabular-nums",
+                  }}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span
+                  className="vox-mono text-[10px] uppercase tracking-wider text-vox-muted"
+                >
+                  {i < 5 ? "Frente" : "Método"}
+                </span>
+              </div>
+              <h3 className="vox-h3 mt-3 text-lg">{g.nome}</h3>
+              <p className="mt-3 text-[14px] text-vox-prose leading-relaxed">
+                {g.desc}
+              </p>
+            </li>
+          ))}
+        </ul>
+
+        <div
+          className="mt-16 rounded-2xl p-7 sm:p-8 max-w-3xl"
+          style={{
+            background: "var(--vox-surface)",
+            border: "1px solid var(--vox-whisper)",
+          }}
+        >
+          <p
+            className="vox-mono text-[10px] uppercase tracking-wider"
+            style={{ color: "var(--vox-forest)" }}
+          >
+            Não é ChatGPT com vestes de pastor
+          </p>
+          <p className="vox-body mt-3 text-[15px] leading-relaxed">
+            É um pipeline acadêmico-pastoral em cinco etapas paralelas, com
+            cache global compartilhado e formato estruturado. Você revê
+            cada frente, edita, descarta o que não couber e regera grupos
+            isolados quando precisar. A IA pesquisa; o púlpito é seu.
+          </p>
+          <p
+            className="vox-mono mt-6 text-[10px] uppercase tracking-wider text-vox-muted"
+          >
+            Disponível no plano Concílio ·{" "}
+            <Link
+              href="#preco"
+              className="underline hover:text-vox-ink transition-colors"
+              style={{ color: "var(--vox-forest)" }}
+            >
+              ver preço
+            </Link>
+          </p>
+        </div>
       </div>
     </section>
   );
@@ -469,7 +595,15 @@ function Faq() {
     },
     {
       q: "A IA é obrigatória?",
-      a: "Não. Vem desligada por padrão. Você liga em configurações se quiser sugestão de ilustração, paráfrase ou revisão de clareza. Desligada, a IA some completamente da interface — nenhum botão, nenhuma sugestão.",
+      a: "Não. A exegese assistida vive no plano Concílio e pode ser desligada a qualquer momento em configurações. Desligada, a IA some completamente da interface — nenhum botão, nenhuma sugestão. Quem quiser apenas o editor fica no plano Manuscrito.",
+    },
+    {
+      q: "A exegese substitui meu próprio estudo?",
+      a: "Não. Ela puxa de uma vez o que você precisaria abrir em quatro abas: léxico, comentário, dicionário bíblico, panorama histórico. Quem decide o que serve pro sermão é você. O material aparece na barra lateral do editor como insumo, não como manuscrito pronto.",
+    },
+    {
+      q: "E se a exegese errar em algum ponto?",
+      a: "Cada exegese mostra a fonte do raciocínio em cinco frentes separadas — texto, contexto, forma, background e síntese. Você pode regerar uma frente isolada sem refazer as outras. O cache compartilhado nunca trava numa resposta ruim: refeita uma vez, todo mundo se beneficia da versão melhor.",
     },
     {
       q: "Funciona sem internet?",
@@ -550,89 +684,191 @@ function Faq() {
 
 function Preco() {
   return (
-    <section id="preco" className="px-6 sm:px-8 py-24">
-      <div className="max-w-3xl mx-auto">
+    <section id="preco" className="px-6 sm:px-8 py-24 scroll-mt-20">
+      <div className="max-w-5xl mx-auto">
         <p className="vox-eyebrow">Preço de lançamento</p>
         <h2
-          className="vox-h2 mt-3"
+          className="vox-h2 mt-3 max-w-2xl"
           style={{ fontSize: "clamp(28px, 3.6vw, 36px)" }}
         >
-          Um plano. Tudo incluído.
+          Dois planos. Você escolhe a profundidade.
         </h2>
-        <p className="vox-body mt-5 max-w-xl text-base">
-          Pensado para o pregador real: o pastor de igreja pequena, o líder
-          de célula, o professor da escola bíblica. Um valor que cabe.
+        <p className="vox-body mt-5 max-w-2xl text-base">
+          Manuscrito é o editor completo. Concílio adiciona a exegese
+          assistida na lateral. Você troca de plano quando quiser, sem
+          multa, sem perder seus sermões.
         </p>
 
-        <article
-          className="mt-12 rounded-2xl p-8 sm:p-10"
-          style={{
-            background: "var(--vox-surface)",
-            border: "1px solid var(--vox-forest)",
-            boxShadow: "var(--vox-shadow-card-hover)",
-          }}
+        <div className="mt-14 grid lg:grid-cols-2 gap-6">
+          <PlanoCard
+            nome="Manuscrito"
+            tagline="O editor completo"
+            precoCheio="R$ 49,90"
+            preco="R$ 19,90"
+            anual="R$ 199 no ano"
+            anualEquivalente="equivale a R$ 16,60/mês"
+            descricao="Pra quem quer escrever sermão, palestra e aula do começo ao fim no editor, sem IA."
+            itens={[
+              "Editor em blocos coloridos",
+              "Seis modelos de pregação",
+              "Bíblia integrada",
+              "Três modos de apresentação",
+              "Séries, cursos e estudos",
+              "Importa Word, exporta PDF",
+              "Funciona offline",
+            ]}
+            cta="Quero o Manuscrito"
+          />
+          <PlanoCard
+            destaque
+            nome="Concílio"
+            tagline="Com exegese assistida"
+            precoCheio="R$ 79,90"
+            preco="R$ 39,90"
+            anual="R$ 399 no ano"
+            anualEquivalente="equivale a R$ 33,25/mês"
+            descricao="Tudo do Manuscrito mais a exegese em cinco frentes, ao lado do editor, no capítulo que você está pregando."
+            itens={[
+              "Tudo do plano Manuscrito",
+              "Exegese em cinco frentes",
+              "30 exegeses novas por mês",
+              "Cache da comunidade ilimitado",
+              "Histórico de exegeses ilimitado",
+              "Regera frentes isoladas quando quiser",
+              "Liga e desliga a IA a qualquer momento",
+            ]}
+            cta="Quero o Concílio"
+          />
+        </div>
+
+        <p
+          className="vox-mono mt-12 text-[10px] uppercase tracking-wider text-vox-muted text-center"
         >
-          <div className="flex items-baseline gap-3 flex-wrap">
-            <span className="vox-mono text-vox-muted line-through text-lg">
-              R$ 49,90
-            </span>
-            <span
-              style={{
-                fontFamily: "var(--vox-font-display)",
-                fontSize: "clamp(56px, 8vw, 80px)",
-                lineHeight: 1,
-                color: "var(--vox-ink)",
-                fontWeight: 500,
-                letterSpacing: "-0.02em",
-              }}
-            >
-              R$ 19,90
-            </span>
-            <span className="vox-mono text-sm text-vox-prose">/mês</span>
-          </div>
-
-          <p className="mt-6 text-[15px] text-vox-prose leading-relaxed max-w-lg">
-            Ou{" "}
-            <strong className="text-vox-ink">R$ 199 no ano</strong>{" "}
-            <span className="text-vox-muted">
-              (equivale a R$ 16,60/mês)
-            </span>
-            . Cancela quando quiser, sem multa. Os primeiros assinantes
-            mantêm esse valor enquanto forem assinantes.
-          </p>
-
-          <div className="mt-8 grid sm:grid-cols-2 gap-x-8 gap-y-3">
-            <PreItem>Editor em blocos coloridos</PreItem>
-            <PreItem>Seis modelos de pregação</PreItem>
-            <PreItem>Bíblia integrada</PreItem>
-            <PreItem>Três modos de apresentação</PreItem>
-            <PreItem>Séries, cursos e estudos</PreItem>
-            <PreItem>Importa Word e exporta PDF</PreItem>
-            <PreItem>Funciona offline</PreItem>
-            <PreItem>IA opcional, você decide</PreItem>
-          </div>
-
-          <Button size="lg" asChild className="mt-10 w-full sm:w-auto">
-            <Link href="#cadastro">Quero garantir minha vaga</Link>
-          </Button>
-          <p className="vox-mono mt-3 text-[10px] uppercase tracking-wider text-vox-muted">
-            Sem cartão agora · cobrança só quando sua vaga abrir
-          </p>
-        </article>
+          Sem cartão agora · cobrança só quando sua vaga abrir · cancela
+          quando quiser
+        </p>
       </div>
     </section>
   );
 }
 
-function PreItem({ children }: { children: React.ReactNode }) {
+function PlanoCard({
+  nome,
+  tagline,
+  precoCheio,
+  preco,
+  anual,
+  anualEquivalente,
+  descricao,
+  itens,
+  cta,
+  destaque,
+}: {
+  nome: string;
+  tagline: string;
+  precoCheio: string;
+  preco: string;
+  anual: string;
+  anualEquivalente: string;
+  descricao: string;
+  itens: readonly string[];
+  cta: string;
+  destaque?: boolean;
+}) {
   return (
-    <div className="flex items-start gap-2.5 text-sm text-vox-prose">
-      <span
-        className="mt-1.5 size-1.5 rounded-full shrink-0"
-        style={{ background: "var(--vox-forest)" }}
-      />
-      <span>{children}</span>
-    </div>
+    <article
+      className="rounded-2xl p-8 sm:p-9 flex flex-col"
+      style={{
+        background: destaque ? "var(--vox-surface)" : "var(--vox-surface)",
+        border: destaque
+          ? "1px solid var(--vox-forest)"
+          : "1px solid var(--vox-whisper)",
+        boxShadow: destaque ? "var(--vox-shadow-card-hover)" : "var(--vox-shadow-card)",
+      }}
+    >
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div>
+          <h3
+            className="vox-h3"
+            style={{
+              fontSize: "clamp(22px, 2.8vw, 26px)",
+              color: destaque ? "var(--vox-forest)" : "var(--vox-ink)",
+            }}
+          >
+            {nome}
+          </h3>
+          <p
+            className="vox-mono mt-1 text-[10px] uppercase tracking-wider"
+            style={{ color: destaque ? "var(--vox-forest)" : "var(--vox-muted)" }}
+          >
+            {tagline}
+          </p>
+        </div>
+        {destaque ? (
+          <span
+            className="vox-mono text-[10px] uppercase tracking-wider rounded-full px-2.5 py-1"
+            style={{
+              background: "var(--vox-forest-soft)",
+              color: "var(--vox-forest)",
+              border: "1px solid var(--vox-forest-tint)",
+            }}
+          >
+            Mais escolhido
+          </span>
+        ) : null}
+      </div>
+
+      <p className="mt-5 text-[14px] text-vox-prose leading-relaxed">
+        {descricao}
+      </p>
+
+      <div className="mt-7 flex items-baseline gap-3 flex-wrap">
+        <span className="vox-mono text-vox-muted line-through text-base">
+          {precoCheio}
+        </span>
+        <span
+          style={{
+            fontFamily: "var(--vox-font-display)",
+            fontSize: "clamp(44px, 5vw, 56px)",
+            lineHeight: 1,
+            color: "var(--vox-ink)",
+            fontWeight: 500,
+            letterSpacing: "-0.02em",
+          }}
+        >
+          {preco}
+        </span>
+        <span className="vox-mono text-sm text-vox-prose">/mês</span>
+      </div>
+
+      <p className="mt-3 text-[13px] text-vox-prose leading-relaxed">
+        Ou <strong className="text-vox-ink">{anual}</strong>{" "}
+        <span className="text-vox-muted">({anualEquivalente})</span>.
+      </p>
+
+      <ul className="mt-7 space-y-2.5 flex-1">
+        {itens.map((i) => (
+          <li key={i} className="flex items-start gap-2.5 text-[14px] text-vox-prose">
+            <span
+              className="mt-1.5 size-1.5 rounded-full shrink-0"
+              style={{
+                background: destaque ? "var(--vox-forest)" : "var(--vox-prose)",
+              }}
+            />
+            <span>{i}</span>
+          </li>
+        ))}
+      </ul>
+
+      <Button
+        size="lg"
+        asChild
+        variant={destaque ? "default" : "outline"}
+        className="mt-9 w-full"
+      >
+        <Link href="#cadastro">{cta}</Link>
+      </Button>
+    </article>
   );
 }
 
@@ -652,6 +888,9 @@ function SiteFooter() {
         <nav className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-vox-prose">
           <Link href="#porque" className="hover:text-vox-ink">
             Modelos
+          </Link>
+          <Link href="#exegese" className="hover:text-vox-ink">
+            Exegese
           </Link>
           <Link href="#faq" className="hover:text-vox-ink">
             Perguntas

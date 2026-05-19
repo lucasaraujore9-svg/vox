@@ -64,10 +64,16 @@ export async function POST(request: NextRequest) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("ai_enabled")
+    .select("plan, ai_enabled")
     .eq("id", user.id)
-    .maybeSingle<{ ai_enabled: boolean }>();
-  if (!profile?.ai_enabled) {
+    .maybeSingle<{ plan: "manuscrito" | "concilio"; ai_enabled: boolean }>();
+  if (profile?.plan !== "concilio") {
+    return NextResponse.json(
+      { error: "Recurso de IA pertence ao plano Concílio. Mude o plano em /settings." },
+      { status: 403 }
+    );
+  }
+  if (!profile.ai_enabled) {
     return NextResponse.json(
       { error: "Módulo de IA desativado. Ative em /settings." },
       { status: 403 }

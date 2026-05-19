@@ -28,8 +28,8 @@ import {
 type Plan = "manuscrito" | "concilio";
 
 const PLAN_PRICE_BRL: Record<Plan, string> = {
-  manuscrito: "Gratuito durante o lançamento",
-  concilio: "R$ 19,90/mês",
+  manuscrito: "R$ 19,90/mês",
+  concilio: "R$ 39,90/mês",
 };
 
 export function SettingsPlanForm({
@@ -144,17 +144,17 @@ export function SettingsPlanForm({
           <PlanCard
             title="Manuscrito"
             tagline="Sem IA"
-            price="Gratuito durante o lançamento"
-            description="Editor, modelos, bíblia integrada e três modos de apresentação. Foco no essencial."
+            price="R$ 19,90/mês"
+            description="Editor completo, seis modelos, bíblia integrada e três modos de apresentação. Foco no essencial, sem IA."
             active={plan === "manuscrito"}
             disabled={pending}
             onClick={() => switchPlan("manuscrito")}
           />
           <PlanCard
             title="Concílio"
-            tagline="Com IA"
-            price="R$ 19,90/mês"
-            description="Tudo do Manuscrito + assistente de exegese. Cada texto que você prega ganha análise estruturada na barra lateral do editor."
+            tagline="Com exegese assistida"
+            price="R$ 39,90/mês"
+            description="Tudo do Manuscrito + exegese em cinco frentes na lateral do editor. 30 exegeses novas por mês, cache da comunidade ilimitado."
             active={plan === "concilio"}
             disabled={pending}
             onClick={() => switchPlan("concilio")}
@@ -229,9 +229,8 @@ export function SettingsPlanForm({
               Sem cobrança pendente
             </p>
             <p className="vox-body mt-2 text-sm text-vox-prose">
-              {plan === "manuscrito"
-                ? "Você está no plano gratuito de lançamento."
-                : "A cobrança começa quando sairmos do período de lançamento. Você será avisado por email com 7 dias de antecedência."}
+              A cobrança começa quando sairmos do período de lançamento.
+              Você será avisado por email com 7 dias de antecedência.
             </p>
           </div>
         </CardContent>
