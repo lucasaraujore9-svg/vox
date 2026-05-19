@@ -155,9 +155,12 @@ export async function updateUserPlanAction(
     return { ok: false, error: "Configuração do servidor incompleta" };
   }
 
-  // Quem volta pra manuscrito perde IA automaticamente (mesma regra do user-self).
-  const updates: { plan: string; ai_enabled?: boolean } = { plan };
-  if (plan === "manuscrito") updates.ai_enabled = false;
+  // Manuscrito desliga IA, Concílio liga — simetria. Quem promove já recebe
+  // o assistente ativo, sem precisar de um passo manual depois.
+  const updates: { plan: string; ai_enabled: boolean } = {
+    plan,
+    ai_enabled: plan === "concilio",
+  };
 
   const service = createServiceClient();
   const { error } = await service

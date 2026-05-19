@@ -140,13 +140,12 @@ export async function updatePlanAction(
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Não autenticado" };
 
-  // Se o usuário voltar pra manuscrito, desliga a IA automaticamente
-  const updates: { plan: string; ai_enabled?: boolean } = {
+  // Manuscrito desliga a IA, Concílio liga — simetria pra evitar
+  // upgrade com IA ainda desativada do estado anterior.
+  const updates: { plan: string; ai_enabled: boolean } = {
     plan: parsed.data.plan,
+    ai_enabled: parsed.data.plan === "concilio",
   };
-  if (parsed.data.plan === "manuscrito") {
-    updates.ai_enabled = false;
-  }
 
   const { error } = await supabase
     .from("profiles")
