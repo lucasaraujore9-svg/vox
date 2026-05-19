@@ -13,7 +13,7 @@ import {
 import { FrameworksGrid } from "@/components/sermon/FrameworksGrid";
 import { SettingsProfileForm } from "@/components/settings/SettingsProfileForm";
 import { SettingsPreferencesForm } from "@/components/settings/SettingsPreferencesForm";
-import { SettingsAIForm } from "@/components/settings/SettingsAIForm";
+import { SettingsPlanForm } from "@/components/settings/SettingsPlanForm";
 import { SettingsPasswordForm } from "@/components/settings/SettingsPasswordForm";
 import { SettingsDeleteAccount } from "@/components/settings/SettingsDeleteAccount";
 import { createClient } from "@/lib/supabase/server";
@@ -86,8 +86,8 @@ export default async function SettingsPage() {
         <p className="vox-eyebrow">Conta · Preferências</p>
         <h1 className="vox-h1 mt-3">Configurações</h1>
         <p className="vox-body mt-3">
-          Ajuste seu perfil, escolha sua tradução padrão, ative o módulo de IA
-          e configure as cores dos blocos.
+          Ajuste seu perfil, escolha sua tradução padrão, gerencie seu plano e
+          configure as cores dos blocos.
         </p>
       </header>
 
@@ -95,7 +95,7 @@ export default async function SettingsPage() {
         <TabsList variant="line" className="w-full justify-start gap-2 border-b">
           <TabsTrigger value="profile">Perfil</TabsTrigger>
           <TabsTrigger value="preferences">Preferências</TabsTrigger>
-          <TabsTrigger value="ai">IA</TabsTrigger>
+          <TabsTrigger value="plan">Meu plano</TabsTrigger>
           <TabsTrigger value="frameworks">Modelos</TabsTrigger>
           <TabsTrigger value="blocks">Blocos</TabsTrigger>
           <TabsTrigger value="account">Conta</TabsTrigger>
@@ -113,10 +113,10 @@ export default async function SettingsPage() {
           <SettingsPreferencesForm initialVersion={profile.bible_version} />
         </TabsContent>
 
-        <TabsContent value="ai" className="space-y-5">
-          <SettingsAIForm
-            initialEnabled={profile.ai_enabled}
+        <TabsContent value="plan" className="space-y-5">
+          <SettingsPlanForm
             initialPlan={profile.plan}
+            initialEnabled={profile.ai_enabled}
           />
         </TabsContent>
 
