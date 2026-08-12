@@ -18,6 +18,12 @@ import {
 } from "@/lib/presenter/channel";
 import { ItemContent } from "@/components/present/ItemContent";
 import { stripHtml, previewSnippet } from "@/lib/editor/html";
+import { PresentThemeToggle } from "@/components/present/PresentThemeToggle";
+import {
+  surfaceFor,
+  usePresentTheme,
+  type PresentSurface,
+} from "@/lib/presenter/theme";
 
 /** Escala de leitura do comentário. Quem prega ajusta conforme a distância. */
 const NOTE_SIZES = {
@@ -29,11 +35,6 @@ const NOTE_SIZES = {
 
 type NoteSize = keyof typeof NOTE_SIZES;
 const NOTE_ORDER: NoteSize[] = ["sm", "md", "lg", "xl"];
-
-/** Texto do comentário: quase branco, sem opacidade, pra ler de relance. */
-const NOTE_INK = "#F5F2ED";
-/** Rótulos e títulos de sessão: legível, mas claramente secundário. */
-const NOTE_MUTED = "#9BB0AA";
 
 export interface PresentSlide {
   id: string;
@@ -64,6 +65,8 @@ export function PresentSlides({
   const [audienceConnected, setAudienceConnected] = useState(false);
   const channelRef = useRef<BroadcastChannel | null>(null);
   const audienceWindowRef = useRef<Window | null>(null);
+  const theme = usePresentTheme();
+  const surface = surfaceFor(theme);
 
   const total = slides.length;
   const current = slides[index];
@@ -142,42 +145,54 @@ export function PresentSlides({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col stage"
-      style={{ background: "var(--vox-stage-bg)", color: "#F1EDE7" }}
+      className={`fixed inset-0 z-50 flex flex-col${surface.isDark ? " stage" : ""}`}
+      style={{ background: surface.bg, color: surface.ink }}
     >
-      <header className="px-8 py-3 flex items-center justify-between gap-4 border-b border-white/5">
+      <header
+        className="px-8 py-3 flex items-center justify-between gap-4"
+        style={{ borderBottom: `1px solid ${surface.border}` }}
+      >
         <div className="flex items-center gap-3 min-w-0">
-          <p className="vox-mono text-xs opacity-70 truncate">{title}</p>
-          <span className="vox-mono text-xs opacity-50">
+          <p className="vox-mono text-xs truncate" style={{ color: surface.soft }}>
+            {title}
+          </p>
+          <span className="vox-mono text-xs" style={{ color: surface.muted }}>
             Slide {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
           </span>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <span
             className="vox-mono text-xs px-3 py-1.5 rounded-full"
-            style={{
-              background: audienceConnected
-                ? "rgba(22,101,52,0.30)"
-                : "rgba(255,255,255,0.06)",
-              color: audienceConnected ? "#86efac" : "rgba(241,237,231,0.7)",
-            }}
+            style={
+              audienceConnected
+                ? {
+                  background: surface.isDark
+                    ? "rgba(22,101,52,0.30)"
+                    : "rgba(22,101,52,0.12)",
+                  color: surface.isDark ? "#86efac" : "var(--vox-forest)",
+                }
+                : {
+                  background: surface.isDark
+                    ? "rgba(255,255,255,0.06)"
+                    : "rgba(24,24,27,0.05)",
+                  color: surface.muted,
+                }
+            }
           >
             {audienceConnected ? "● Projeção conectada" : "○ Sem projeção"}
           </span>
+          <PresentThemeToggle theme={theme} surface={surface} />
           <Button
             onClick={openProjection}
             size="sm"
             variant={audienceConnected ? "outline" : "default"}
-            className={
-              audienceConnected
-                ? "text-current border-white/20 hover:bg-white/10"
-                : ""
-            }
           >
             {audienceConnected ? "Focar janela" : "Abrir tela de projeção"}
           </Button>
-          <Button asChild variant="ghost" size="sm" className="text-current opacity-80">
-            <Link href={backHref}>Sair</Link>
+          <Button asChild variant="ghost" size="sm">
+            <Link href={backHref} style={{ color: surface.soft }}>
+              Sair
+            </Link>
           </Button>
         </div>
       </header>
@@ -189,13 +204,15 @@ export function PresentSlides({
             : "flex-1 p-6 min-h-0"
         }
       >
-        {/* Slide grande à esquerda */}
+        {/* Slide grande à esquerda. Fundo neutro atrás da imagem: o slide traz
+            o próprio fundo e não deve brigar com o da tela. */}
         <section
-          className="rounded-xl border border-white/10 flex items-center justify-center overflow-hidden"
+          className="rounded-xl flex items-center justify-center overflow-hidden"
           style={{
+            border: `1px solid ${surface.border}`,
             background: current?.image_url
-              ? `url(${current.image_url}) center / contain no-repeat`
-              : "#11171B",
+              ? `${surface.slideBg} url(${current.image_url}) center / contain no-repeat`
+              : surface.slideBg,
           }}
         >
           {googleSlidesUrl && !current?.image_url ? (
@@ -207,8 +224,12 @@ export function PresentSlides({
             />
           ) : !current?.image_url ? (
             <p
-              className="text-7xl opacity-30"
-              style={{ fontFamily: "var(--vox-font-display)" }}
+              className="text-7xl"
+              style={{
+                fontFamily: "var(--vox-font-display)",
+                color: surface.muted,
+                opacity: 0.5,
+              }}
             >
               {String(current?.order ?? 1).padStart(2, "0")}
             </p>
@@ -221,32 +242,40 @@ export function PresentSlides({
           <aside
             className="rounded-xl flex flex-col min-h-0 overflow-hidden"
             style={{
-              background: "#12181A",
-              border: "1px solid rgba(255,255,255,0.10)",
+              background: surface.panel,
+              border: `1px solid ${surface.border}`,
             }}
           >
             <div
               className="shrink-0 flex items-center justify-between gap-3 px-5 py-3"
-              style={{ borderBottom: "1px solid rgba(255,255,255,0.10)" }}
+              style={{ borderBottom: `1px solid ${surface.border}` }}
             >
-              <p className="vox-eyebrow" style={{ color: NOTE_MUTED }}>
+              <p className="vox-eyebrow" style={{ color: surface.muted }}>
                 Comentário do slide
               </p>
-              <NoteSizeControl value={noteSize} onChange={setNoteSize} />
+              <NoteSizeControl
+                value={noteSize}
+                onChange={setNoteSize}
+                surface={surface}
+              />
             </div>
 
             <div className="flex-1 overflow-y-auto min-h-0 px-5 py-5">
-              <SlideCommentRender slide={current} size={noteSize} />
+              <SlideCommentRender
+                slide={current}
+                size={noteSize}
+                surface={surface}
+              />
             </div>
 
             <div
               className="shrink-0 px-5 py-4"
-              style={{ borderTop: "1px solid rgba(255,255,255,0.10)" }}
+              style={{ borderTop: `1px solid ${surface.border}` }}
             >
               {next ? (
-                <NextSlideBlock slide={next} />
+                <NextSlideBlock slide={next} surface={surface} />
               ) : (
-                <p className="vox-eyebrow text-xs" style={{ color: NOTE_MUTED }}>
+                <p className="vox-eyebrow text-xs" style={{ color: surface.muted }}>
                   Último slide
                 </p>
               )}
@@ -255,14 +284,17 @@ export function PresentSlides({
         ) : null}
       </main>
 
-      <footer className="px-8 py-3 flex items-center justify-between border-t border-white/5">
+      <footer
+        className="px-8 py-3 flex items-center justify-between"
+        style={{ borderTop: `1px solid ${surface.border}` }}
+      >
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="sm"
             onClick={goPrev}
             disabled={index === 0}
-            className="text-current"
+            style={{ color: surface.ink }}
           >
             ◀ Anterior
           </Button>
@@ -271,11 +303,14 @@ export function PresentSlides({
             size="sm"
             onClick={goNext}
             disabled={index === total - 1}
-            className="text-current"
+            style={{ color: surface.ink }}
           >
             Próximo ▶
           </Button>
-          <span className="vox-mono text-xs opacity-50 ml-3 hidden sm:inline">
+          <span
+            className="vox-mono text-xs ml-3 hidden sm:inline"
+            style={{ color: surface.muted }}
+          >
             ← / → / espaço
           </span>
         </div>
@@ -284,7 +319,7 @@ export function PresentSlides({
             variant="ghost"
             size="sm"
             onClick={() => setShowComment((s) => !s)}
-            className="text-current opacity-80"
+            style={{ color: surface.soft }}
           >
             {showComment ? "Só slide" : "Slide + comentário"}
           </Button>
@@ -298,9 +333,11 @@ export function PresentSlides({
 function NoteSizeControl({
   value,
   onChange,
+  surface,
 }: {
   value: NoteSize;
   onChange: (next: NoteSize) => void;
+  surface: PresentSurface;
 }) {
   const i = NOTE_ORDER.indexOf(value);
   function step(delta: number) {
@@ -314,8 +351,8 @@ function NoteSizeControl({
         onClick={() => step(-1)}
         disabled={i === 0}
         aria-label="Diminuir o texto"
-        className="size-7 rounded flex items-center justify-center transition-colors hover:bg-white/10 disabled:opacity-30"
-        style={{ color: NOTE_MUTED, fontSize: "13px" }}
+        className="size-7 rounded flex items-center justify-center transition-colors hover:bg-black/5 disabled:opacity-30"
+        style={{ color: surface.muted, fontSize: "13px" }}
       >
         A−
       </button>
@@ -324,8 +361,8 @@ function NoteSizeControl({
         onClick={() => step(1)}
         disabled={i === NOTE_ORDER.length - 1}
         aria-label="Aumentar o texto"
-        className="size-7 rounded flex items-center justify-center transition-colors hover:bg-white/10 disabled:opacity-30"
-        style={{ color: NOTE_MUTED, fontSize: "16px" }}
+        className="size-7 rounded flex items-center justify-center transition-colors hover:bg-black/5 disabled:opacity-30"
+        style={{ color: surface.muted, fontSize: "16px" }}
       >
         A+
       </button>
@@ -336,9 +373,11 @@ function NoteSizeControl({
 function SlideCommentRender({
   slide,
   size,
+  surface,
 }: {
   slide: PresentSlide | undefined;
   size: NoteSize;
+  surface: PresentSurface;
 }) {
   if (!slide) return null;
   const scale = NOTE_SIZES[size];
@@ -362,14 +401,14 @@ function SlideCommentRender({
             className={sIdx > 0 ? "mt-7 pt-7" : ""}
             style={
               sIdx > 0
-                ? { borderTop: "1px solid rgba(255,255,255,0.10)" }
+                ? { borderTop: `1px solid ${surface.border}` }
                 : undefined
             }
           >
             {session.title ? (
               <h3
                 className="vox-eyebrow mb-4"
-                style={{ color: NOTE_MUTED, fontSize: "12px" }}
+                style={{ color: surface.muted, fontSize: "12px" }}
               >
                 {session.title}
               </h3>
@@ -390,19 +429,22 @@ function SlideCommentRender({
                     className="pl-4"
                     style={{
                       borderLeft: `3px solid ${
-                        isPlainNote ? "rgba(255,255,255,0.16)" : t.color
+                        isPlainNote
+                          ? surface.plainRule
+                          : blockColor(t.id, surface.isDark)
                       }`,
                     }}
                   >
                     {!isPlainNote ? (
                       <p
                         className="vox-eyebrow mb-1.5"
-                        style={{ color: blockColor(t.id, true), fontSize: "11px" }}
+                        style={{ color: blockColor(t.id, surface.isDark), fontSize: "11px" }}
                       >
                         {t.label}
                       </p>
                     ) : null}
                     <ItemContent
+                      onDarkSurface={surface.isDark}
                       html={item.content}
                       style={{
                         // Trecho pra ler em voz alta mantém o serif em itálico;
@@ -413,7 +455,7 @@ function SlideCommentRender({
                         fontStyle: verbatim ? "italic" : "normal",
                         fontSize: `${scale.px}px`,
                         lineHeight: scale.lh,
-                        color: isScripture ? "var(--vox-gold)" : NOTE_INK,
+                        color: isScripture ? "var(--vox-gold)" : surface.ink,
                       }}
                     />
                   </div>
@@ -433,7 +475,7 @@ function SlideCommentRender({
           fontFamily: "var(--vox-font-ui)",
           fontSize: `${scale.px}px`,
           lineHeight: scale.lh,
-          color: NOTE_INK,
+          color: surface.ink,
         }}
       >
         {slide.comment}
@@ -442,13 +484,19 @@ function SlideCommentRender({
   }
 
   return (
-    <p className="italic" style={{ color: NOTE_MUTED }}>
+    <p className="italic" style={{ color: surface.muted }}>
       Sem comentário pra este slide.
     </p>
   );
 }
 
-function NextSlideBlock({ slide }: { slide: PresentSlide }) {
+function NextSlideBlock({
+  slide,
+  surface,
+}: {
+  slide: PresentSlide;
+  surface: PresentSurface;
+}) {
   // Primeiro item visível do próximo slide pra exibir como pré-aviso textual
   // Prévia do próximo slide, também só para os olhos do apresentador.
   const firstItem = slide.comment_items?.sessions
@@ -461,7 +509,7 @@ function NextSlideBlock({ slide }: { slide: PresentSlide }) {
       <div className="flex-1 min-w-0 order-2">
         <p
           className="vox-eyebrow mb-2"
-          style={{ color: NOTE_MUTED, fontSize: "11px" }}
+          style={{ color: surface.muted, fontSize: "11px" }}
         >
           Próximo · slide {String(slide.order).padStart(2, "0")}
         </p>
@@ -472,13 +520,13 @@ function NextSlideBlock({ slide }: { slide: PresentSlide }) {
               fontFamily: "var(--vox-font-ui)",
               fontSize: "14px",
               lineHeight: 1.45,
-              color: "rgba(245,242,237,0.72)",
+              color: surface.soft,
             }}
           >
             {previewSnippet(firstItem.content, 140)}
           </p>
         ) : (
-          <p className="vox-mono text-xs" style={{ color: NOTE_MUTED }}>
+          <p className="vox-mono text-xs" style={{ color: surface.muted }}>
             Sem comentário
           </p>
         )}
@@ -489,19 +537,21 @@ function NextSlideBlock({ slide }: { slide: PresentSlide }) {
         className="rounded-lg aspect-video w-36 shrink-0 overflow-hidden relative order-1"
         style={{
           background: slide.image_url
-            ? `url(${slide.image_url}) center / cover`
-            : "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.10)",
+            ? `${surface.slideBg} url(${slide.image_url}) center / cover`
+            : surface.slideBg,
+          border: `1px solid ${surface.border}`,
         }}
       >
         {!slide.image_url ? (
           <div className="absolute inset-0 flex items-center justify-center">
             <span
-              className="vox-mono opacity-30"
+              className="vox-mono"
               style={{
                 fontSize: "28px",
                 fontFamily: "var(--vox-font-display)",
                 lineHeight: 1,
+                color: surface.muted,
+                opacity: 0.6,
               }}
             >
               {String(slide.order).padStart(2, "0")}

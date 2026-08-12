@@ -15,6 +15,7 @@ import {
 } from "@/lib/mocks/blocks";
 import type { SlideItem } from "@/components/slides/SlidesPanel";
 import { ItemContent } from "@/components/present/ItemContent";
+import { surfaceFor, usePresentTheme } from "@/lib/presenter/theme";
 
 const VISIBLE_TYPES = new Set<BlockTypeId>(
   VOX_BLOCK_TYPES.filter((b) => b.visibleInPresentation).map((b) => b.id)
@@ -29,6 +30,7 @@ interface SlideProjectionProps {
 export function SlideProjection({ title, slides, backHref }: SlideProjectionProps) {
   const [index, setIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const surface = surfaceFor(usePresentTheme());
 
   const total = slides.length;
   const current = slides[index];
@@ -103,8 +105,8 @@ export function SlideProjection({ title, slides, backHref }: SlideProjectionProp
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col stage"
-      style={{ background: "var(--vox-stage-bg)", color: "#F1EDE7" }}
+      className={`fixed inset-0 z-50 flex flex-col${surface.isDark ? " stage" : ""}`}
+      style={{ background: surface.bg, color: surface.ink }}
     >
       {!isFullscreen ? (
         <header className="absolute top-3 right-3 z-10 flex items-center gap-2">
@@ -120,7 +122,7 @@ export function SlideProjection({ title, slides, backHref }: SlideProjectionProp
       ) : null}
 
       <main className="flex-1 flex items-center justify-center">
-        <SlideRender slide={current} />
+        <SlideRender slide={current} isDark={surface.isDark} />
       </main>
 
       {!isFullscreen ? (
@@ -158,7 +160,13 @@ export function SlideProjection({ title, slides, backHref }: SlideProjectionProp
   );
 }
 
-function SlideRender({ slide }: { slide: SlideItem | undefined }) {
+function SlideRender({
+  slide,
+  isDark,
+}: {
+  slide: SlideItem | undefined;
+  isDark: boolean;
+}) {
   if (!slide) {
     return <p className="opacity-50 italic">Sem slides.</p>;
   }
@@ -184,18 +192,19 @@ function SlideRender({ slide }: { slide: SlideItem | undefined }) {
       <article className="max-w-5xl px-16 text-center">
         <p
           className="vox-eyebrow opacity-60 mb-6"
-          style={{ color: blockColor(blockType.id, true) }}
+          style={{ color: blockColor(blockType.id, isDark) }}
         >
           {blockType.label}
         </p>
         <ItemContent
+                      onDarkSurface={isDark}
           html={firstItem.content}
           style={{
             fontFamily: "var(--vox-font-display)",
             fontStyle: isScripture ? "italic" : "normal",
             fontSize: "clamp(36px, 5vw, 64px)",
             lineHeight: 1.35,
-            color: isScripture ? "var(--vox-gold)" : "#F1EDE7",
+            color: isScripture ? "var(--vox-gold)" : isDark ? "#F5F2ED" : "var(--vox-ink)",
           }}
         />
       </article>

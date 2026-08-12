@@ -63,6 +63,29 @@ export function safeHtml(html: string): string {
   return safe;
 }
 
+/**
+ * Remove cor e marca-texto inline do HTML do TipTap.
+ *
+ * O editor grava `style="color: …"` com cores escolhidas sobre o Parchment.
+ * Levadas para o fundo escuro, viram texto escuro sobre escuro — some. Em modo
+ * noturno a superfície decide a cor; o resto da formatação (negrito, itálico,
+ * listas) fica intacto.
+ */
+export function withoutInlineColors(html: string): string {
+  if (!html) return html;
+  return html.replace(/style\s*=\s*"([^"]*)"/gi, (full, css: string) => {
+    const kept = css
+      .split(";")
+      .filter((decl) => {
+        const prop = decl.split(":")[0]?.trim().toLowerCase() ?? "";
+        return prop !== "color" && prop !== "background-color" && prop !== "background";
+      })
+      .join(";")
+      .trim();
+    return kept ? `style="${kept}"` : "";
+  });
+}
+
 function escapeHtml(input: string): string {
   return input
     .replace(/&/g, "&amp;")

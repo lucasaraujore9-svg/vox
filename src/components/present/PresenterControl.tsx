@@ -424,12 +424,12 @@ function ContentList({
           <div
             key={item.id}
             className="pl-3"
-            style={{ borderLeft: `2px solid ${blockColor(t.id, true)}`, opacity: isHidden ? 0.6 : 1 }}
+            style={{ borderLeft: `2px solid ${blockColor(t.id, false)}`, opacity: isHidden ? 0.6 : 1 }}
           >
             <div className="flex items-center gap-2">
               <p
                 className="vox-eyebrow"
-                style={{ color: blockColor(t.id, true), fontSize: size === "lg" ? "10px" : "9px" }}
+                style={{ color: blockColor(t.id, false), fontSize: size === "lg" ? "10px" : "9px" }}
               >
                 {t.label}
               </p>

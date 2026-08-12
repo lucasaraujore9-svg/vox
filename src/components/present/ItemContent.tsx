@@ -3,7 +3,7 @@
 // uniformiza headings, parágrafos, blockquote, listas, herda fonte/tamanho
 // do container.
 
-import { safeHtml } from "@/lib/editor/html";
+import { safeHtml, withoutInlineColors } from "@/lib/editor/html";
 import { cn } from "@/lib/utils";
 
 interface ItemContentProps {
@@ -11,6 +11,8 @@ interface ItemContentProps {
   className?: string;
   style?: React.CSSProperties;
   as?: "div" | "article" | "section";
+  /** Em fundo escuro, descarta a cor inline do editor (escolhida no claro). */
+  onDarkSurface?: boolean;
 }
 
 export function ItemContent({
@@ -18,12 +20,16 @@ export function ItemContent({
   className,
   style,
   as: Tag = "div",
+  onDarkSurface = false,
 }: ItemContentProps) {
+  const safe = safeHtml(html);
   return (
     <Tag
       className={cn("vox-present-content", className)}
       style={style}
-      dangerouslySetInnerHTML={{ __html: safeHtml(html) }}
+      dangerouslySetInnerHTML={{
+        __html: onDarkSurface ? withoutInlineColors(safe) : safe,
+      }}
     />
   );
 }

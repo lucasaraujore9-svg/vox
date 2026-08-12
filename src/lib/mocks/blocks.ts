@@ -141,12 +141,12 @@ export function getBlockType(id: BlockTypeId): BlockType | undefined {
 }
 
 /**
- * Versão de palco das cores dos blocos.
+ * Cores dos rótulos de bloco por superfície, todas medidas em ≥ 4.5:1.
  *
- * As cores acima são calibradas para o Parchment (#F9F7F4). Sobre o fundo do
- * palco a maioria despenca: `conclusao` usa --vox-ink e chega a 1.01:1, ou seja,
- * some. Aqui cada bloco mantém sua família cromática, com a luminosidade
- * ajustada para a superfície escura — todos acima de 4.5:1.
+ * O campo `color` acima serve ao editor e nem sempre funciona como TEXTO:
+ * `transicao` (#E2E8F0) dá 1.15:1 sobre o Parchment e `conclusao` (--vox-ink)
+ * dá 1.01:1 sobre o palco. Cada mapa aqui mantém a família cromática do bloco
+ * e ajusta só a luminosidade para a superfície onde vai ser lido.
  */
 const STAGE_COLORS: Record<BlockTypeId, string> = {
   texto_biblico: "var(--vox-gold)", // já clareado no bloco .stage do globals.css
@@ -166,8 +166,26 @@ const STAGE_COLORS: Record<BlockTypeId, string> = {
   notas_pessoais: "#9BB0AA",
 };
 
-/** Cor do bloco para a superfície em uso. */
+/** Sobre o Parchment claro das telas de apresentação. */
+const LIGHT_SURFACE_COLORS: Record<BlockTypeId, string> = {
+  texto_biblico: "#8F4207",
+  introducao: "#166534",
+  contexto: "#55606E",
+  proposicao: "#166534",
+  ponto_principal: "#166534",
+  subponto: "#15803D",
+  desenvolvimento: "#475569",
+  ilustracao: "#7C3AED",
+  aplicacao: "#0D7C7C",
+  citacao: "#9A5B06",
+  pergunta_retorica: "#9333EA",
+  transicao: "#5B6570",
+  conclusao: "#18181B",
+  oracao: "#146B33",
+  notas_pessoais: "#6B7280",
+};
+
+/** Cor legível do bloco na superfície em uso. */
 export function blockColor(id: BlockTypeId, onStage: boolean): string {
-  if (onStage) return STAGE_COLORS[id];
-  return getBlockType(id)?.color ?? "var(--vox-muted)";
+  return onStage ? STAGE_COLORS[id] : LIGHT_SURFACE_COLORS[id];
 }

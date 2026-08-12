@@ -17,6 +17,7 @@ import { VOX_BLOCK_TYPES, type BlockTypeId, getBlockType, blockColor } from "@/l
 import type { SessionNode } from "@/lib/sermons/sessions";
 import { nextSessionPeek } from "@/lib/sermons/sessions";
 import { ItemContent } from "@/components/present/ItemContent";
+import { setPresentTheme, usePresentTheme } from "@/lib/presenter/theme";
 import { stripHtml, previewSnippet } from "@/lib/editor/html";
 
 type FontSize = "sm" | "md" | "lg" | "xl";
@@ -79,7 +80,8 @@ export function PresentSessions({
   const [index, setIndex] = useState(0);
   // Em telas estreitas, default `md`; em desk, `lg`.
   const [fontSize, setFontSize] = useState<FontSize>("lg");
-  const [stageDark, setStageDark] = useState(true);
+  const theme = usePresentTheme();
+  const stageDark = theme === "escuro";
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Sincroniza estado com mudanças de fullscreen (Esc, F11, etc.)
@@ -193,10 +195,10 @@ export function PresentSessions({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col stage"
+      className={`fixed inset-0 z-50 flex flex-col${stageDark ? " stage" : ""}`}
       style={{
         background: stageDark ? "var(--vox-stage-bg)" : "var(--vox-bg)",
-        color: stageDark ? "#F1EDE7" : "var(--vox-ink)",
+        color: stageDark ? "#F5F2ED" : "var(--vox-ink)",
       }}
     >
       <header
@@ -232,7 +234,7 @@ export function PresentSessions({
           {current?.title ? (
             <p
               className={`vox-eyebrow ${isCompact ? "mb-3" : "mb-6"}`}
-              style={{ color: stageDark ? "#9BB0AA" : "var(--vox-prose)" }}
+              style={{ color: stageDark ? "#9BB0AA" : "#55606E" }}
             >
               {current.title}
             </p>
@@ -278,6 +280,7 @@ export function PresentSessions({
                     </div>
                   ) : null}
                   <ItemContent
+                      onDarkSurface={stageDark}
                     html={item.content}
                     style={{
                       // Serif em itálico para o que se lê em voz alta; nota de
@@ -416,7 +419,7 @@ export function PresentSessions({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setStageDark((s) => !s)}
+            onClick={() => setPresentTheme(stageDark ? "claro" : "escuro")}
             className="text-current opacity-80 hover:opacity-100 px-2"
             aria-label={stageDark ? "Modo claro" : "Modo noturno"}
           >

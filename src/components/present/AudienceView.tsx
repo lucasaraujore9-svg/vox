@@ -16,6 +16,11 @@ import {
 import type { SessionNode } from "@/lib/sermons/sessions";
 import type { SlideItem } from "@/components/slides/SlidesPanel";
 import { ItemContent } from "@/components/present/ItemContent";
+import {
+  surfaceFor,
+  usePresentTheme,
+  type PresentSurface,
+} from "@/lib/presenter/theme";
 import { stripHtml } from "@/lib/editor/html";
 
 const VISIBLE_TYPES = new Set<BlockTypeId>(
@@ -105,16 +110,14 @@ export function AudienceView({
   }
 
   const safeIndex = Math.min(index, Math.max(0, total - 1));
+  const surface = surfaceFor(usePresentTheme());
   const currentSlide = slides?.[safeIndex];
   const currentSession = sessions?.[safeIndex];
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col stage"
-      style={{
-        background: "var(--vox-stage-bg)",
-        color: "#F1EDE7",
-      }}
+      className={`fixed inset-0 z-50 flex flex-col${surface.isDark ? " stage" : ""}`}
+      style={{ background: surface.bg, color: surface.ink }}
     >
       {!isFullscreen ? (
         <header className="absolute top-3 right-3 z-10 flex items-center gap-2">
@@ -137,9 +140,9 @@ export function AudienceView({
 
       <main className="flex-1 flex items-center justify-center">
         {currentSlide ? (
-          <SlideRender slide={currentSlide} />
+          <SlideRender slide={currentSlide} surface={surface} />
         ) : currentSession ? (
-          <SessionRender session={currentSession} />
+          <SessionRender session={currentSession} surface={surface} />
         ) : (
           <div className="text-center opacity-60">
             <p className="vox-mono text-xs uppercase mb-3">{title}</p>
@@ -161,7 +164,7 @@ export function AudienceView({
   );
 }
 
-function SlideRender({ slide }: { slide: SlideItem }) {
+function SlideRender({ slide, surface }: { slide: SlideItem; surface: PresentSurface }) {
   if (slide.image_url) {
     return (
       <div
@@ -185,18 +188,19 @@ function SlideRender({ slide }: { slide: SlideItem }) {
       <article className="max-w-5xl px-16 text-center">
         <p
           className="vox-eyebrow opacity-60 mb-6"
-          style={{ color: blockColor(blockType.id, true) }}
+          style={{ color: blockColor(blockType.id, surface.isDark) }}
         >
           {blockType.label}
         </p>
         <ItemContent
+                      onDarkSurface={surface.isDark}
           html={firstItem.content}
           style={{
             fontFamily: "var(--vox-font-display)",
             fontStyle: isScripture ? "italic" : "normal",
             fontSize: "clamp(36px, 5vw, 64px)",
             lineHeight: 1.35,
-            color: isScripture ? "var(--vox-gold)" : "#F1EDE7",
+            color: isScripture ? "var(--vox-gold)" : surface.ink,
           }}
         />
       </article>
@@ -213,7 +217,7 @@ function SlideRender({ slide }: { slide: SlideItem }) {
   );
 }
 
-function SessionRender({ session }: { session: SessionNode }) {
+function SessionRender({ session, surface }: { session: SessionNode; surface: PresentSurface }) {
   const visibleItems = session.items.filter((i) => VISIBLE_TYPES.has(i.type));
   return (
     <article className="max-w-5xl px-16 w-full">
@@ -227,16 +231,17 @@ function SessionRender({ session }: { session: SessionNode }) {
             <div
               key={item.id}
               className="pl-5"
-              style={{ borderLeft: `2px solid ${blockColor(t.id, true)}` }}
+              style={{ borderLeft: `2px solid ${blockColor(t.id, surface.isDark)}` }}
             >
               <ItemContent
+                      onDarkSurface={surface.isDark}
                 html={item.content}
                 style={{
                   fontFamily: "var(--vox-font-display)",
                   fontStyle: isScripture ? "italic" : "normal",
                   fontSize: "clamp(28px, 3.5vw, 44px)",
                   lineHeight: 1.4,
-                  color: isScripture ? "var(--vox-gold)" : "#F1EDE7",
+                  color: isScripture ? "var(--vox-gold)" : surface.ink,
                 }}
               />
             </div>
