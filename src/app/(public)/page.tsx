@@ -904,6 +904,12 @@ function SiteFooter() {
           <Link href="#cadastro" className="hover:text-vox-ink">
             Cadastro
           </Link>
+          <Link href="/termos" className="hover:text-vox-ink">
+            Termos
+          </Link>
+          <Link href="/privacidade" className="hover:text-vox-ink">
+            Privacidade
+          </Link>
         </nav>
       </div>
       <p className="vox-mono mt-8 text-[10px] uppercase tracking-wider text-vox-muted">

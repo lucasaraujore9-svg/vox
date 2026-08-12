@@ -8,6 +8,7 @@
 //  - Histórico de faturas (placeholder até billing integrar)
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
@@ -201,11 +202,21 @@ export function SettingsPlanForm({
               }}
             >
               <p className="font-medium text-vox-ink mb-1">
-                Política de privacidade
+                O que sai daqui quando você usa a IA
               </p>
               <p>
-                O conteúdo enviado para a IA é descartado depois da resposta.
-                Nenhum manuscrito é armazenado ou usado para treinar modelos.
+                Trechos do manuscrito ou a referência escolhida são enviados à
+                OpenAI, nos Estados Unidos, para gerar a resposta. Nada é usado
+                para treinar modelos. A exegese gerada fica num catálogo
+                compartilhado por capítulo, que guarda o estudo bíblico e nunca
+                o texto do seu manuscrito. Detalhes na{" "}
+                <Link
+                  href="/privacidade"
+                  className="text-vox-forest underline underline-offset-4"
+                >
+                  Política de Privacidade
+                </Link>
+                .
               </p>
             </div>
           </CardContent>
