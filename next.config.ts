@@ -12,6 +12,19 @@ const withSerwist = withSerwistInit({
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["@napi-rs/canvas", "sharp", "pdfjs-dist"],
+  // O pdfjs carrega worker, fontes, cmaps e wasm do disco em runtime, e resolve
+  // o @napi-rs/canvas por um require() dinâmico dentro do próprio pacote —
+  // caminhos que o tracer do Next não consegue deduzir. Sem isso o upload de
+  // PDF quebra na Vercel com "Cannot find module …/pdf.worker.mjs".
+  outputFileTracingIncludes: {
+    "/api/sermons/slides/**": [
+      "./node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs",
+      "./node_modules/pdfjs-dist/standard_fonts/**",
+      "./node_modules/pdfjs-dist/cmaps/**",
+      "./node_modules/pdfjs-dist/wasm/**",
+      "./node_modules/@napi-rs/**",
+    ],
+  },
   images: {
     remotePatterns: [
       {

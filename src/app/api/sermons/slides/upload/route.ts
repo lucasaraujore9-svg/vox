@@ -2,6 +2,8 @@
 // Issue 024 · ~50MB por arquivo, output 1280x720, salva no bucket privado sermon-slides.
 // Os slides entram DEPOIS dos que já existem, nunca sobrescrevem a ordem anterior.
 
+import { existsSync } from "node:fs";
+import path from "node:path";
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
@@ -20,23 +22,72 @@ const queryParamsSchema = z.object({
   sermonId: z.string().uuid("sermonId inválido"),
 });
 
+/** Raiz do pacote pdfjs dentro da função. Os assets (fontes, cmaps, wasm) são
+ *  lidos do disco em Node, e vão pro bundle via outputFileTracingIncludes. */
+const PDFJS_ROOT = path.join(process.cwd(), "node_modules", "pdfjs-dist");
+
+/** Só passa a URL se o diretório realmente veio no pacote; senão pdfjs
+ *  erra ao tentar buscar em vez de seguir sem o recurso. */
+function assetDir(name: string): string | undefined {
+  const dir = path.join(PDFJS_ROOT, name);
+  return existsSync(dir) ? `${dir}${path.sep}` : undefined;
+}
+
+let workerRegistration: Promise<void> | null = null;
+
+/**
+ * Em Node o pdfjs roda o worker na própria thread e carrega `pdf.worker.mjs`
+ * por import dinâmico com specifier calculado — o bundler não enxerga, o
+ * arquivo não entra no pacote da função e o upload morre com
+ * "Setting up fake worker failed: Cannot find module …/pdf.worker.mjs".
+ * Registrar o módulo em `globalThis.pdfjsWorker` faz o pdfjs usar este import
+ * estático, que o tracer enxerga.
+ */
+async function registerPdfWorker(): Promise<void> {
+  workerRegistration ??= (async () => {
+    const g = globalThis as typeof globalThis & { pdfjsWorker?: unknown };
+    if (g.pdfjsWorker) return;
+    g.pdfjsWorker = await import("pdfjs-dist/legacy/build/pdf.worker.mjs");
+  })();
+  return workerRegistration;
+}
+
+/** Canvas criado pelo próprio pdfjs. Tipado à mão: o .d.ts expõe como `Object`. */
+interface PdfCanvasAndContext {
+  canvas: { toBuffer(mime: "image/png"): Buffer } | null;
+  context: unknown;
+}
+interface PdfCanvasFactory {
+  create(width: number, height: number): PdfCanvasAndContext;
+  destroy(canvasAndContext: PdfCanvasAndContext): void;
+}
+
 async function pdfToWebpBuffers(pdfBytes: ArrayBuffer): Promise<Buffer[]> {
-  // pdfjs-dist precisa de canvas no Node, usa o reaper que vem com pdfjs-dist >= 4
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
   const sharp = (await import("sharp")).default;
 
-  // Standard fonts são necessárias para evitar warnings de render
+  // Precisa vir antes do primeiro getDocument: o pdfjs resolve o worker uma
+  // única vez por processo e guarda o resultado.
+  await registerPdfWorker();
+
+  // Sem system fonts na Lambda: usa os dados de fonte que vêm no próprio
+  // pacote, senão texto não embutido no PDF sai em branco.
   const loadingTask = pdfjs.getDocument({
     data: new Uint8Array(pdfBytes),
-    useSystemFonts: true,
+    standardFontDataUrl: assetDir("standard_fonts"),
+    cMapUrl: assetDir("cmaps"),
+    cMapPacked: true,
+    wasmUrl: assetDir("wasm"),
   });
   const doc = await loadingTask.promise;
 
-  // Renderiza para um canvas via @napi-rs/canvas; carrega uma vez só.
-  let canvasMod: typeof import("@napi-rs/canvas");
-  try {
-    canvasMod = await import("@napi-rs/canvas");
-  } catch {
+  // O canvas TEM que vir da fábrica do pdfjs. Ele carrega @napi-rs/canvas via
+  // require() interno e usa esse mesmo módulo pra polyfillar globalThis.Path2D;
+  // se importarmos o pacote por fora viram duas instâncias do módulo nativo e
+  // o desenho de glifos quebra com "Value is none of these types String, Path".
+  const canvasFactory = (doc as unknown as { canvasFactory?: PdfCanvasFactory })
+    .canvasFactory;
+  if (!canvasFactory) {
     throw new Error(
       "Conversão de PDF indisponível no servidor. Suba as páginas como imagem (PNG ou JPG) enquanto isso."
     );
@@ -49,23 +100,28 @@ async function pdfToWebpBuffers(pdfBytes: ArrayBuffer): Promise<Buffer[]> {
     const scale = SLIDE_WIDTH / viewport.width;
     const scaled = page.getViewport({ scale });
 
-    const canvas = canvasMod.createCanvas(
+    const canvasAndContext = canvasFactory.create(
       Math.ceil(scaled.width),
       Math.ceil(scaled.height)
     );
-    const ctx = canvas.getContext("2d");
-    await page.render({
-      canvas: canvas as unknown as HTMLCanvasElement,
-      canvasContext: ctx as unknown as CanvasRenderingContext2D,
-      viewport: scaled,
-    }).promise;
+    try {
+      await page.render({
+        canvas: canvasAndContext.canvas as unknown as HTMLCanvasElement,
+        canvasContext: canvasAndContext.context as CanvasRenderingContext2D,
+        viewport: scaled,
+      }).promise;
 
-    const pngBuffer = canvas.toBuffer("image/png");
-    const webp = await sharp(pngBuffer)
-      .resize(SLIDE_WIDTH, SLIDE_HEIGHT, { fit: "contain", background: "#ffffff" })
-      .webp({ quality: 82 })
-      .toBuffer();
-    out.push(webp);
+      const pngBuffer = canvasAndContext.canvas?.toBuffer("image/png");
+      if (!pngBuffer) throw new Error(`Falha ao renderizar a página ${pageNum}`);
+      const webp = await sharp(pngBuffer)
+        .resize(SLIDE_WIDTH, SLIDE_HEIGHT, { fit: "contain", background: "#ffffff" })
+        .webp({ quality: 82 })
+        .toBuffer();
+      out.push(webp);
+    } finally {
+      page.cleanup();
+      canvasFactory.destroy(canvasAndContext);
+    }
   }
   return out;
 }
