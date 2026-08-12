@@ -4,8 +4,17 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
-// Rotas públicas que não exigem autenticação
-const PUBLIC_PATHS = ["/", "/auth/login", "/auth/register", "/templates"];
+// Rotas públicas que não exigem autenticação.
+// /termos e /privacidade PRECISAM ser públicas: a LGPD exige que o titular
+// possa lê-las antes de criar conta, e o rodapé da landing linka as duas.
+const PUBLIC_PATHS = [
+  "/",
+  "/auth/login",
+  "/auth/register",
+  "/templates",
+  "/termos",
+  "/privacidade",
+];
 
 function isPublicPath(pathname: string): boolean {
   if (PUBLIC_PATHS.includes(pathname)) return true;
