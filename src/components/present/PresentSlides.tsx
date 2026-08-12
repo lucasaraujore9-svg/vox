@@ -274,50 +274,67 @@ export function PresentSlides({
 function SlideCommentRender({ slide }: { slide: PresentSlide | undefined }) {
   if (!slide) return null;
 
-  if (slide.comment_items?.sessions?.length) {
+  // Este painel é a tela do apresentador, não a projeção. Mostra TUDO, inclusive
+  // notas pessoais (que a audiência nunca vê) — do contrário um manuscrito de
+  // folha em branco, cujos itens são todos `notas_pessoais`, aparece vazio.
+  const sessionsWithContent = (slide.comment_items?.sessions ?? [])
+    .map((session) => ({
+      session,
+      items: session.items.filter((i) => stripHtml(i.content).trim()),
+    }))
+    .filter((s) => s.items.length > 0);
+
+  if (sessionsWithContent.length > 0) {
     return (
       <div className="space-y-5">
-        {slide.comment_items.sessions.map((session) => {
-          const visibleItems = session.items.filter((i) => VISIBLE_TYPES.has(i.type));
-          if (visibleItems.length === 0) return null;
-          return (
-            <div key={session.id} className="space-y-4">
-              {session.title ? (
-                <p className="vox-eyebrow opacity-60 text-xs">{session.title}</p>
-              ) : null}
-              {visibleItems.map((item) => {
-                const t = getBlockType(item.type);
-                if (!t || !stripHtml(item.content).trim()) return null;
-                const isScripture = item.type === "texto_biblico";
-                const isQuote = item.type === "citacao";
-                return (
-                  <div
-                    key={item.id}
-                    className="pl-4"
-                    style={{ borderLeft: `2px solid ${t.color}` }}
-                  >
+        {sessionsWithContent.map(({ session, items }) => (
+          <div key={session.id} className="space-y-4">
+            {session.title ? (
+              <p className="vox-eyebrow opacity-60 text-xs">{session.title}</p>
+            ) : null}
+            {items.map((item) => {
+              const t = getBlockType(item.type);
+              if (!t) return null;
+              const isScripture = item.type === "texto_biblico";
+              const isQuote = item.type === "citacao";
+              const isPrivate = !VISIBLE_TYPES.has(item.type);
+              return (
+                <div
+                  key={item.id}
+                  className="pl-4"
+                  style={{ borderLeft: `2px solid ${t.color}` }}
+                >
+                  <div className="flex items-center gap-2 mb-1.5">
                     <p
-                      className="vox-eyebrow opacity-60 mb-1.5 text-xs"
+                      className="vox-eyebrow opacity-60 text-xs"
                       style={{ color: t.color }}
                     >
                       {t.label}
                     </p>
-                    <ItemContent
-                      html={item.content}
-                      style={{
-                        fontFamily: "var(--vox-font-display)",
-                        fontStyle: isScripture || isQuote ? "italic" : "normal",
-                        fontSize: "22px",
-                        lineHeight: 1.5,
-                        color: isScripture ? "var(--vox-gold)" : "#F1EDE7",
-                      }}
-                    />
+                    {isPrivate ? (
+                      <span
+                        className="vox-mono italic opacity-50"
+                        style={{ fontSize: "10px" }}
+                      >
+                        (só você)
+                      </span>
+                    ) : null}
                   </div>
-                );
-              })}
-            </div>
-          );
-        })}
+                  <ItemContent
+                    html={item.content}
+                    style={{
+                      fontFamily: "var(--vox-font-display)",
+                      fontStyle: isScripture || isQuote ? "italic" : "normal",
+                      fontSize: "22px",
+                      lineHeight: 1.5,
+                      color: isScripture ? "var(--vox-gold)" : "#F1EDE7",
+                    }}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        ))}
       </div>
     );
   }
@@ -341,9 +358,10 @@ function SlideCommentRender({ slide }: { slide: PresentSlide | undefined }) {
 
 function NextSlideBlock({ slide }: { slide: PresentSlide }) {
   // Primeiro item visível do próximo slide pra exibir como pré-aviso textual
+  // Prévia do próximo slide, também só para os olhos do apresentador.
   const firstItem = slide.comment_items?.sessions
     ?.flatMap((s) => s.items)
-    .find((i) => VISIBLE_TYPES.has(i.type));
+    .find((i) => stripHtml(i.content).trim());
   const blockType = firstItem ? getBlockType(firstItem.type) : null;
 
   return (

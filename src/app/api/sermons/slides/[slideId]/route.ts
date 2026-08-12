@@ -1,20 +1,24 @@
 // Ações sobre um slide específico.
 //   DELETE → apaga o slide, o arquivo no Storage e renumera os que sobraram.
-//   PUT    → substitui a imagem do slide (PDF de 1 página, PNG, JPG ou WebP).
+//   PUT    → substitui a imagem do slide (PNG, JPG ou WebP).
+//
+// Como no upload, a imagem não vem no corpo: o navegador sobe direto pro
+// Storage e manda o caminho, senão a Vercel recusa arquivos acima de ~4.5MB.
 
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { SLIDES_BUCKET, isValidSourcePath } from "@/lib/sermons/slide-sources";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-const MAX_BYTES = 50 * 1024 * 1024;
 const SLIDE_WIDTH = 1280;
 const SLIDE_HEIGHT = 720;
 
 const paramsSchema = z.object({ slideId: z.string().uuid() });
+const putBodySchema = z.object({ source: z.string().min(1).max(400) });
 
 interface OwnedSlide {
   id: string;
@@ -76,7 +80,7 @@ export async function DELETE(
 
   if (slide.storage_path) {
     // Falha aqui não invalida a exclusão: o registro já saiu.
-    await supabase.storage.from("sermon-slides").remove([slide.storage_path]);
+    await supabase.storage.from(SLIDES_BUCKET).remove([slide.storage_path]);
   }
 
   // Renumera os que ficaram, pra não deixar buraco na sequência.
@@ -119,45 +123,48 @@ export async function PUT(
     return NextResponse.json({ error: "Slide não encontrado" }, { status: 404 });
   }
 
-  const formData = await request.formData();
-  const file = formData.get("file");
-  if (!(file instanceof File) || file.size === 0) {
+  const body = await request.json().catch(() => null);
+  const parsedBody = putBodySchema.safeParse(body);
+  if (!parsedBody.success) {
     return NextResponse.json({ error: "Nenhum arquivo enviado" }, { status: 400 });
   }
-  if (file.size > MAX_BYTES) {
-    return NextResponse.json({ error: "Arquivo passa de 50MB" }, { status: 413 });
-  }
-
-  const name = file.name.toLowerCase();
-  const isImage =
-    file.type.startsWith("image/") ||
-    [".png", ".jpg", ".jpeg", ".webp"].some((e) => name.endsWith(e));
-  if (!isImage) {
+  const { source } = parsedBody.data;
+  if (
+    !isValidSourcePath(source, user.id, slide.sermon_id) ||
+    source.toLowerCase().endsWith(".pdf")
+  ) {
     return NextResponse.json(
       { error: "Envie uma imagem (PNG, JPG ou WebP) para substituir o slide." },
-      { status: 415 }
+      { status: 400 }
     );
   }
 
+  const storage = supabase.storage.from(SLIDES_BUCKET);
+
   let webp: Buffer;
   try {
+    const { data: blob, error: downloadError } = await storage.download(source);
+    if (downloadError || !blob) throw new Error("download");
     const sharp = (await import("sharp")).default;
-    webp = await sharp(Buffer.from(await file.arrayBuffer()))
+    webp = await sharp(Buffer.from(await blob.arrayBuffer()))
       .resize(SLIDE_WIDTH, SLIDE_HEIGHT, { fit: "contain", background: "#ffffff" })
       .webp({ quality: 82 })
       .toBuffer();
   } catch {
+    await storage.remove([source]).catch(() => null);
     return NextResponse.json(
       { error: "Não consegui ler essa imagem" },
       { status: 422 }
     );
   }
+  await storage.remove([source]).catch(() => null);
 
   const batch = crypto.randomUUID().slice(0, 8);
   const storagePath = `${user.id}/${slide.sermon_id}/${batch}-${String(slide.order).padStart(3, "0")}.webp`;
-  const uploadRes = await supabase.storage
-    .from("sermon-slides")
-    .upload(storagePath, webp, { contentType: "image/webp", upsert: true });
+  const uploadRes = await storage.upload(storagePath, webp, {
+    contentType: "image/webp",
+    upsert: true,
+  });
   if (uploadRes.error) {
     return NextResponse.json({ error: uploadRes.error.message }, { status: 500 });
   }
@@ -167,13 +174,13 @@ export async function PUT(
     .update({ image_url: null, storage_path: storagePath })
     .eq("id", slide.id);
   if (updateError) {
-    await supabase.storage.from("sermon-slides").remove([storagePath]);
+    await supabase.storage.from(SLIDES_BUCKET).remove([storagePath]);
     return NextResponse.json({ error: updateError.message }, { status: 500 });
   }
 
   // Remove o arquivo antigo só depois que o novo já está apontado.
   if (slide.storage_path && slide.storage_path !== storagePath) {
-    await supabase.storage.from("sermon-slides").remove([slide.storage_path]);
+    await supabase.storage.from(SLIDES_BUCKET).remove([slide.storage_path]);
   }
 
   return NextResponse.json({ ok: true });

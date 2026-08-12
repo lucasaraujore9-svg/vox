@@ -29,6 +29,8 @@ const FONT_SIZE: Record<FontSize, { px: number; lh: number }> = {
 
 const FONT_ORDER: FontSize[] = ["sm", "md", "lg", "xl"];
 
+/** Tipos que a audiência pode ver. Aqui serve só pra marcar o que é privado:
+ *  o teleprompter mostra tudo, mas sinaliza o que jamais vai pra projeção. */
 const VISIBLE_TYPES = new Set<BlockTypeId>(
   VOX_BLOCK_TYPES.filter((b) => b.visibleInPresentation).map((b) => b.id)
 );
@@ -104,8 +106,9 @@ export function PresentSessions({
 
   const total = sessions.length;
   const current = sessions[index];
-  const visibleItems =
-    current?.items.filter((item) => VISIBLE_TYPES.has(item.type)) ?? [];
+  // Teleprompter é a tela de quem prega, não a projeção: mostra tudo, inclusive
+  // notas pessoais. Só a AudienceView e a projeção filtram por visibilidade.
+  const visibleItems = current?.items ?? [];
   const peek = nextSessionPeek(sessions, index);
 
   const next = useCallback(() => setIndex((i) => Math.min(i + 1, total - 1)), [total]);
@@ -246,12 +249,22 @@ export function PresentSessions({
                   className="relative pl-4 sm:pl-5"
                   style={{ borderLeft: `2px solid ${t.color}` }}
                 >
-                  <p
-                    className="vox-eyebrow opacity-60 mb-2"
-                    style={{ color: t.color }}
-                  >
-                    {t.label}
-                  </p>
+                  <div className="flex items-center gap-2 mb-2">
+                    <p
+                      className="vox-eyebrow opacity-60"
+                      style={{ color: t.color }}
+                    >
+                      {t.label}
+                    </p>
+                    {!VISIBLE_TYPES.has(item.type) ? (
+                      <span
+                        className="vox-mono italic opacity-50"
+                        style={{ fontSize: "10px" }}
+                      >
+                        (só você)
+                      </span>
+                    ) : null}
+                  </div>
                   <ItemContent
                     html={item.content}
                     style={{

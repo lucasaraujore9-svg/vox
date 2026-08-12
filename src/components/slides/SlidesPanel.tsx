@@ -28,8 +28,12 @@ import {
 } from "@/lib/sermons/sessions";
 import type { FrameworkId } from "@/lib/mocks/frameworks";
 import { termsFor } from "@/lib/sermons/terminology";
+import { uploadSlideSources } from "@/lib/sermons/slide-sources";
 import type { ContentType } from "@/types/database";
 import { cn } from "@/lib/utils";
+
+/** Fase do envio, só pra rotular o botão com a verdade do que está rolando. */
+type UploadStage = "idle" | "sending" | "converting";
 
 export interface SlideItem {
   id: string;
@@ -61,6 +65,7 @@ export function SlidesPanel({
   const terms = termsFor(contentType);
   const [selectedId, setSelectedId] = useState<string | null>(slides[0]?.id ?? null);
   const [busy, setBusy] = useState(false);
+  const [stage, setStage] = useState<UploadStage>("idle");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const initialContents = useMemo(
@@ -85,12 +90,18 @@ export function SlidesPanel({
       const list = Array.from(files);
       if (list.length === 0) return;
       setBusy(true);
+      setStage("sending");
       try {
-        const form = new FormData();
-        for (const file of list) form.append("file", file);
+        // O arquivo vai direto pro Storage; a rota recebe só o caminho.
+        const sources = await uploadSlideSources(createClient(), sermonId, list);
+        setStage("converting");
         const res = await fetch(
           `/api/sermons/slides/upload?sermonId=${sermonId}`,
-          { method: "POST", body: form }
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sources }),
+          }
         );
         const body = (await res.json().catch(() => null)) as
           | { error?: string; slidesCreated?: number }
@@ -106,6 +117,7 @@ export function SlidesPanel({
           description: err instanceof Error ? err.message : undefined,
         });
       } finally {
+        setStage("idle");
         setBusy(false);
       }
     },
@@ -134,13 +146,16 @@ export function SlidesPanel({
 
   const replaceImage = useCallback(
     async (slideId: string, file: File) => {
+      if (!sermonId) return;
       setBusy(true);
+      setStage("sending");
       try {
-        const form = new FormData();
-        form.append("file", file);
+        const [source] = await uploadSlideSources(createClient(), sermonId, [file]);
+        setStage("converting");
         const res = await fetch(`/api/sermons/slides/${slideId}`, {
           method: "PUT",
-          body: form,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ source }),
         });
         const body = (await res.json().catch(() => null)) as { error?: string } | null;
         if (!res.ok) throw new Error(body?.error ?? `Erro ${res.status}`);
@@ -151,10 +166,11 @@ export function SlidesPanel({
           description: err instanceof Error ? err.message : undefined,
         });
       } finally {
+        setStage("idle");
         setBusy(false);
       }
     },
-    [router]
+    [sermonId, router]
   );
 
   const deleteSlide = useCallback(async () => {
@@ -282,7 +298,7 @@ export function SlidesPanel({
         {isEmpty ? (
           <SlideDropzone
             disabled={!canEdit || busy}
-            busy={busy}
+            stage={stage}
             onFiles={(files) => void uploadFiles(files)}
             onBlank={() => void addBlankSlide()}
             contentLabel={`${terms.demonstrative === "este" ? "deste" : "desta"} ${terms.labelLower}`}
@@ -351,13 +367,13 @@ export function SlidesPanel({
 /** Estado vazio de verdade: arrasta o arquivo, escolhe do disco ou começa em branco. */
 function SlideDropzone({
   disabled,
-  busy,
+  stage,
   onFiles,
   onBlank,
   contentLabel,
 }: {
   disabled: boolean;
-  busy: boolean;
+  stage: UploadStage;
   onFiles: (files: FileList | File[]) => void;
   onBlank: () => void;
   contentLabel: string;
@@ -404,7 +420,11 @@ function SlideDropzone({
           variant="default"
           size="default"
         >
-          {busy ? "Processando…" : "Escolher arquivo"}
+          {stage === "sending"
+            ? "Enviando…"
+            : stage === "converting"
+              ? "Convertendo…"
+              : "Escolher arquivo"}
         </FilePickerButton>
         <Button variant="outline" onClick={onBlank} disabled={disabled}>
           Começar em branco

@@ -1,25 +1,35 @@
-// Route Handler, upload de PDF (ou imagens) e conversão server-side em slides WebP.
-// Issue 024 · ~50MB por arquivo, output 1280x720, salva no bucket privado sermon-slides.
+// Route Handler, conversão server-side de PDF (ou imagens) em slides WebP.
+// Issue 024 · output 1280x720, salva no bucket privado sermon-slides.
 // Os slides entram DEPOIS dos que já existem, nunca sobrescrevem a ordem anterior.
+//
+// O arquivo NÃO vem no corpo: o navegador sobe direto pro Storage e manda só o
+// caminho. Corpo acima de ~4.5MB é recusado pela Vercel com
+// 413 FUNCTION_PAYLOAD_TOO_LARGE antes deste handler existir. Ver slide-sources.ts.
 
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import {
+  SLIDES_BUCKET,
+  isPdfName,
+  isValidSourcePath,
+} from "@/lib/sermons/slide-sources";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 60;
+export const maxDuration = 300;
 
-const MAX_BYTES = 50 * 1024 * 1024;
 const SLIDE_WIDTH = 1280;
 const SLIDE_HEIGHT = 720;
 
-const IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp"];
-
 const queryParamsSchema = z.object({
   sermonId: z.string().uuid("sermonId inválido"),
+});
+
+const bodySchema = z.object({
+  sources: z.array(z.string().min(1).max(400)).min(1).max(20),
 });
 
 /** Raiz do pacote pdfjs dentro da função. Os assets (fontes, cmaps, wasm) são
@@ -134,19 +144,6 @@ async function imageToWebpBuffer(bytes: ArrayBuffer): Promise<Buffer> {
     .toBuffer();
 }
 
-function isPdfFile(file: File): boolean {
-  return (
-    file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")
-  );
-}
-
-function isImageFile(file: File): boolean {
-  const name = file.name.toLowerCase();
-  return (
-    file.type.startsWith("image/") || IMAGE_EXTENSIONS.some((e) => name.endsWith(e))
-  );
-}
-
 export async function POST(request: NextRequest) {
   const params = queryParamsSchema.safeParse({
     sermonId: request.nextUrl.searchParams.get("sermonId"),
@@ -178,44 +175,42 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Conteúdo não encontrado" }, { status: 404 });
   }
 
-  const formData = await request.formData();
-  const files = formData
-    .getAll("file")
-    .filter((f): f is File => f instanceof File && f.size > 0);
-  if (files.length === 0) {
+  const body = await request.json().catch(() => null);
+  const parsedBody = bodySchema.safeParse(body);
+  if (!parsedBody.success) {
     return NextResponse.json({ error: "Nenhum arquivo enviado" }, { status: 400 });
   }
-  const tooBig = files.find((f) => f.size > MAX_BYTES);
-  if (tooBig) {
-    return NextResponse.json(
-      { error: `"${tooBig.name}" passa de 50MB` },
-      { status: 413 }
-    );
-  }
-  const unsupported = files.find((f) => !isPdfFile(f) && !isImageFile(f));
-  if (unsupported) {
-    return NextResponse.json(
-      {
-        error:
-          `"${unsupported.name}" não é suportado. Envie PDF, PNG, JPG ou WebP. ` +
-          "Para PPT, exporte como PDF no PowerPoint ou Keynote antes.",
-      },
-      { status: 415 }
-    );
+  const { sources } = parsedBody.data;
+
+  // O caminho vem do cliente: confere que aponta pra pasta deste usuário e
+  // deste conteúdo antes de tocar no Storage.
+  const invalid = sources.find((s) => !isValidSourcePath(s, user.id, sermonId));
+  if (invalid) {
+    return NextResponse.json({ error: "Arquivo inválido" }, { status: 400 });
   }
 
-  // Converte tudo antes de tocar no Storage, pra não deixar lixo se falhar no meio.
+  const storage = supabase.storage.from(SLIDES_BUCKET);
+
+  // Converte tudo antes de gravar slide algum, pra não deixar meia apresentação
+  // se falhar no meio. Os fontes temporários somem no finally, dê no que der.
   const webpBuffers: Buffer[] = [];
   try {
-    for (const file of files) {
-      const bytes = await file.arrayBuffer();
-      if (isPdfFile(file)) {
+    for (const source of sources) {
+      const { data: blob, error: downloadError } = await storage.download(source);
+      if (downloadError || !blob) {
+        throw new Error(
+          `Não consegui ler o arquivo enviado${downloadError ? `: ${downloadError.message}` : ""}`
+        );
+      }
+      const bytes = await blob.arrayBuffer();
+      if (isPdfName(source)) {
         webpBuffers.push(...(await pdfToWebpBuffers(bytes)));
       } else {
         webpBuffers.push(await imageToWebpBuffer(bytes));
       }
     }
   } catch (err) {
+    await storage.remove(sources).catch(() => null);
     return NextResponse.json(
       {
         error:
@@ -226,6 +221,9 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+
+  // Já temos tudo convertido em memória: o fonte não serve mais pra nada.
+  await storage.remove(sources).catch(() => null);
 
   if (webpBuffers.length === 0) {
     return NextResponse.json(
@@ -253,12 +251,10 @@ export async function POST(request: NextRequest) {
     const storagePath = `${user.id}/${sermonId}/${batch}-${String(order).padStart(3, "0")}.webp`;
     const buf = webpBuffers[i];
     if (!buf) continue;
-    const uploadRes = await supabase.storage
-      .from("sermon-slides")
-      .upload(storagePath, buf, {
-        contentType: "image/webp",
-        upsert: true,
-      });
+    const uploadRes = await storage.upload(storagePath, buf, {
+      contentType: "image/webp",
+      upsert: true,
+    });
     if (uploadRes.error) {
       return NextResponse.json(
         { error: `Falha no upload do slide ${order}: ${uploadRes.error.message}` },
@@ -278,9 +274,7 @@ export async function POST(request: NextRequest) {
   const { error: insertError } = await supabase.from("slides").insert(rows);
   if (insertError) {
     // Limpa os arquivos órfãos do Storage antes de devolver o erro.
-    await supabase.storage
-      .from("sermon-slides")
-      .remove(inserted.map((s) => s.storage_path));
+    await storage.remove(inserted.map((s) => s.storage_path));
     return NextResponse.json(
       { error: `Falha ao salvar slides: ${insertError.message}` },
       { status: 500 }
