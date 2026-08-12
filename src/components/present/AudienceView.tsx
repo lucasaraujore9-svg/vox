@@ -11,6 +11,7 @@ import {
   VOX_BLOCK_TYPES,
   getBlockType,
   type BlockTypeId,
+  blockColor,
 } from "@/lib/mocks/blocks";
 import type { SessionNode } from "@/lib/sermons/sessions";
 import type { SlideItem } from "@/components/slides/SlidesPanel";
@@ -184,7 +185,7 @@ function SlideRender({ slide }: { slide: SlideItem }) {
       <article className="max-w-5xl px-16 text-center">
         <p
           className="vox-eyebrow opacity-60 mb-6"
-          style={{ color: blockType.color }}
+          style={{ color: blockColor(blockType.id, true) }}
         >
           {blockType.label}
         </p>
@@ -226,7 +227,7 @@ function SessionRender({ session }: { session: SessionNode }) {
             <div
               key={item.id}
               className="pl-5"
-              style={{ borderLeft: `2px solid ${t.color}` }}
+              style={{ borderLeft: `2px solid ${blockColor(t.id, true)}` }}
             >
               <ItemContent
                 html={item.content}

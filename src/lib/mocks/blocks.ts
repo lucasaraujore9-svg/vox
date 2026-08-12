@@ -139,3 +139,35 @@ export const VOX_BLOCK_TYPES: readonly BlockType[] = [
 export function getBlockType(id: BlockTypeId): BlockType | undefined {
   return VOX_BLOCK_TYPES.find((b) => b.id === id);
 }
+
+/**
+ * Versão de palco das cores dos blocos.
+ *
+ * As cores acima são calibradas para o Parchment (#F9F7F4). Sobre o fundo do
+ * palco a maioria despenca: `conclusao` usa --vox-ink e chega a 1.01:1, ou seja,
+ * some. Aqui cada bloco mantém sua família cromática, com a luminosidade
+ * ajustada para a superfície escura — todos acima de 4.5:1.
+ */
+const STAGE_COLORS: Record<BlockTypeId, string> = {
+  texto_biblico: "var(--vox-gold)", // já clareado no bloco .stage do globals.css
+  introducao: "#5FBF7F",
+  contexto: "#9FB0C4",
+  proposicao: "#5FBF7F",
+  ponto_principal: "#5FBF7F",
+  subponto: "#7FD199",
+  desenvolvimento: "#A3B2C4",
+  ilustracao: "#B18CF5",
+  aplicacao: "#4FC0C0",
+  citacao: "#F0A93C",
+  pergunta_retorica: "#C79BF7",
+  transicao: "#D6DEE6",
+  conclusao: "#E4E2DD",
+  oracao: "#8FD1A6",
+  notas_pessoais: "#9BB0AA",
+};
+
+/** Cor do bloco para a superfície em uso. */
+export function blockColor(id: BlockTypeId, onStage: boolean): string {
+  if (onStage) return STAGE_COLORS[id];
+  return getBlockType(id)?.color ?? "var(--vox-muted)";
+}

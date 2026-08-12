@@ -177,6 +177,12 @@
   --sidebar-accent-foreground: #F1EDE7;
   --sidebar-border: rgba(255, 255, 255, 0.08);
   --sidebar-ring: var(--vox-forest-mid);
+
+  /* Scripture Gold é calibrado para o Parchment. Sobre o palco escuro ele cai
+     para 3.5:1 e a referência bíblica fica ilegível justo em quem está pregando.
+     Mesma cor, mesmo papel semântico, luminosidade adaptada à superfície: 8.3:1. */
+  --vox-gold: #E9A23B;
+  --vox-gold-soft: rgba(233, 162, 59, 0.14);
 }
 
 /* =========================================================================

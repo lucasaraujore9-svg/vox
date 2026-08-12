@@ -8,11 +8,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  VOX_BLOCK_TYPES,
-  type BlockTypeId,
-  getBlockType,
-} from "@/lib/mocks/blocks";
+import { getBlockType, blockColor } from "@/lib/mocks/blocks";
 import type { SermonContent } from "@/lib/sermons/sessions";
 import {
   openChannel,
@@ -23,9 +19,21 @@ import {
 import { ItemContent } from "@/components/present/ItemContent";
 import { stripHtml, previewSnippet } from "@/lib/editor/html";
 
-const VISIBLE_TYPES = new Set<BlockTypeId>(
-  VOX_BLOCK_TYPES.filter((b) => b.visibleInPresentation).map((b) => b.id)
-);
+/** Escala de leitura do comentário. Quem prega ajusta conforme a distância. */
+const NOTE_SIZES = {
+  sm: { px: 17, lh: 1.5 },
+  md: { px: 20, lh: 1.55 },
+  lg: { px: 24, lh: 1.55 },
+  xl: { px: 29, lh: 1.5 },
+} as const;
+
+type NoteSize = keyof typeof NOTE_SIZES;
+const NOTE_ORDER: NoteSize[] = ["sm", "md", "lg", "xl"];
+
+/** Texto do comentário: quase branco, sem opacidade, pra ler de relance. */
+const NOTE_INK = "#F5F2ED";
+/** Rótulos e títulos de sessão: legível, mas claramente secundário. */
+const NOTE_MUTED = "#9BB0AA";
 
 export interface PresentSlide {
   id: string;
@@ -52,6 +60,7 @@ export function PresentSlides({
 }: PresentSlidesProps) {
   const [index, setIndex] = useState(0);
   const [showComment, setShowComment] = useState(true);
+  const [noteSize, setNoteSize] = useState<NoteSize>("md");
   const [audienceConnected, setAudienceConnected] = useState(false);
   const channelRef = useRef<BroadcastChannel | null>(null);
   const audienceWindowRef = useRef<Window | null>(null);
@@ -176,7 +185,7 @@ export function PresentSlides({
       <main
         className={
           showComment
-            ? "flex-1 grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6 p-6 min-h-0"
+            ? "flex-1 grid grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] gap-6 p-6 min-h-0"
             : "flex-1 p-6 min-h-0"
         }
       >
@@ -206,28 +215,42 @@ export function PresentSlides({
           ) : null}
         </section>
 
-        {/* Painel direito: comentário + thumbnail do próximo */}
+        {/* Painel direito: cabeçalho fixo, comentário rolando, próximo slide ancorado.
+            O "próximo" não pode sumir com o scroll: é o que evita ser pego de surpresa. */}
         {showComment ? (
           <aside
-            className="rounded-xl p-6 overflow-y-auto min-h-0"
+            className="rounded-xl flex flex-col min-h-0 overflow-hidden"
             style={{
-              background: "#11171B",
-              border: "1px solid rgba(255,255,255,0.08)",
+              background: "#12181A",
+              border: "1px solid rgba(255,255,255,0.10)",
             }}
           >
-            <p className="vox-eyebrow opacity-60 mb-4">Comentário do slide</p>
-            <SlideCommentRender slide={current} />
+            <div
+              className="shrink-0 flex items-center justify-between gap-3 px-5 py-3"
+              style={{ borderBottom: "1px solid rgba(255,255,255,0.10)" }}
+            >
+              <p className="vox-eyebrow" style={{ color: NOTE_MUTED }}>
+                Comentário do slide
+              </p>
+              <NoteSizeControl value={noteSize} onChange={setNoteSize} />
+            </div>
 
-            {next ? (
-              <NextSlideBlock slide={next} />
-            ) : (
-              <div
-                className="mt-7 pt-5"
-                style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
-              >
-                <p className="vox-eyebrow opacity-50 text-xs">Fim da apresentação</p>
-              </div>
-            )}
+            <div className="flex-1 overflow-y-auto min-h-0 px-5 py-5">
+              <SlideCommentRender slide={current} size={noteSize} />
+            </div>
+
+            <div
+              className="shrink-0 px-5 py-4"
+              style={{ borderTop: "1px solid rgba(255,255,255,0.10)" }}
+            >
+              {next ? (
+                <NextSlideBlock slide={next} />
+              ) : (
+                <p className="vox-eyebrow text-xs" style={{ color: NOTE_MUTED }}>
+                  Último slide
+                </p>
+              )}
+            </div>
           </aside>
         ) : null}
       </main>
@@ -271,8 +294,54 @@ export function PresentSlides({
   );
 }
 
-function SlideCommentRender({ slide }: { slide: PresentSlide | undefined }) {
+/** Controle A− / A+ do tamanho do comentário. */
+function NoteSizeControl({
+  value,
+  onChange,
+}: {
+  value: NoteSize;
+  onChange: (next: NoteSize) => void;
+}) {
+  const i = NOTE_ORDER.indexOf(value);
+  function step(delta: number) {
+    const next = NOTE_ORDER[Math.min(Math.max(i + delta, 0), NOTE_ORDER.length - 1)];
+    if (next) onChange(next);
+  }
+  return (
+    <div className="flex items-center gap-1 shrink-0">
+      <button
+        type="button"
+        onClick={() => step(-1)}
+        disabled={i === 0}
+        aria-label="Diminuir o texto"
+        className="size-7 rounded flex items-center justify-center transition-colors hover:bg-white/10 disabled:opacity-30"
+        style={{ color: NOTE_MUTED, fontSize: "13px" }}
+      >
+        A−
+      </button>
+      <button
+        type="button"
+        onClick={() => step(1)}
+        disabled={i === NOTE_ORDER.length - 1}
+        aria-label="Aumentar o texto"
+        className="size-7 rounded flex items-center justify-center transition-colors hover:bg-white/10 disabled:opacity-30"
+        style={{ color: NOTE_MUTED, fontSize: "16px" }}
+      >
+        A+
+      </button>
+    </div>
+  );
+}
+
+function SlideCommentRender({
+  slide,
+  size,
+}: {
+  slide: PresentSlide | undefined;
+  size: NoteSize;
+}) {
   if (!slide) return null;
+  const scale = NOTE_SIZES[size];
 
   // Este painel é a tela do apresentador, não a projeção. Mostra TUDO, inclusive
   // notas pessoais (que a audiência nunca vê) — do contrário um manuscrito de
@@ -286,54 +355,72 @@ function SlideCommentRender({ slide }: { slide: PresentSlide | undefined }) {
 
   if (sessionsWithContent.length > 0) {
     return (
-      <div className="space-y-5">
-        {sessionsWithContent.map(({ session, items }) => (
-          <div key={session.id} className="space-y-4">
+      <div>
+        {sessionsWithContent.map(({ session, items }, sIdx) => (
+          <section
+            key={session.id}
+            className={sIdx > 0 ? "mt-7 pt-7" : ""}
+            style={
+              sIdx > 0
+                ? { borderTop: "1px solid rgba(255,255,255,0.10)" }
+                : undefined
+            }
+          >
             {session.title ? (
-              <p className="vox-eyebrow opacity-60 text-xs">{session.title}</p>
+              <h3
+                className="vox-eyebrow mb-4"
+                style={{ color: NOTE_MUTED, fontSize: "12px" }}
+              >
+                {session.title}
+              </h3>
             ) : null}
-            {items.map((item) => {
-              const t = getBlockType(item.type);
-              if (!t) return null;
-              const isScripture = item.type === "texto_biblico";
-              const isQuote = item.type === "citacao";
-              const isPrivate = !VISIBLE_TYPES.has(item.type);
-              return (
-                <div
-                  key={item.id}
-                  className="pl-4"
-                  style={{ borderLeft: `2px solid ${t.color}` }}
-                >
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <p
-                      className="vox-eyebrow opacity-60 text-xs"
-                      style={{ color: t.color }}
-                    >
-                      {t.label}
-                    </p>
-                    {isPrivate ? (
-                      <span
-                        className="vox-mono italic opacity-50"
-                        style={{ fontSize: "10px" }}
-                      >
-                        (só você)
-                      </span>
-                    ) : null}
-                  </div>
-                  <ItemContent
-                    html={item.content}
+            <div className="space-y-5">
+              {items.map((item) => {
+                const t = getBlockType(item.type);
+                if (!t) return null;
+                const isScripture = item.type === "texto_biblico";
+                const isQuote = item.type === "citacao";
+                // Nota pessoal é o tipo padrão da folha em branco: repetir o
+                // rótulo em cada parágrafo vira ruído e come o texto de verdade.
+                const isPlainNote = item.type === "notas_pessoais";
+                const verbatim = isScripture || isQuote;
+                return (
+                  <div
+                    key={item.id}
+                    className="pl-4"
                     style={{
-                      fontFamily: "var(--vox-font-display)",
-                      fontStyle: isScripture || isQuote ? "italic" : "normal",
-                      fontSize: "22px",
-                      lineHeight: 1.5,
-                      color: isScripture ? "var(--vox-gold)" : "#F1EDE7",
+                      borderLeft: `3px solid ${
+                        isPlainNote ? "rgba(255,255,255,0.16)" : t.color
+                      }`,
                     }}
-                  />
-                </div>
-              );
-            })}
-          </div>
+                  >
+                    {!isPlainNote ? (
+                      <p
+                        className="vox-eyebrow mb-1.5"
+                        style={{ color: blockColor(t.id, true), fontSize: "11px" }}
+                      >
+                        {t.label}
+                      </p>
+                    ) : null}
+                    <ItemContent
+                      html={item.content}
+                      style={{
+                        // Trecho pra ler em voz alta mantém o serif em itálico;
+                        // nota de apoio vai na fonte de UI, que se lê de relance.
+                        fontFamily: verbatim
+                          ? "var(--vox-font-display)"
+                          : "var(--vox-font-ui)",
+                        fontStyle: verbatim ? "italic" : "normal",
+                        fontSize: `${scale.px}px`,
+                        lineHeight: scale.lh,
+                        color: isScripture ? "var(--vox-gold)" : NOTE_INK,
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </section>
         ))}
       </div>
     );
@@ -343,9 +430,10 @@ function SlideCommentRender({ slide }: { slide: PresentSlide | undefined }) {
     return (
       <p
         style={{
-          fontFamily: "var(--vox-font-display)",
-          fontSize: "24px",
-          lineHeight: 1.5,
+          fontFamily: "var(--vox-font-ui)",
+          fontSize: `${scale.px}px`,
+          lineHeight: scale.lh,
+          color: NOTE_INK,
         }}
       >
         {slide.comment}
@@ -353,7 +441,11 @@ function SlideCommentRender({ slide }: { slide: PresentSlide | undefined }) {
     );
   }
 
-  return <p className="opacity-50 italic">Sem comentário pra este slide.</p>;
+  return (
+    <p className="italic" style={{ color: NOTE_MUTED }}>
+      Sem comentário pra este slide.
+    </p>
+  );
 }
 
 function NextSlideBlock({ slide }: { slide: PresentSlide }) {
@@ -365,74 +457,58 @@ function NextSlideBlock({ slide }: { slide: PresentSlide }) {
   const blockType = firstItem ? getBlockType(firstItem.type) : null;
 
   return (
-    <div
-      className="mt-7 pt-5"
-      style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
-    >
-      <p className="vox-eyebrow opacity-50 text-xs mb-3">Próximo slide</p>
+    <div className="flex items-start gap-4">
+      <div className="flex-1 min-w-0 order-2">
+        <p
+          className="vox-eyebrow mb-2"
+          style={{ color: NOTE_MUTED, fontSize: "11px" }}
+        >
+          Próximo · slide {String(slide.order).padStart(2, "0")}
+        </p>
+        {firstItem && blockType ? (
+          <p
+            className="line-clamp-3"
+            style={{
+              fontFamily: "var(--vox-font-ui)",
+              fontSize: "14px",
+              lineHeight: 1.45,
+              color: "rgba(245,242,237,0.72)",
+            }}
+          >
+            {previewSnippet(firstItem.content, 140)}
+          </p>
+        ) : (
+          <p className="vox-mono text-xs" style={{ color: NOTE_MUTED }}>
+            Sem comentário
+          </p>
+        )}
+      </div>
 
-      {/* Thumbnail visual com aspect-video, mesma estética do slide grande */}
+      {/* Miniatura compacta: referência visual, não protagonista. */}
       <div
-        className="rounded-lg aspect-video overflow-hidden relative"
+        className="rounded-lg aspect-video w-36 shrink-0 overflow-hidden relative order-1"
         style={{
           background: slide.image_url
             ? `url(${slide.image_url}) center / cover`
             : "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.08)",
+          border: "1px solid rgba(255,255,255,0.10)",
         }}
       >
         {!slide.image_url ? (
-          <div className="absolute inset-0 flex items-center gap-4 px-5">
+          <div className="absolute inset-0 flex items-center justify-center">
             <span
-              className="vox-mono opacity-30 shrink-0"
+              className="vox-mono opacity-30"
               style={{
-                fontSize: "44px",
+                fontSize: "28px",
                 fontFamily: "var(--vox-font-display)",
                 lineHeight: 1,
               }}
             >
               {String(slide.order).padStart(2, "0")}
             </span>
-            {blockType && firstItem ? (
-              <div className="flex-1 min-w-0 text-left">
-                <p
-                  className="vox-eyebrow opacity-70 text-xs mb-1"
-                  style={{ color: blockType.color }}
-                >
-                  {blockType.label}
-                </p>
-                <p
-                  className="line-clamp-2 opacity-80"
-                  style={{
-                    fontFamily: "var(--vox-font-display)",
-                    fontStyle: firstItem.type === "texto_biblico" ? "italic" : "normal",
-                    fontSize: "13px",
-                    lineHeight: 1.4,
-                  }}
-                >
-                  {previewSnippet(firstItem.content, 120)}
-                </p>
-              </div>
-            ) : null}
           </div>
         ) : null}
-        <span
-          className="absolute top-2 right-2 vox-mono text-xs opacity-70 px-2 py-0.5 rounded"
-          style={{ background: "rgba(0,0,0,0.6)" }}
-        >
-          Slide {String(slide.order).padStart(2, "0")}
-        </span>
       </div>
-
-      {/* Sumário textual quando o slide tem imagem (pra não duplicar info no thumb) */}
-      {slide.image_url && firstItem && blockType ? (
-        <p className="vox-mono text-xs opacity-60 mt-3">
-          <span style={{ color: blockType.color }}>{blockType.label}</span>
-          {firstItem.content && stripHtml(firstItem.content).trim()
-            ? ` · ${previewSnippet(firstItem.content, 80)}`
-            : ""}
-        </p>
-      ) : null}
     </div>
   );
 }

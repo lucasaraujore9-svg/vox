@@ -13,7 +13,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { VOX_BLOCK_TYPES, type BlockTypeId, getBlockType } from "@/lib/mocks/blocks";
+import { VOX_BLOCK_TYPES, type BlockTypeId, getBlockType, blockColor } from "@/lib/mocks/blocks";
 import type { SessionNode } from "@/lib/sermons/sessions";
 import { nextSessionPeek } from "@/lib/sermons/sessions";
 import { ItemContent } from "@/components/present/ItemContent";
@@ -231,8 +231,8 @@ export function PresentSessions({
         >
           {current?.title ? (
             <p
-              className={`vox-eyebrow opacity-60 ${isCompact ? "mb-3" : "mb-6"}`}
-              style={{ color: stageDark ? "#94A3A0" : undefined }}
+              className={`vox-eyebrow ${isCompact ? "mb-3" : "mb-6"}`}
+              style={{ color: stageDark ? "#9BB0AA" : "var(--vox-prose)" }}
             >
               {current.title}
             </p>
@@ -243,39 +243,55 @@ export function PresentSessions({
               const t = getBlockType(item.type);
               if (!t || !stripHtml(item.content).trim()) return null;
               const isScripture = item.type === "texto_biblico";
+              const isPlainNote = item.type === "notas_pessoais";
+              const verbatim = isScripture || item.type === "citacao";
               return (
                 <div
                   key={item.id}
                   className="relative pl-4 sm:pl-5"
-                  style={{ borderLeft: `2px solid ${t.color}` }}
+                  style={{
+                    borderLeft: `3px solid ${
+                      isPlainNote && stageDark
+                        ? "rgba(255,255,255,0.16)"
+                        : blockColor(t.id, stageDark)
+                    }`,
+                  }}
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <p
-                      className="vox-eyebrow opacity-60"
-                      style={{ color: t.color }}
-                    >
-                      {t.label}
-                    </p>
-                    {!VISIBLE_TYPES.has(item.type) ? (
-                      <span
-                        className="vox-mono italic opacity-50"
-                        style={{ fontSize: "10px" }}
+                  {/* Nota pessoal é o tipo padrão da folha em branco: repetir o
+                      rótulo em todo parágrafo só rouba atenção do texto. */}
+                  {!isPlainNote ? (
+                    <div className="flex items-center gap-2 mb-2">
+                      <p
+                        className="vox-eyebrow"
+                        style={{ color: blockColor(t.id, stageDark), opacity: 0.9 }}
                       >
-                        (só você)
-                      </span>
-                    ) : null}
-                  </div>
+                        {t.label}
+                      </p>
+                      {!VISIBLE_TYPES.has(item.type) ? (
+                        <span
+                          className="vox-mono italic opacity-60"
+                          style={{ fontSize: "10px" }}
+                        >
+                          (só você)
+                        </span>
+                      ) : null}
+                    </div>
+                  ) : null}
                   <ItemContent
                     html={item.content}
                     style={{
-                      fontFamily: "var(--vox-font-display)",
-                      fontStyle: isScripture ? "italic" : "normal",
+                      // Serif em itálico para o que se lê em voz alta; nota de
+                      // apoio na fonte de UI, que se lê num relance.
+                      fontFamily: verbatim
+                        ? "var(--vox-font-display)"
+                        : "var(--vox-font-ui)",
+                      fontStyle: verbatim ? "italic" : "normal",
                       fontSize: `${f.px}px`,
                       lineHeight: f.lh,
                       color: isScripture
                         ? "var(--vox-gold)"
                         : stageDark
-                          ? "#F1EDE7"
+                          ? "#F5F2ED"
                           : "var(--vox-ink)",
                       wordBreak: "break-word",
                     }}

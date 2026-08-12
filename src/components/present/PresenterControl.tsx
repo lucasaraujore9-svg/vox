@@ -22,6 +22,7 @@ import {
   VOX_BLOCK_TYPES,
   getBlockType,
   type BlockTypeId,
+  blockColor,
 } from "@/lib/mocks/blocks";
 import type { SessionNode } from "@/lib/sermons/sessions";
 import type { SlideItem } from "@/components/slides/SlidesPanel";
@@ -423,12 +424,12 @@ function ContentList({
           <div
             key={item.id}
             className="pl-3"
-            style={{ borderLeft: `2px solid ${t.color}`, opacity: isHidden ? 0.6 : 1 }}
+            style={{ borderLeft: `2px solid ${blockColor(t.id, true)}`, opacity: isHidden ? 0.6 : 1 }}
           >
             <div className="flex items-center gap-2">
               <p
                 className="vox-eyebrow"
-                style={{ color: t.color, fontSize: size === "lg" ? "10px" : "9px" }}
+                style={{ color: blockColor(t.id, true), fontSize: size === "lg" ? "10px" : "9px" }}
               >
                 {t.label}
               </p>

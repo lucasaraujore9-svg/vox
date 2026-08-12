@@ -11,6 +11,7 @@ import {
   VOX_BLOCK_TYPES,
   getBlockType,
   type BlockTypeId,
+  blockColor,
 } from "@/lib/mocks/blocks";
 import type { SlideItem } from "@/components/slides/SlidesPanel";
 import { ItemContent } from "@/components/present/ItemContent";
@@ -183,7 +184,7 @@ function SlideRender({ slide }: { slide: SlideItem | undefined }) {
       <article className="max-w-5xl px-16 text-center">
         <p
           className="vox-eyebrow opacity-60 mb-6"
-          style={{ color: blockType.color }}
+          style={{ color: blockColor(blockType.id, true) }}
         >
           {blockType.label}
         </p>
