@@ -1,19 +1,35 @@
-// Painel de slides reformulado, densidade visual maior, menos espaço desperdiçado.
-// Layout: rail compacto de thumbs (200px) + área principal com header "Slide N"
-// embutido em uma barra fina + SermonEditor (manuscrito) ocupando o resto.
+// Painel de slides. Rail compacto de thumbs (180px) + área principal com a barra
+// do slide + manuscrito (SermonEditor) por slide, com auto-save.
+// Toda ação aqui é real: subir PDF/imagem, criar slide em branco, trocar a
+// imagem de um slide e apagar slide.
 
 "use client";
 
-import { useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { ImageUp, Trash2, Upload } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { SermonEditor } from "@/components/editor/SermonEditor";
+import { useAutoSave, type AutoSaveStatus } from "@/hooks/useAutoSave";
+import { createClient } from "@/lib/supabase/client";
 import {
   emptyContentFor,
   type SermonContent,
 } from "@/lib/sermons/sessions";
 import type { FrameworkId } from "@/lib/mocks/frameworks";
+import { termsFor } from "@/lib/sermons/terminology";
+import type { ContentType } from "@/types/database";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 
 export interface SlideItem {
   id: string;
@@ -24,38 +40,146 @@ export interface SlideItem {
 }
 
 interface SlidesPanelProps {
+  /** Necessário pra subir arquivo e salvar comentário. Sem ele o painel é só leitura. */
+  sermonId?: string;
   slides: SlideItem[];
   framework?: FrameworkId;
-  empty?: boolean;
+  contentType?: ContentType;
   className?: string;
 }
 
+const ACCEPT = ".pdf,.png,.jpg,.jpeg,.webp,application/pdf,image/*";
+
 export function SlidesPanel({
+  sermonId,
   slides,
   framework = "livre",
-  empty = false,
+  contentType = "sermão",
   className,
 }: SlidesPanelProps) {
+  const router = useRouter();
+  const terms = termsFor(contentType);
   const [selectedId, setSelectedId] = useState<string | null>(slides[0]?.id ?? null);
-  const [contents, setContents] = useState<Record<string, SermonContent>>(() =>
-    Object.fromEntries(
-      slides.map((s) => [s.id, s.comment_items ?? legacyToContent(s.comment, framework)])
-    )
+  const [busy, setBusy] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const initialContents = useMemo(
+    () =>
+      Object.fromEntries(
+        slides.map((s) => [
+          s.id,
+          s.comment_items ?? legacyToContent(s.comment, framework),
+        ])
+      ) as Record<string, SermonContent>,
+    [slides, framework]
   );
 
-  const selected = slides.find((s) => s.id === selectedId) ?? null;
-  const currentContent = selected ? contents[selected.id] : undefined;
+  const selected =
+    slides.find((s) => s.id === selectedId) ?? slides[0] ?? null;
   const selectedIdx = selected ? slides.findIndex((s) => s.id === selected.id) : -1;
+  const isEmpty = slides.length === 0;
 
-  function handleContentChange(slideId: string, content: SermonContent) {
-    setContents((prev) => ({ ...prev, [slideId]: content }));
-  }
+  const uploadFiles = useCallback(
+    async (files: FileList | File[]) => {
+      if (!sermonId || busy) return;
+      const list = Array.from(files);
+      if (list.length === 0) return;
+      setBusy(true);
+      try {
+        const form = new FormData();
+        for (const file of list) form.append("file", file);
+        const res = await fetch(
+          `/api/sermons/slides/upload?sermonId=${sermonId}`,
+          { method: "POST", body: form }
+        );
+        const body = (await res.json().catch(() => null)) as
+          | { error?: string; slidesCreated?: number }
+          | null;
+        if (!res.ok) throw new Error(body?.error ?? `Erro ${res.status}`);
+        const count = body?.slidesCreated ?? 0;
+        toast.success(
+          count === 1 ? "1 slide adicionado" : `${count} slides adicionados`
+        );
+        router.refresh();
+      } catch (err) {
+        toast.error("Não consegui subir os slides", {
+          description: err instanceof Error ? err.message : undefined,
+        });
+      } finally {
+        setBusy(false);
+      }
+    },
+    [sermonId, busy, router]
+  );
 
-  function itemCount(slide: SlideItem): number {
-    const c = contents[slide.id];
-    if (!c) return 0;
-    return c.sessions.reduce((sum, s) => sum + s.items.filter((i) => i.content.trim()).length, 0);
-  }
+  const addBlankSlide = useCallback(async () => {
+    if (!sermonId || busy) return;
+    setBusy(true);
+    try {
+      const res = await fetch(`/api/sermons/slides/manual?sermonId=${sermonId}`, {
+        method: "POST",
+      });
+      const body = (await res.json().catch(() => null)) as { error?: string } | null;
+      if (!res.ok) throw new Error(body?.error ?? `Erro ${res.status}`);
+      toast.success("Slide em branco criado");
+      router.refresh();
+    } catch (err) {
+      toast.error("Não consegui criar o slide", {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    } finally {
+      setBusy(false);
+    }
+  }, [sermonId, busy, router]);
+
+  const replaceImage = useCallback(
+    async (slideId: string, file: File) => {
+      setBusy(true);
+      try {
+        const form = new FormData();
+        form.append("file", file);
+        const res = await fetch(`/api/sermons/slides/${slideId}`, {
+          method: "PUT",
+          body: form,
+        });
+        const body = (await res.json().catch(() => null)) as { error?: string } | null;
+        if (!res.ok) throw new Error(body?.error ?? `Erro ${res.status}`);
+        toast.success("Imagem trocada");
+        router.refresh();
+      } catch (err) {
+        toast.error("Não consegui trocar a imagem", {
+          description: err instanceof Error ? err.message : undefined,
+        });
+      } finally {
+        setBusy(false);
+      }
+    },
+    [router]
+  );
+
+  const deleteSlide = useCallback(async () => {
+    if (!deletingId) return;
+    setBusy(true);
+    try {
+      const res = await fetch(`/api/sermons/slides/${deletingId}`, {
+        method: "DELETE",
+      });
+      const body = (await res.json().catch(() => null)) as { error?: string } | null;
+      if (!res.ok) throw new Error(body?.error ?? `Erro ${res.status}`);
+      toast.success("Slide apagado");
+      if (selectedId === deletingId) setSelectedId(null);
+      setDeletingId(null);
+      router.refresh();
+    } catch (err) {
+      toast.error("Não consegui apagar o slide", {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    } finally {
+      setBusy(false);
+    }
+  }, [deletingId, selectedId, router]);
+
+  const canEdit = Boolean(sermonId);
 
   return (
     <div className={cn("grid grid-cols-1 lg:grid-cols-[180px_1fr] gap-5", className)}>
@@ -72,20 +196,13 @@ export function SlidesPanel({
           <span className="vox-mono text-xs text-vox-muted">{slides.length}</span>
         </div>
         <div className="p-2 space-y-1.5 max-h-[70vh] overflow-y-auto">
-          {empty ? (
-            <div
-              className="rounded-md border-2 border-dashed p-5 text-center"
-              style={{ borderColor: "var(--vox-whisper-strong)" }}
-            >
-              <p className="text-xs text-vox-prose">Arraste PDF ou cole link</p>
-              <Button size="sm" variant="outline" className="mt-3 text-xs">
-                Escolher arquivo
-              </Button>
-            </div>
+          {isEmpty ? (
+            <p className="px-1 py-4 text-xs text-vox-prose text-center">
+              Nenhum slide ainda.
+            </p>
           ) : (
             slides.map((slide) => {
-              const total = itemCount(slide);
-              const isActive = selectedId === slide.id;
+              const isActive = selected?.id === slide.id;
               return (
                 <button
                   key={slide.id}
@@ -100,7 +217,6 @@ export function SlidesPanel({
                     borderWidth: isActive ? "1.5px" : "1px",
                   }}
                 >
-                  {/* Thumb aspect-video pequena */}
                   <div
                     className="aspect-video flex items-center justify-center relative"
                     style={{
@@ -130,50 +246,69 @@ export function SlidesPanel({
                     >
                       {String(slide.order).padStart(2, "0")}
                     </span>
-                    {total > 0 ? (
-                      <span className="vox-mono text-[10px] text-vox-muted">
-                        {total}
-                      </span>
-                    ) : null}
                   </div>
                 </button>
               );
             })
           )}
 
-          {!empty ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full mt-1 text-xs h-auto py-1.5"
-            >
-              + Slide
-            </Button>
+          {canEdit ? (
+            <div className="pt-1 space-y-1">
+              <FilePickerButton
+                accept={ACCEPT}
+                multiple
+                disabled={busy}
+                onFiles={(files) => void uploadFiles(files)}
+                className="w-full text-xs h-auto py-1.5"
+              >
+                + Arquivo
+              </FilePickerButton>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full text-xs h-auto py-1.5"
+                disabled={busy}
+                onClick={() => void addBlankSlide()}
+              >
+                + Em branco
+              </Button>
+            </div>
           ) : null}
         </div>
       </aside>
 
-      {/* Área principal: header compacto + editor */}
+      {/* Área principal */}
       <section className="space-y-5 min-w-0">
-        {selected ? (
+        {isEmpty ? (
+          <SlideDropzone
+            disabled={!canEdit || busy}
+            busy={busy}
+            onFiles={(files) => void uploadFiles(files)}
+            onBlank={() => void addBlankSlide()}
+            contentLabel={`${terms.demonstrative === "este" ? "deste" : "desta"} ${terms.labelLower}`}
+          />
+        ) : selected ? (
           <>
             <SlideHeaderBar
               slide={selected}
               index={selectedIdx}
               total={slides.length}
+              canEdit={canEdit}
+              busy={busy}
+              onReplace={(file) => void replaceImage(selected.id, file)}
+              onDelete={() => setDeletingId(selected.id)}
             />
             <div>
               <p className="vox-eyebrow text-xs mb-3 text-vox-prose">
                 Manuscrito do slide
               </p>
-              {currentContent ? (
-                <SermonEditor
-                  key={selected.id}
-                  framework={framework}
-                  initialContent={currentContent}
-                  onChange={(c) => handleContentChange(selected.id, c)}
-                />
-              ) : null}
+              <SlideCommentEditor
+                key={selected.id}
+                slideId={selected.id}
+                framework={framework}
+                initialContent={initialContents[selected.id] ?? emptyContentFor(framework)}
+                canSave={canEdit}
+              />
             </div>
           </>
         ) : (
@@ -182,32 +317,185 @@ export function SlidesPanel({
           </div>
         )}
       </section>
+
+      <Dialog
+        open={deletingId !== null}
+        onOpenChange={(o) => !o && !busy && setDeletingId(null)}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Apagar este slide?</DialogTitle>
+            <DialogDescription>
+              A imagem e o manuscrito deste slide serão removidos. Essa ação não
+              pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setDeletingId(null)} disabled={busy}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={() => void deleteSlide()}
+              disabled={busy}
+              style={{ background: "var(--vox-destructive, #B91C1C)", color: "#fff" }}
+            >
+              {busy ? "Apagando…" : "Apagar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
-/** Barra fina no topo: thumb + slide N + descrição curta. */
+/** Estado vazio de verdade: arrasta o arquivo, escolhe do disco ou começa em branco. */
+function SlideDropzone({
+  disabled,
+  busy,
+  onFiles,
+  onBlank,
+  contentLabel,
+}: {
+  disabled: boolean;
+  busy: boolean;
+  onFiles: (files: FileList | File[]) => void;
+  onBlank: () => void;
+  contentLabel: string;
+}) {
+  const [dragging, setDragging] = useState(false);
+
+  return (
+    <div
+      onDragOver={(e) => {
+        if (disabled) return;
+        e.preventDefault();
+        setDragging(true);
+      }}
+      onDragLeave={() => setDragging(false)}
+      onDrop={(e) => {
+        if (disabled) return;
+        e.preventDefault();
+        setDragging(false);
+        if (e.dataTransfer.files?.length) onFiles(e.dataTransfer.files);
+      }}
+      className="rounded-xl border-2 border-dashed p-10 text-center transition-colors"
+      style={{
+        borderColor: dragging ? "var(--vox-forest)" : "var(--vox-whisper-strong)",
+        background: dragging ? "var(--vox-surface-deep)" : "transparent",
+      }}
+    >
+      <Upload
+        className="size-6 mx-auto mb-4"
+        style={{ color: "var(--vox-muted)" }}
+        aria-hidden
+      />
+      <h3 className="vox-h3 text-base">Suba os slides {contentLabel}</h3>
+      <p className="vox-body text-sm mt-2 max-w-md mx-auto">
+        Arraste um PDF aqui, ou escolha do computador. Cada página vira um slide.
+        Também aceita PNG, JPG e WebP.
+      </p>
+
+      <div className="flex items-center justify-center gap-2 mt-6 flex-wrap">
+        <FilePickerButton
+          accept={ACCEPT}
+          multiple
+          disabled={disabled}
+          onFiles={onFiles}
+          variant="default"
+          size="default"
+        >
+          {busy ? "Processando…" : "Escolher arquivo"}
+        </FilePickerButton>
+        <Button variant="outline" onClick={onBlank} disabled={disabled}>
+          Começar em branco
+        </Button>
+      </div>
+
+      <p className="text-xs text-vox-muted mt-5">
+        Para PPT ou Keynote, exporte como PDF antes de subir. Até 50MB por arquivo.
+      </p>
+    </div>
+  );
+}
+
+/** Botão que abre o seletor de arquivos. Encapsula o input escondido. */
+function FilePickerButton({
+  accept,
+  multiple = false,
+  disabled,
+  onFiles,
+  children,
+  className,
+  variant = "ghost",
+  size = "sm",
+}: {
+  accept: string;
+  multiple?: boolean;
+  disabled?: boolean;
+  onFiles: (files: FileList | File[]) => void;
+  children: React.ReactNode;
+  className?: string;
+  variant?: "default" | "outline" | "ghost";
+  size?: "default" | "sm";
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  return (
+    <>
+      <input
+        ref={inputRef}
+        type="file"
+        accept={accept}
+        multiple={multiple}
+        className="hidden"
+        onChange={(e) => {
+          const files = e.target.files;
+          if (files?.length) onFiles(files);
+          // Permite re-selecionar o mesmo arquivo depois de um erro.
+          e.target.value = "";
+        }}
+      />
+      <Button
+        type="button"
+        variant={variant}
+        size={size}
+        className={className}
+        disabled={disabled}
+        onClick={() => inputRef.current?.click()}
+      >
+        {children}
+      </Button>
+    </>
+  );
+}
+
+/** Barra fina no topo: thumb + slide N + ações do slide. */
 function SlideHeaderBar({
   slide,
   index,
   total,
+  canEdit,
+  busy,
+  onReplace,
+  onDelete,
 }: {
   slide: SlideItem;
   index: number;
   total: number;
+  canEdit: boolean;
+  busy: boolean;
+  onReplace: (file: File) => void;
+  onDelete: () => void;
 }) {
   return (
     <div
       className="rounded-lg bg-card border p-4 flex items-center gap-4"
       style={{ borderColor: "var(--vox-whisper)" }}
     >
-      {/* Miniatura à esquerda (~140px wide) */}
+      {/* Miniatura à esquerda */}
       <div
         className="aspect-video w-32 rounded-md overflow-hidden shrink-0 flex items-center justify-center relative"
         style={{
-          background: slide.image_url
-            ? `url(${slide.image_url}) center / cover`
-            : "var(--vox-surface-deep)",
+          background: "var(--vox-surface-deep)",
           border: "1px solid var(--vox-whisper)",
         }}
       >
@@ -218,6 +506,7 @@ function SlideHeaderBar({
             fill
             sizes="128px"
             className="object-cover"
+            unoptimized
           />
         ) : (
           <span className="vox-mono text-2xl" style={{ color: "var(--vox-muted)" }}>
@@ -229,10 +518,7 @@ function SlideHeaderBar({
       {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3">
-          <p
-            className="vox-eyebrow"
-            style={{ color: "var(--vox-forest)" }}
-          >
+          <p className="vox-eyebrow" style={{ color: "var(--vox-forest)" }}>
             Slide {String(slide.order).padStart(2, "0")}
           </p>
           <span className="vox-mono text-xs text-vox-muted">
@@ -244,12 +530,115 @@ function SlideHeaderBar({
         </p>
       </div>
 
-      {/* Ações por slide (placeholder) */}
-      <div className="flex gap-2 shrink-0">
-        <Button variant="outline" size="sm">
-          Substituir imagem
-        </Button>
-      </div>
+      {/* Ações do slide */}
+      {canEdit ? (
+        <div className="flex gap-2 shrink-0">
+          <FilePickerButton
+            accept=".png,.jpg,.jpeg,.webp,image/*"
+            disabled={busy}
+            variant="outline"
+            onFiles={(files) => {
+              const file = Array.from(files)[0];
+              if (file) onReplace(file);
+            }}
+          >
+            <ImageUp className="size-3.5 mr-1.5" />
+            {slide.image_url ? "Trocar imagem" : "Pôr imagem"}
+          </FilePickerButton>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onDelete}
+            disabled={busy}
+            aria-label="Apagar slide"
+            title="Apagar slide"
+            className="text-vox-muted hover:text-vox-destructive"
+          >
+            <Trash2 className="size-3.5" />
+          </Button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+const SAVE_LABEL: Record<AutoSaveStatus, string> = {
+  idle: "Salvo",
+  dirty: "Editando…",
+  saving: "Salvando…",
+  saved: "Salvo",
+  offline: "Salvo localmente · sincroniza quando voltar online",
+};
+
+/** Manuscrito de um slide com auto-save em `slides.comment_items`. */
+function SlideCommentEditor({
+  slideId,
+  framework,
+  initialContent,
+  canSave,
+}: {
+  slideId: string;
+  framework: FrameworkId;
+  initialContent: SermonContent;
+  canSave: boolean;
+}) {
+  const [content, setContent] = useState<SermonContent>(initialContent);
+
+  const supabase = useMemo(() => {
+    if (typeof window === "undefined") return null;
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return null;
+    if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return null;
+    try {
+      return createClient();
+    } catch {
+      return null;
+    }
+  }, []);
+
+  const save = useCallback(
+    async (next: SermonContent) => {
+      if (!canSave || !supabase) return;
+      const payload = JSON.parse(JSON.stringify(next));
+      const { error } = await supabase
+        .from("slides")
+        .update({ comment_items: payload })
+        .eq("id", slideId);
+      if (error) throw error;
+    },
+    [slideId, supabase, canSave]
+  );
+
+  const status = useAutoSave({
+    value: content,
+    save,
+    fallbackId: `slide:${slideId}`,
+  });
+
+  const statusColor =
+    status === "offline"
+      ? "var(--vox-gold)"
+      : status === "saving" || status === "dirty"
+        ? "var(--vox-prose)"
+        : "var(--vox-muted)";
+
+  return (
+    <div className="space-y-3">
+      {canSave ? (
+        <div className="flex justify-end">
+          <span
+            className="vox-mono text-[11px]"
+            style={{ color: statusColor }}
+            aria-live="polite"
+          >
+            {SAVE_LABEL[status]}
+          </span>
+        </div>
+      ) : null}
+      <SermonEditor
+        framework={framework}
+        initialContent={initialContent}
+        onChange={setContent}
+      />
     </div>
   );
 }

@@ -22,17 +22,13 @@ import { listSermonVersions } from "@/lib/sermons/versions";
 import { listExegesesForSermon } from "@/lib/exegesis/queries";
 import { normalizeChapter } from "@/lib/exegesis/normalize";
 import { createClient } from "@/lib/supabase/server";
+import { statusLabelFor, termsFor } from "@/lib/sermons/terminology";
 import { VOX_FRAMEWORKS, type FrameworkId } from "@/lib/mocks/frameworks";
 import type { ContentType, SermonStatus, SermonType } from "@/types/database";
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
-
-const STATUS_LABEL = {
-  rascunho: "Em rascunho",
-  pronto: "Pregado",
-} as const;
 
 export default async function SermonEditorPage({ params }: PageProps) {
   const { id } = await params;
@@ -119,6 +115,7 @@ export default async function SermonEditorPage({ params }: PageProps) {
     : null;
 
   const isBlank = sermon.framework === "livre";
+  const terms = termsFor(sermon.content_type);
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 min-w-0">
@@ -148,8 +145,11 @@ export default async function SermonEditorPage({ params }: PageProps) {
                 </span>
               </>
             )}
-            <Badge variant="secondary" className="text-xs font-normal ml-1">
-              {STATUS_LABEL[sermon.status]}
+            <Badge variant="outline" className="text-xs font-normal ml-1">
+              {terms.label}
+            </Badge>
+            <Badge variant="secondary" className="text-xs font-normal">
+              {statusLabelFor(sermon.content_type, sermon.status)}
             </Badge>
             {isArchived ? (
               <Badge
@@ -226,6 +226,7 @@ export default async function SermonEditorPage({ params }: PageProps) {
 
       {sermon.type === "apresentação" ? (
         <SlidesPanel
+          sermonId={sermon.id}
           slides={slides.map((s) => ({
             id: s.id,
             order: s.order,
@@ -233,7 +234,7 @@ export default async function SermonEditorPage({ params }: PageProps) {
             comment_items: s.comment_items,
           }))}
           framework={sermon.framework}
-          empty={slides.length === 0}
+          contentType={sermon.content_type}
         />
       ) : (
         <SermonEditor
@@ -245,6 +246,7 @@ export default async function SermonEditorPage({ params }: PageProps) {
 
       <EngagementsSection
         sermonId={sermon.id}
+        contentType={sermon.content_type}
         initialEngagements={engagements}
       />
     </div>
