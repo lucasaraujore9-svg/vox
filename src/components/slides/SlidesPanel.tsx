@@ -35,6 +35,23 @@ import { cn } from "@/lib/utils";
 /** Fase do envio, só pra rotular o botão com a verdade do que está rolando. */
 type UploadStage = "idle" | "sending" | "converting";
 
+/**
+ * Lê a resposta da API exigindo JSON. Com a sessão expirada o middleware
+ * redireciona para o login e a resposta vira HTML com status 200 — sem esta
+ * checagem isso passaria por "sucesso, 0 slides".
+ */
+async function readJson<T extends { error?: string }>(res: Response): Promise<T> {
+  const isJson = res.headers
+    .get("content-type")
+    ?.includes("application/json");
+  if (!isJson) {
+    throw new Error("Sua sessão expirou. Recarregue a página e tente de novo.");
+  }
+  const body = (await res.json().catch(() => null)) as T | null;
+  if (!res.ok) throw new Error(body?.error ?? `Erro ${res.status}`);
+  return (body ?? ({} as T));
+}
+
 export interface SlideItem {
   id: string;
   order: number;
@@ -103,11 +120,8 @@ export function SlidesPanel({
             body: JSON.stringify({ sources }),
           }
         );
-        const body = (await res.json().catch(() => null)) as
-          | { error?: string; slidesCreated?: number }
-          | null;
-        if (!res.ok) throw new Error(body?.error ?? `Erro ${res.status}`);
-        const count = body?.slidesCreated ?? 0;
+        const body = await readJson<{ error?: string; slidesCreated?: number }>(res);
+        const count = body.slidesCreated ?? 0;
         toast.success(
           count === 1 ? "1 slide adicionado" : `${count} slides adicionados`
         );
@@ -131,8 +145,7 @@ export function SlidesPanel({
       const res = await fetch(`/api/sermons/slides/manual?sermonId=${sermonId}`, {
         method: "POST",
       });
-      const body = (await res.json().catch(() => null)) as { error?: string } | null;
-      if (!res.ok) throw new Error(body?.error ?? `Erro ${res.status}`);
+      await readJson(res);
       toast.success("Slide em branco criado");
       router.refresh();
     } catch (err) {
@@ -157,8 +170,7 @@ export function SlidesPanel({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ source }),
         });
-        const body = (await res.json().catch(() => null)) as { error?: string } | null;
-        if (!res.ok) throw new Error(body?.error ?? `Erro ${res.status}`);
+        await readJson(res);
         toast.success("Imagem trocada");
         router.refresh();
       } catch (err) {
@@ -180,8 +192,7 @@ export function SlidesPanel({
       const res = await fetch(`/api/sermons/slides/${deletingId}`, {
         method: "DELETE",
       });
-      const body = (await res.json().catch(() => null)) as { error?: string } | null;
-      if (!res.ok) throw new Error(body?.error ?? `Erro ${res.status}`);
+      await readJson(res);
       toast.success("Slide apagado");
       if (selectedId === deletingId) setSelectedId(null);
       setDeletingId(null);
