@@ -8,7 +8,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { getBlockType, blockColor } from "@/lib/mocks/blocks";
+import {
+  getBlockType,
+  blockColor,
+  sessionRoleColor,
+} from "@/lib/mocks/blocks";
 import type { SermonContent } from "@/lib/sermons/sessions";
 import {
   openChannel,
@@ -398,17 +402,23 @@ function SlideCommentRender({
         {sessionsWithContent.map(({ session, items }, sIdx) => (
           <section
             key={session.id}
-            className={sIdx > 0 ? "mt-7 pt-7" : ""}
-            style={
-              sIdx > 0
-                ? { borderTop: `1px solid ${surface.border}` }
-                : undefined
-            }
+            className={`relative pl-[19px] ${sIdx > 0 ? "mt-8" : ""}`}
           >
+            {/* Mesmo código visual da construção: barra vertical no papel da
+                sessão, ponto + rótulo na cor do bloco. Consultar durante a fala
+                usa a mesma pista de cor de quem escreveu. */}
+            <span
+              aria-hidden
+              className="absolute left-0 top-0 bottom-0 w-[3px] rounded-full"
+              style={{ background: sessionRoleColor(session.role, surface.isDark, sIdx) }}
+            />
             {session.title ? (
               <h3
                 className="vox-eyebrow mb-4"
-                style={{ color: surface.muted, fontSize: "12px" }}
+                style={{
+                  color: sessionRoleColor(session.role, surface.isDark, sIdx),
+                  fontSize: "12px",
+                }}
               >
                 {session.title}
               </h3>
@@ -419,30 +429,23 @@ function SlideCommentRender({
                 if (!t) return null;
                 const isScripture = item.type === "texto_biblico";
                 const isQuote = item.type === "citacao";
-                // Nota pessoal é o tipo padrão da folha em branco: repetir o
-                // rótulo em cada parágrafo vira ruído e come o texto de verdade.
-                const isPlainNote = item.type === "notas_pessoais";
                 const verbatim = isScripture || isQuote;
+                const tone = blockColor(t.id, surface.isDark);
                 return (
-                  <div
-                    key={item.id}
-                    className="pl-4"
-                    style={{
-                      borderLeft: `3px solid ${
-                        isPlainNote
-                          ? surface.plainRule
-                          : blockColor(t.id, surface.isDark)
-                      }`,
-                    }}
-                  >
-                    {!isPlainNote ? (
+                  <div key={item.id}>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span
+                        aria-hidden
+                        className="inline-block size-1.5 rounded-full shrink-0"
+                        style={{ background: tone }}
+                      />
                       <p
-                        className="vox-eyebrow mb-1.5"
-                        style={{ color: blockColor(t.id, surface.isDark), fontSize: "11px" }}
+                        className="vox-eyebrow"
+                        style={{ color: tone, fontSize: "11px" }}
                       >
                         {t.label}
                       </p>
-                    ) : null}
+                    </div>
                     <ItemContent
                       onDarkSurface={surface.isDark}
                       html={item.content}

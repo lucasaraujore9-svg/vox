@@ -189,3 +189,70 @@ const LIGHT_SURFACE_COLORS: Record<BlockTypeId, string> = {
 export function blockColor(id: BlockTypeId, onStage: boolean): string {
   return onStage ? STAGE_COLORS[id] : LIGHT_SURFACE_COLORS[id];
 }
+
+/**
+ * Cor do papel da sessão, o mesmo código de cor da barra vertical do editor
+ * (SessionCard). Repetido nas telas de apresentação para que consultar durante
+ * a fala use a mesma pista visual de quem escreveu.
+ *
+ * Os valores do editor não servem direto: `conclusao` usa --vox-ink (some no
+ * palco) e `livre` usa --vox-muted (2.4:1 no claro). Aqui vão medidos.
+ */
+export type SessionRoleId = "introducao" | "topico" | "conclusao" | "livre";
+
+const ROLE_LIGHT: Record<SessionRoleId, string> = {
+  introducao: "#166534",
+  topico: "#8F4207",
+  conclusao: "#18181B",
+  livre: "#6B7280",
+};
+
+const ROLE_STAGE: Record<SessionRoleId, string> = {
+  introducao: "#5FBF7F",
+  topico: "#E9A23B",
+  conclusao: "#E4E2DD",
+  livre: "#9BB0AA",
+};
+
+/**
+ * Rodízio para sessões sem papel definido.
+ *
+ * Numa folha em branco todas as sessões são "livre" e todos os itens são
+ * "notas_pessoais": pelo papel, a tela inteira sairia de uma cor só e a cor
+ * deixaria de ajudar a achar o tópico. Aqui cada tópico ganha um tom distinto
+ * do próximo, para consultar de relance no meio da fala.
+ */
+const FREE_ROTATION_LIGHT = [
+  "#166534",
+  "#8F4207",
+  "#0D7C7C",
+  "#7C3AED",
+  "#475569",
+  "#A3123A",
+];
+
+const FREE_ROTATION_STAGE = [
+  "#5FBF7F",
+  "#E9A23B",
+  "#4FC0C0",
+  "#B18CF5",
+  "#A3B2C4",
+  "#F0899F",
+];
+
+/**
+ * Cor do tópico. `index` só é usado quando a sessão não tem papel definido;
+ * com papel (introdução, tópico, conclusão) a cor é a mesma do editor.
+ */
+export function sessionRoleColor(
+  role: string,
+  onStage: boolean,
+  index = 0
+): string {
+  if (role !== "introducao" && role !== "topico" && role !== "conclusao") {
+    const rotation = onStage ? FREE_ROTATION_STAGE : FREE_ROTATION_LIGHT;
+    return rotation[index % rotation.length] as string;
+  }
+  const map = onStage ? ROLE_STAGE : ROLE_LIGHT;
+  return map[role];
+}

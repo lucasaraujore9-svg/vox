@@ -13,7 +13,13 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { VOX_BLOCK_TYPES, type BlockTypeId, getBlockType, blockColor } from "@/lib/mocks/blocks";
+import {
+  VOX_BLOCK_TYPES,
+  type BlockTypeId,
+  getBlockType,
+  blockColor,
+  sessionRoleColor,
+} from "@/lib/mocks/blocks";
 import type { SessionNode } from "@/lib/sermons/sessions";
 import { nextSessionPeek } from "@/lib/sermons/sessions";
 import { ItemContent } from "@/components/present/ItemContent";
@@ -234,7 +240,9 @@ export function PresentSessions({
           {current?.title ? (
             <p
               className={`vox-eyebrow ${isCompact ? "mb-3" : "mb-6"}`}
-              style={{ color: stageDark ? "#9BB0AA" : "#55606E" }}
+              style={{
+                color: sessionRoleColor(current.role, stageDark, index),
+              }}
             >
               {current.title}
             </p>
@@ -245,40 +253,38 @@ export function PresentSessions({
               const t = getBlockType(item.type);
               if (!t || !stripHtml(item.content).trim()) return null;
               const isScripture = item.type === "texto_biblico";
-              const isPlainNote = item.type === "notas_pessoais";
               const verbatim = isScripture || item.type === "citacao";
               return (
                 <div
                   key={item.id}
                   className="relative pl-4 sm:pl-5"
                   style={{
-                    borderLeft: `3px solid ${
-                      isPlainNote && stageDark
-                        ? "rgba(255,255,255,0.16)"
-                        : blockColor(t.id, stageDark)
-                    }`,
+                    borderLeft: `3px solid ${blockColor(t.id, stageDark)}`,
                   }}
                 >
-                  {/* Nota pessoal é o tipo padrão da folha em branco: repetir o
-                      rótulo em todo parágrafo só rouba atenção do texto. */}
-                  {!isPlainNote ? (
-                    <div className="flex items-center gap-2 mb-2">
-                      <p
-                        className="vox-eyebrow"
-                        style={{ color: blockColor(t.id, stageDark), opacity: 0.9 }}
+                  {/* Mesmo código de cor da construção: ponto + rótulo no tom
+                      do bloco, para consultar durante a fala pela cor. */}
+                  <div className="flex items-center gap-2 mb-2">
+                    <span
+                      aria-hidden
+                      className="inline-block size-1.5 rounded-full shrink-0"
+                      style={{ background: blockColor(t.id, stageDark) }}
+                    />
+                    <p
+                      className="vox-eyebrow"
+                      style={{ color: blockColor(t.id, stageDark) }}
+                    >
+                      {t.label}
+                    </p>
+                    {!VISIBLE_TYPES.has(item.type) ? (
+                      <span
+                        className="vox-mono italic opacity-60"
+                        style={{ fontSize: "10px" }}
                       >
-                        {t.label}
-                      </p>
-                      {!VISIBLE_TYPES.has(item.type) ? (
-                        <span
-                          className="vox-mono italic opacity-60"
-                          style={{ fontSize: "10px" }}
-                        >
-                          (só você)
-                        </span>
-                      ) : null}
-                    </div>
-                  ) : null}
+                        (só você)
+                      </span>
+                    ) : null}
+                  </div>
                   <ItemContent
                       onDarkSurface={stageDark}
                     html={item.content}
