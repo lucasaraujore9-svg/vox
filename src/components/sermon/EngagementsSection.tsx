@@ -1,7 +1,8 @@
 "use client";
 
-// Seção embaixo do editor: lista de pregações + dialog pra registrar nova.
+// Seção embaixo do editor: lista de entregas + dialog pra registrar nova.
 // Cada engagement tem data, local, audiência, rating (1–5 estrelas), feedback.
+// A linguagem muda com o content_type: pregação, palestra ou aula.
 
 import { useState, useTransition } from "react";
 import { Trash2 } from "lucide-react";
@@ -20,19 +21,25 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { deleteEngagement, upsertEngagement } from "@/lib/sermons/engagements";
+import { termsFor } from "@/lib/sermons/terminology";
 import type { MockEngagement } from "@/lib/mocks/engagements";
+import type { ContentType } from "@/types/database";
 import { cn } from "@/lib/utils";
 
 interface EngagementsSectionProps {
   sermonId: string;
+  /** Define o vocabulário da seção: pregação, palestra ou aula. */
+  contentType?: ContentType;
   /** Carregados do server (mocks ou Supabase). */
   initialEngagements: MockEngagement[];
 }
 
 export function EngagementsSection({
   sermonId,
+  contentType = "sermão",
   initialEngagements,
 }: EngagementsSectionProps) {
+  const terms = termsFor(contentType);
   const [engagements, setEngagements] = useState<MockEngagement[]>(initialEngagements);
   const [editing, setEditing] = useState<MockEngagement | null>(null);
   const [open, setOpen] = useState(false);
@@ -81,13 +88,10 @@ export function EngagementsSection({
       <header className="flex items-end justify-between mb-6 flex-wrap gap-4">
         <div>
           <p className="vox-eyebrow">Histórico</p>
-          <h2 className="vox-h2 mt-2">Pregações</h2>
-          <p className="vox-body text-sm mt-2 max-w-lg">
-            Toda vez que pregar, palestrar ou dar a aula, registre como foi. Cria
-            memória ministerial, e melhora a próxima vez.
-          </p>
+          <h2 className="vox-h2 mt-2">{terms.eventPlural}</h2>
+          <p className="vox-body text-sm mt-2 max-w-lg">{terms.historyIntro}</p>
         </div>
-        <Button onClick={openCreate}>+ Registrar pregação</Button>
+        <Button onClick={openCreate}>+ {terms.registerAction}</Button>
       </header>
 
       {engagements.length === 0 ? (
@@ -95,10 +99,7 @@ export function EngagementsSection({
           className="rounded-xl border-2 border-dashed p-10 text-center"
           style={{ borderColor: "var(--vox-whisper-strong)" }}
         >
-          <p className="vox-body text-sm">
-            Nenhum registro ainda. Ao pregar este manuscrito, anote aqui o que foi
-            forte, o que ficou fraco, e o lugar onde aconteceu.
-          </p>
+          <p className="vox-body text-sm">{terms.historyEmpty}</p>
         </div>
       ) : (
         <ul className="space-y-4">
@@ -117,6 +118,7 @@ export function EngagementsSection({
         open={open}
         onOpenChange={setOpen}
         sermonId={sermonId}
+        contentType={contentType}
         editing={editing}
         onSaved={handleSaved}
       />
@@ -130,7 +132,7 @@ export function EngagementsSection({
             <DialogTitle>Apagar este registro?</DialogTitle>
             <DialogDescription>
               {deletingEngagement?.location
-                ? `Pregação em ${deletingEngagement.location} (${new Date(
+                ? `${terms.event} em ${deletingEngagement.location} (${new Date(
                   deletingEngagement.preached_at + "T12:00:00"
                 ).toLocaleDateString("pt-BR")}).`
                 : "Esse registro será removido permanentemente."}{" "}
@@ -253,15 +255,18 @@ function EngagementDialog({
   open,
   onOpenChange,
   sermonId,
+  contentType,
   editing,
   onSaved,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   sermonId: string;
+  contentType: ContentType;
   editing: MockEngagement | null;
   onSaved: (e: MockEngagement) => void;
 }) {
+  const terms = termsFor(contentType);
   const [pending, startTransition] = useTransition();
   const [date, setDate] = useState(
     editing?.preached_at ?? new Date().toISOString().slice(0, 10)
@@ -321,7 +326,7 @@ function EngagementDialog({
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>
-            {editing ? "Editar pregação" : "Registrar pregação"}
+            {editing ? terms.editAction : terms.registerAction}
           </DialogTitle>
           <DialogDescription>
             Anote como foi. O que funcionou, o que falhou, e onde aconteceu.

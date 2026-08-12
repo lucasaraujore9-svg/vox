@@ -34,6 +34,7 @@ import { ArchiveSermonDialog } from "@/components/sermon/ArchiveSermonDialog";
 import { PermanentDeleteDialog } from "@/components/sermon/PermanentDeleteDialog";
 import { LinkSeriesDialog } from "@/components/sermon/LinkSeriesDialog";
 import { updateSermonMetaAction } from "@/lib/sermons/actions";
+import { termsFor } from "@/lib/sermons/terminology";
 import type { MockSermon } from "@/lib/mocks/sermons";
 
 interface SermonActionsMenuProps {
@@ -56,6 +57,7 @@ export function SermonActionsMenu({
   const [statusBusy, setStatusBusy] = useState(false);
   const router = useRouter();
   const isDraft = sermon.status === "rascunho";
+  const terms = termsFor(sermon.content_type);
 
   useEffect(() => {
     setIsDemoMode(!process.env.NEXT_PUBLIC_SUPABASE_URL);
@@ -89,9 +91,7 @@ export function SermonActionsMenu({
       return;
     }
     toast.success(
-      nextStatus === "pronto"
-        ? "Marcado como pregado"
-        : "Voltou para rascunho"
+      nextStatus === "pronto" ? terms.markedDoneToast : "Voltou para rascunho"
     );
     router.refresh();
   }
@@ -126,7 +126,7 @@ export function SermonActionsMenu({
                   className="size-4 mr-2"
                   style={{ color: "var(--vox-forest)" }}
                 />
-                Marcar como pregado
+                {terms.markDoneAction}
               </>
             ) : (
               <>

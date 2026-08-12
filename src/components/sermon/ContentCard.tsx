@@ -5,17 +5,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { MockSermon } from "@/lib/mocks/sermons";
-
-const STATUS_LABEL: Record<MockSermon["status"], string> = {
-  rascunho: "Em rascunho",
-  pronto: "Pregado",
-};
-
-const CONTENT_TYPE_LABEL: Record<MockSermon["content_type"], string> = {
-  "sermão": "Sermão",
-  palestra: "Palestra",
-  aula: "Aula",
-};
+import { statusLabelFor, termsFor } from "@/lib/sermons/terminology";
 
 function formatRelative(iso: string): string {
   const date = new Date(iso);
@@ -65,7 +55,7 @@ export function ContentCard({
         <div className="flex items-center gap-2">
           <span className="inline-block size-2 rounded-full" style={{ background: accent }} />
           <span className="vox-eyebrow" style={{ color: accent }}>
-            {CONTENT_TYPE_LABEL[sermon.content_type]}
+            {termsFor(sermon.content_type).label}
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -82,7 +72,7 @@ export function ContentCard({
             </Badge>
           ) : null}
           <Badge variant="secondary" className="text-xs font-normal">
-            {STATUS_LABEL[sermon.status]}
+            {statusLabelFor(sermon.content_type, sermon.status)}
           </Badge>
         </div>
       </div>

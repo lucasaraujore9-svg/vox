@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import type { MockSermon } from "@/lib/mocks/sermons";
+import { statusLabelFor, termsFor } from "@/lib/sermons/terminology";
 import { VOX_FRAMEWORKS } from "@/lib/mocks/frameworks";
 
 interface MetadataDialogProps {
@@ -23,17 +24,6 @@ interface MetadataDialogProps {
 const TYPE_LABEL: Record<MockSermon["type"], string> = {
   "esboço": "Esboço",
   "apresentação": "Apresentação",
-};
-
-const CONTENT_TYPE_LABEL: Record<MockSermon["content_type"], string> = {
-  "sermão": "Sermão",
-  palestra: "Palestra",
-  aula: "Aula",
-};
-
-const STATUS_LABEL: Record<MockSermon["status"], string> = {
-  rascunho: "Em rascunho",
-  pronto: "Pregado",
 };
 
 function formatDate(iso: string | null, withTime = false): string {
@@ -58,6 +48,7 @@ export function MetadataDialog({
   onOpenChange,
 }: MetadataDialogProps) {
   const framework = VOX_FRAMEWORKS.find((f) => f.id === sermon.framework);
+  const terms = termsFor(sermon.content_type);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -70,9 +61,11 @@ export function MetadataDialog({
         </DialogHeader>
 
         <dl className="space-y-3 text-sm pt-2">
-          <Row label="Tipo">{CONTENT_TYPE_LABEL[sermon.content_type]}</Row>
+          <Row label="Tipo">{terms.label}</Row>
           <Row label="Formato">{TYPE_LABEL[sermon.type]}</Row>
-          <Row label="Status">{STATUS_LABEL[sermon.status]}</Row>
+          <Row label="Status">
+            {statusLabelFor(sermon.content_type, sermon.status)}
+          </Row>
           <Row label="Modelo">
             <span className="inline-flex items-center gap-2">
               <span
@@ -91,7 +84,7 @@ export function MetadataDialog({
           </Row>
           {sermon.bible_book ? <Row label="Livro">{sermon.bible_book}</Row> : null}
           {sermon.series ? <Row label="Série">{sermon.series.title}</Row> : null}
-          <Row label="Pregado em">{formatDate(sermon.preached_at)}</Row>
+          <Row label={terms.doneAtLabel}>{formatDate(sermon.preached_at)}</Row>
           <Row label="Palavras">
             {sermon.word_count.toLocaleString("pt-BR")}
           </Row>
