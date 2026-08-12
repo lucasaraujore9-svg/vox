@@ -49,8 +49,9 @@ export function SettingsDeleteAccount() {
           Excluir conta
         </CardTitle>
         <CardDescription>
-          Esta ação é irreversível. Seus sermões serão arquivados por 30 dias e
-          depois removidos.
+          Esta ação é irreversível e imediata. Sua conta, seus manuscritos,
+          notas, séries, cursos e arquivos enviados são apagados na hora, sem
+          período de recuperação. Exporte o que quiser guardar antes.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -64,8 +65,8 @@ export function SettingsDeleteAccount() {
             <DialogHeader>
               <DialogTitle>Confirmar exclusão</DialogTitle>
               <DialogDescription>
-                Digite <strong>excluir</strong> abaixo para confirmar. Esta
-                ação não pode ser desfeita.
+                Digite <strong>excluir</strong> abaixo para confirmar. Tudo é
+                apagado imediatamente e não há como recuperar depois.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-2">

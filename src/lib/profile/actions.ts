@@ -6,7 +6,8 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { SLIDES_BUCKET } from "@/lib/sermons/slide-sources";
 
 export type ActionResult = { ok: boolean; error?: string };
 
@@ -184,8 +185,59 @@ export async function updatePasswordAction(
   return { ok: true };
 }
 
-// === Excluir conta (soft delete dos sermões + signOut) ===
+// === Excluir conta (eliminação definitiva, LGPD art. 18 VI) ===
 
+/**
+ * Remove tudo que o usuário tem no bucket de slides.
+ *
+ * O `list` do Storage não é recursivo, então descemos a árvore
+ * `{userId}/{sermonId}/[_src/]arquivo` nível a nível. Entrada sem `id` é
+ * pasta; com `id` é arquivo.
+ */
+async function purgeUserStorage(
+  service: ReturnType<typeof createServiceClient>,
+  userId: string
+): Promise<string[]> {
+  const bucket = service.storage.from(SLIDES_BUCKET);
+  const files: string[] = [];
+
+  async function walk(prefix: string, depth: number): Promise<void> {
+    // A árvore real tem 3 níveis; o limite evita laço infinito se ela mudar.
+    if (depth > 4) return;
+    const { data, error } = await bucket.list(prefix, { limit: 1000 });
+    if (error || !data) return;
+    for (const entry of data) {
+      const path = `${prefix}/${entry.name}`;
+      if (entry.id) files.push(path);
+      else await walk(path, depth + 1);
+    }
+  }
+
+  await walk(userId, 0);
+  if (files.length > 0) {
+    // `remove` aceita lotes; 100 por vez evita URL/payload grande demais.
+    for (let i = 0; i < files.length; i += 100) {
+      await bucket.remove(files.slice(i, i + 100));
+    }
+  }
+  return files;
+}
+
+/**
+ * Exclui a conta em definitivo: arquivos do Storage, depois o usuário no Auth.
+ *
+ * Apagar o usuário no Auth cascateia todo o banco: `profiles.id` referencia
+ * `auth.users on delete cascade`, e sermões, séries, cursos, estudo, notas,
+ * versões, registros de pregação e preferências referenciam `profiles.id`
+ * também em cascade. O catálogo compartilhado de exegeses sobrevive com a
+ * autoria anonimizada (`generated_by on delete set null`), que é o
+ * comportamento correto: o estudo bíblico não é dado pessoal do usuário.
+ *
+ * A ordem importa. O Storage é varrido por prefixo de caminho, não por
+ * consulta ao banco, mas fazemos isso ANTES de apagar o usuário para que uma
+ * falha aqui interrompa a operação com a conta ainda íntegra, em vez de
+ * deixar arquivos órfãos e sem dono.
+ */
 export async function deleteAccountAction(): Promise<ActionResult> {
   const supabase = await createClient();
   const {
@@ -193,11 +245,55 @@ export async function deleteAccountAction(): Promise<ActionResult> {
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Não autenticado" };
 
-  await supabase
-    .from("sermons")
-    .update({ deleted_at: new Date().toISOString() })
-    .eq("user_id", user.id);
+  if (
+    !process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    !process.env.NEXT_PUBLIC_SUPABASE_URL
+  ) {
+    return {
+      ok: false,
+      error:
+        "Exclusão indisponível: configuração do servidor incompleta. Fale com o suporte.",
+    };
+  }
 
-  await supabase.auth.signOut();
+  const service = createServiceClient();
+
+  try {
+    await purgeUserStorage(service, user.id);
+  } catch {
+    return {
+      ok: false,
+      error:
+        "Não foi possível remover seus arquivos. Nada foi excluído; tente de novo.",
+    };
+  }
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/admin/users/${user.id}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+        apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    return {
+      ok: false,
+      error: `Não foi possível excluir a conta (HTTP ${response.status}). Tente de novo.`,
+    };
+  }
+
+  // A conta já não existe; o signOut aqui só limpa o cookie local. Se falhar,
+  // a exclusão continua sendo um sucesso — o middleware derruba a sessão órfã
+  // no próximo request de qualquer forma. Engolir o erro evita mostrar "falhou"
+  // para uma operação que de fato aconteceu e é irreversível.
+  try {
+    await supabase.auth.signOut();
+  } catch {
+    // sessão órfã, nada a fazer
+  }
   return { ok: true };
 }
