@@ -1,0 +1,32 @@
+# Portão Zero-Erro
+Data: 2026-08-12 14:51 · Commit base: 2cdb419 · Branch: main
+Após aplicar SEG-012, LGPD-001 e LGPD-002.
+
+## 1. install --frozen-lockfile
+N/A — package.json alterado nesta rodada (upgrade do pdfjs-dist).
+
+## 2. typecheck (npx tsc --noEmit)
+EXIT 0 — VERDE
+
+## 3. lint (npx eslint .)
+EXIT 1 — VERMELHO. 93 erros, 98 avisos.
+  src/ .......................... 18 erros,  9 avisos  (dívida real)
+  design-system/ + public/sw.js .. 75 erros, 89 avisos  (ruído de config)
+PRÉ-EXISTENTE: nenhum dos erros está em arquivo alterado nesta rodada.
+Registrado como COD-014. O baseline anterior ('0 erros') era leitura errada:
+o $? vinha do 'tail' do pipe, não do eslint.
+
+## 4. build (npm run build)
+EXIT 0 — VERDE. 42 rotas (40 + /termos + /privacidade).
+
+## 5. test
+FALHA ESTRUTURAL — sem script 'test' e sem testes (QA-002).
+
+## 6. npm audit --omit=dev
+15 vulnerabilidades (2 low, 4 moderate, 9 high) — era 16 (10 high).
+pdfjs-dist saiu da lista (SEG-012 corrigido). Permanece sharp/libvips (SEG-011).
+
+## Veredito
+PARCIAL. typecheck e build verdes; lint vermelho por dívida pré-existente;
+testes inexistentes. As três correções desta rodada não introduziram nenhum
+erro novo de tipo, lint ou build.
