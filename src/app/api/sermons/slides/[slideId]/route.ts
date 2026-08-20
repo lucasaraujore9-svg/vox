@@ -8,14 +8,17 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { SLIDES_BUCKET, isValidSourcePath } from "@/lib/sermons/slide-sources";
+import {
+  SLIDES_BUCKET,
+  SLIDE_HEIGHT,
+  SLIDE_WEBP_OPTIONS,
+  SLIDE_WIDTH,
+  isValidSourcePath,
+} from "@/lib/sermons/slide-sources";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
-
-const SLIDE_WIDTH = 1280;
-const SLIDE_HEIGHT = 720;
 
 const paramsSchema = z.object({ slideId: z.string().uuid() });
 const putBodySchema = z.object({ source: z.string().min(1).max(400) });
@@ -148,7 +151,7 @@ export async function PUT(
     const sharp = (await import("sharp")).default;
     webp = await sharp(Buffer.from(await blob.arrayBuffer()))
       .resize(SLIDE_WIDTH, SLIDE_HEIGHT, { fit: "contain", background: "#ffffff" })
-      .webp({ quality: 82 })
+      .webp(SLIDE_WEBP_OPTIONS)
       .toBuffer();
   } catch {
     await storage.remove([source]).catch(() => null);

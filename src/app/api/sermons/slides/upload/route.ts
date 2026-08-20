@@ -1,5 +1,5 @@
 // Route Handler, conversão server-side de PDF (ou imagens) em slides WebP.
-// Issue 024 · output 1280x720, salva no bucket privado sermon-slides.
+// Issue 024 · output 2560x1440, salva no bucket privado sermon-slides.
 // Os slides entram DEPOIS dos que já existem, nunca sobrescrevem a ordem anterior.
 //
 // O arquivo NÃO vem no corpo: o navegador sobe direto pro Storage e manda só o
@@ -13,6 +13,9 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import {
   SLIDES_BUCKET,
+  SLIDE_HEIGHT,
+  SLIDE_WEBP_OPTIONS,
+  SLIDE_WIDTH,
   isPdfName,
   isValidSourcePath,
 } from "@/lib/sermons/slide-sources";
@@ -20,9 +23,6 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
-
-const SLIDE_WIDTH = 1280;
-const SLIDE_HEIGHT = 720;
 
 const queryParamsSchema = z.object({
   sermonId: z.string().uuid("sermonId inválido"),
@@ -125,7 +125,7 @@ async function pdfToWebpBuffers(pdfBytes: ArrayBuffer): Promise<Buffer[]> {
       if (!pngBuffer) throw new Error(`Falha ao renderizar a página ${pageNum}`);
       const webp = await sharp(pngBuffer)
         .resize(SLIDE_WIDTH, SLIDE_HEIGHT, { fit: "contain", background: "#ffffff" })
-        .webp({ quality: 82 })
+        .webp(SLIDE_WEBP_OPTIONS)
         .toBuffer();
       out.push(webp);
     } finally {
@@ -140,7 +140,7 @@ async function imageToWebpBuffer(bytes: ArrayBuffer): Promise<Buffer> {
   const sharp = (await import("sharp")).default;
   return sharp(Buffer.from(bytes))
     .resize(SLIDE_WIDTH, SLIDE_HEIGHT, { fit: "contain", background: "#ffffff" })
-    .webp({ quality: 82 })
+    .webp(SLIDE_WEBP_OPTIONS)
     .toBuffer();
 }
 

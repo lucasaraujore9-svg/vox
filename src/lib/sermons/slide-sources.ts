@@ -13,6 +13,22 @@ export const SOURCE_PREFIX = "_src";
 
 export const MAX_SOURCE_BYTES = 50 * 1024 * 1024;
 
+// --- Formato do slide renderizado ---------------------------------------
+// Compartilhado pelas duas rotas que rasterizam (upload em lote e troca de
+// imagem de um slide), pra não divergirem: um slide trocado precisa ter a
+// mesma nitidez dos que vieram do PDF.
+//
+// 2560x1440 é 2x o 1080p da projeção. O PDF é vetorial, então a largura de
+// render é o que define a nitidez do texto — em 1280 as serifas serrilham
+// visivelmente num projetor. Dobrar custa ~110KB por slide (era ~25KB) e
+// ~300ms de render, folgado dentro do maxDuration.
+export const SLIDE_WIDTH = 2560;
+export const SLIDE_HEIGHT = 1440;
+
+/** q92 é o joelho da curva: acima disso o arquivo cresce sem ganho visível.
+    `effort` fica no padrão (4) — o 6 economiza 2KB e custa 35% mais tempo. */
+export const SLIDE_WEBP_OPTIONS = { quality: 92 } as const;
+
 const EXTENSION_BY_MIME: Record<string, string> = {
   "application/pdf": ".pdf",
   "image/png": ".png",
